@@ -9,8 +9,10 @@ import { LaunchCadenceChart } from '@/components/charts/LaunchCadenceChart';
 import { RiskLandscapeChart } from '@/components/charts/RiskLandscapeChart';
 import { ProgramTable } from '@/components/ProgramTable';
 import { ChatWidget } from '@/components/ChatWidget';
+import { useState, useEffect, useMemo } from 'react';
+import { fetchPrograms } from '@/lib/api';
+import type { Program } from '@/lib/mockData';
 import {
-  programs,
   getVelocityData,
   getStrategicAlignmentData,
   getLaunchCadenceData,
@@ -22,17 +24,71 @@ import {
 } from '@/lib/mockData';
 
 export default function Dashboard() {
+  const [fetchedPrograms, setFetchedPrograms] = useState<Program[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setIsLoading(true);
+        const data = await fetchPrograms();
+        setFetchedPrograms(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error loading programs:', err);
+        setError('Failed to load portfolio data. Please ensure the backend is running.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
   // Compute KPI data
-  const strategicCoverage = getStrategicCoverage();
-  const linesUnderPressure = getLinesUnderPressure();
-  const milestoneCompletion = getMilestoneCompletion();
-  const upcomingLaunches = getUpcomingLaunches();
+  const strategicCoverage = useMemo(() => getStrategicCoverage(fetchedPrograms), [fetchedPrograms]);
+  const linesUnderPressure = useMemo(() => getLinesUnderPressure(fetchedPrograms), [fetchedPrograms]);
+  const milestoneCompletion = useMemo(() => getMilestoneCompletion(fetchedPrograms), [fetchedPrograms]);
+  const upcomingLaunches = useMemo(() => getUpcomingLaunches(fetchedPrograms), [fetchedPrograms]);
 
   // Compute chart data
-  const velocityData = getVelocityData();
-  const alignmentData = getStrategicAlignmentData();
+  const velocityData = useMemo(() => getVelocityData(fetchedPrograms), [fetchedPrograms]);
+  const alignmentData = useMemo(() => getStrategicAlignmentData(fetchedPrograms), [fetchedPrograms]);
+  const riskData = useMemo(() => getRiskLandscapeData(fetchedPrograms), [fetchedPrograms]);
+
+  // Launch Cadence uses simulated months for now
   const cadenceData = getLaunchCadenceData();
-  const riskData = getRiskLandscapeData();
+
+  if (isLoading) {
+    return (
+      <div className="h-screen bg-[#f8fafc] flex items-center justify-center font-inter">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-500 font-medium">Loading portfolio data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-screen bg-[#f8fafc] flex items-center justify-center font-inter p-6">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-red-100 p-8 text-center text-sm">
+          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Bell className="w-6 h-6 text-red-600" />
+          </div>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Connection Error</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-xl hover:bg-blue-700 transition-colors shadow-sm"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex">
@@ -118,7 +174,7 @@ export default function Dashboard() {
           </div>
 
           {/* Program Table */}
-          <ProgramTable programs={programs} />
+          <ProgramTable programs={fetchedPrograms} />
         </main>
       </div>
 

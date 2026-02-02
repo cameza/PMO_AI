@@ -1,6 +1,11 @@
 # Current Work - Week of Feb 2, 2026
 
 ## Active Feature Branches
+- `feature/frontend-integration` (Frontend) → Stream F: Integration & Features
+- `feature/backend-agent` (Backend) → Stream B: AI Agent Core
+- `feature/slack-bot` (Backend) → Stream S: Slack Integration
+
+### Completed Branches
 - `feature/backend-data-db` (Windsurf) → Stream C: Data & Database ✓
 - `feature/backend-api` (Windsurf) → Stream D: AI Agent & API ✓
 - `feature/frontend-polish` (Antigravity) → Stream E: UI Polish & Responsiveness ✓
@@ -180,6 +185,144 @@ app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:3000"], ...)
  
 ## Blocked/Questions
 - None currently
+
+---
+
+## Stream F: Frontend — Integration & Features
+
+### F1. Frontend-Backend Integration ⚡ HIGH PRIORITY
+**Files:** `frontend/lib/api.ts`, `frontend/app/page.tsx`, `frontend/app/dashboard-compact/page.tsx`
+- [ ] Replace `mockData.ts` imports with API calls to `http://localhost:8000/api/programs`
+- [ ] Add loading states and error handling
+- [ ] Test with backend running at port 8000
+> **Dependency:** None (can start immediately)
+
+### F2. Program Table Filtering
+**File:** `frontend/components/ProgramTable.tsx`
+- [x] Add filter dropdowns for Status and Product Line
+- [x] Wire filters to table rendering logic
+> **Status:** Completed ✓
+
+### F3. Program Detail Page
+**File:** `frontend/app/programs/[id]/page.tsx` (new)
+- [ ] Create dynamic route for individual program view
+- [ ] Display: description, status, product line, pipeline stage, owner, team, launch date, progress, strategic objectives
+- [ ] List all risks with severity and mitigation
+- [ ] List all milestones with due dates and completion status
+- [ ] Fetch from `GET /api/programs/:id`
+> **Dependency:** F1 (needs API integration pattern established)
+
+### F4. Functional Chat Widget
+**File:** `frontend/components/ChatWidget.tsx`
+- [ ] Connect to `POST /api/agent/chat` SSE endpoint
+- [ ] Implement streaming response display (character by character)
+- [ ] Maintain conversation history in session state
+- [ ] Add proactive insight on dashboard load (call agent on mount)
+> **Dependency:** B4 (backend agent endpoint must be functional)
+
+### F5. Context-Aware Chat
+**File:** `frontend/components/ChatWidget.tsx`
+- [ ] Pass `context.programId` when chat opened on `/programs/[id]` page
+> **Dependency:** F3 + F4 (needs detail page and functional chat)
+
+---
+
+## Stream B: Backend — AI Agent Core
+
+### B1. LLM Provider Abstraction ⚡ HIGH PRIORITY
+**Files:** `backend/agent/llm_provider.py` (new), `backend/agent/prompts.py` (new)
+- [ ] Create `LLMProvider` base class with `generate()` and `stream()` methods
+- [ ] Implement `ClaudeProvider` (Anthropic claude-sonnet-4-20250514)
+- [ ] Implement `OpenAIProvider` (GPT-4)
+- [ ] Provider selected via `LLM_PROVIDER` env var
+- [ ] Prompt templates adapt to provider (XML tags for Claude)
+> **Dependency:** None (can start immediately)
+
+### B2. RAG Implementation
+**File:** `backend/agent/rag.py` (new)
+- [ ] Set up ChromaDB in-memory vector store
+- [ ] Embed program descriptions, update narratives, risk descriptions at startup
+- [ ] Implement semantic search function for retrieval
+> **Dependency:** B1 (needs LLM provider for embeddings or sentence-transformers)
+
+### B3. Query Handler — Agent Orchestration
+**File:** `backend/agent/query_handler.py` (new)
+- [ ] Receive user query + conversation history
+- [ ] Determine if query needs vector search, SQL query, or both
+- [ ] Assemble context from retrieved chunks
+- [ ] Call LLM with grounded context
+- [ ] Return streaming response
+- [ ] Handle "I don't have information on that" gracefully
+> **Dependency:** B1 + B2 (needs LLM provider and RAG)
+
+### B4. Wire Agent to Chat Endpoint
+**File:** `backend/api/agent.py`
+- [ ] Replace stub with actual query_handler calls
+- [ ] Implement proper SSE streaming from LLM
+- [ ] Accept optional `context.programId` for context-aware responses
+> **Dependency:** B3 (needs query handler complete)
+
+### B5. Portfolio Summary Endpoint
+**File:** `backend/api/agent.py`
+- [ ] Implement `POST /api/agent/summary`
+- [ ] Query DB for portfolio state, assemble context, generate narrative summary
+> **Dependency:** B3 (needs query handler for LLM generation)
+
+---
+
+## Stream S: Backend — Slack Integration
+
+### B6. Slack Bot Core
+**Files:** `slack-bot/app.py` (new), `slack-bot/handlers/messages.py` (new), `slack-bot/requirements.txt` (new)
+- [ ] Set up Slack Bolt app
+- [ ] Handle `message.im` (DMs) and `app_mention` events
+- [ ] Forward messages to `POST /api/agent/chat`
+- [ ] Post responses back to Slack
+> **Dependency:** B4 (agent endpoint must be functional)
+
+### B7. Monday Morning Summary
+**File:** `slack-bot/handlers/notifications.py` (new)
+- [ ] Implement scheduler (APScheduler) for Monday 9 AM
+- [ ] Call `POST /api/agent/summary`
+- [ ] Post generated summary to configured Slack channel
+> **Dependency:** B5 + B6 (needs summary endpoint and Slack bot running)
+
+---
+
+## Dependencies & Critical Path
+
+### Backend Critical Path (Sequential)
+```
+B1 (LLM Provider) → B2 (RAG) → B3 (Query Handler) → B4 (Chat Endpoint) → B5 (Summary)
+                                                   ↓
+                                              B6 (Slack Bot) → B7 (Monday Summary)
+```
+
+### Frontend Dependencies
+| Task | Can Start When |
+|------|----------------|
+| F1 | Immediately |
+| F2 | Immediately |
+| F3 | After F1 |
+| F4 | After B4 complete |
+| F5 | After F3 + F4 |
+
+### Tasks Ready to Assign Now
+- **Frontend:** F1, F2
+- **Backend:** B1
+
+---
+
+## Environment Setup Required
+```bash
+# Add to .env
+LLM_PROVIDER=claude          # or "openai"
+ANTHROPIC_API_KEY=sk-...
+OPENAI_API_KEY=sk-...
+SLACK_BOT_TOKEN=xoxb-...
+SLACK_APP_TOKEN=xapp-...
+SLACK_CHANNEL_ID=C...        # For Monday summary
+```
 
 ---
 *Refer to `PRD.md` for full context.*

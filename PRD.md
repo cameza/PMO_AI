@@ -244,8 +244,8 @@ Each chart visually expands on or grounds one of the KPI cards above, giving the
 - [x] **Risk Landscape** — a stacked bar chart with product lines on the x-axis, showing the count of open risks per product line, segmented by severity (High / Medium / Low). Visually grounds the Product Lines Under Pressure KPI by showing *what* is driving the pressure and *where*.
 
 **Acceptance Criteria — Program Table (Row 3):**
-- [ ] A program table lists all programs with columns: Name, Status, Product Line, Owner, Team, Launch Date, Pipeline Stage
-- [ ] The table supports filtering by status (On Track / At Risk / Off Track) and by product line
+- [x] A program table lists all programs with columns: Name, Status, Product Line, Owner, Team, Launch Date, Pipeline Stage
+- [x] The table supports filtering by status (On Track / At Risk / Off Track) and by product line
 
 **Technical Notes:**
 - KPI card and chart components adapted from AI Missions Week 04 codebase
@@ -602,6 +602,13 @@ The agent uses a hybrid retrieval approach to ground its responses:
 ---
 
 ## Changelog
+
+### v1.4 — February 2, 2026
+- **Work Planning**: Defined next phase with 12 tasks across Frontend (F1-F5) and Backend (B1-B7)
+- **Frontend Focus**: API integration, program detail page, functional chat widget
+- **Backend Focus**: LLM provider abstraction, RAG implementation, query handler, Slack bot
+- **Critical Path Identified**: B1 → B2 → B3 → B4 (agent must be functional before chat/Slack work)
+- **Immediate Assignments**: F1, F2 (frontend), B1 (backend) — no dependencies
 
 ### v1.3 — February 2, 2026
 - **Backend Implementation Complete**: SQLite database with 18 synthetic programs, FastAPI with REST endpoints and SSE chat stub

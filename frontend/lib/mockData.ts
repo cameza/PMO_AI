@@ -398,7 +398,7 @@ export const programs: Program[] = [
 ];
 
 // Computed data for charts
-export const getVelocityData = () => {
+export const getVelocityData = (data: Program[] = programs) => {
   const stageCounts = {
     'Discovery': 0,
     'Planning': 0,
@@ -406,37 +406,37 @@ export const getVelocityData = () => {
     'Launching': 0,
     'Completed': 0,
   };
-  
-  programs.forEach(p => {
+
+  data.forEach(p => {
     stageCounts[p.pipelineStage]++;
   });
-  
+
   return Object.entries(stageCounts).map(([stage, count]) => ({
     stage,
     count,
   }));
 };
 
-export const getStrategicAlignmentData = () => {
-  const data: Record<string, { productLine: string; onTrack: number; atRisk: number; offTrack: number }> = {};
-  
+export const getStrategicAlignmentData = (data: Program[] = programs) => {
+  const result: Record<string, { productLine: string; onTrack: number; atRisk: number; offTrack: number }> = {};
+
   productLines.forEach(line => {
-    data[line] = { productLine: line, onTrack: 0, atRisk: 0, offTrack: 0 };
+    result[line] = { productLine: line, onTrack: 0, atRisk: 0, offTrack: 0 };
   });
-  
-  programs.filter(p => p.status !== 'Completed').forEach(p => {
-    if (p.status === 'On Track') data[p.productLine].onTrack++;
-    else if (p.status === 'At Risk') data[p.productLine].atRisk++;
-    else if (p.status === 'Off Track') data[p.productLine].offTrack++;
+
+  data.filter(p => p.status !== 'Completed').forEach(p => {
+    if (p.status === 'On Track') result[p.productLine].onTrack++;
+    else if (p.status === 'At Risk') result[p.productLine].atRisk++;
+    else if (p.status === 'Off Track') result[p.productLine].offTrack++;
   });
-  
-  return Object.values(data);
+
+  return Object.values(result);
 };
 
 export const getLaunchCadenceData = () => {
   const months = ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'];
   const currentMonth = 'Feb'; // Current month based on date 2026-02-01
-  
+
   // Simulated launch counts per month
   return [
     { month: 'Aug', count: 0, isCurrent: false },
@@ -448,28 +448,28 @@ export const getLaunchCadenceData = () => {
   ];
 };
 
-export const getRiskLandscapeData = () => {
-  const data: Record<string, { productLine: string; high: number; medium: number; low: number }> = {};
-  
+export const getRiskLandscapeData = (data: Program[] = programs) => {
+  const result: Record<string, { productLine: string; high: number; medium: number; low: number }> = {};
+
   productLines.forEach(line => {
-    data[line] = { productLine: line, high: 0, medium: 0, low: 0 };
+    result[line] = { productLine: line, high: 0, medium: 0, low: 0 };
   });
-  
-  programs.forEach(p => {
+
+  data.forEach(p => {
     p.risks.filter(r => r.status === 'Open').forEach(r => {
-      if (r.severity === 'High') data[p.productLine].high++;
-      else if (r.severity === 'Medium') data[p.productLine].medium++;
-      else if (r.severity === 'Low') data[p.productLine].low++;
+      if (r.severity === 'High') result[p.productLine].high++;
+      else if (r.severity === 'Medium') result[p.productLine].medium++;
+      else if (r.severity === 'Low') result[p.productLine].low++;
     });
   });
-  
-  return Object.values(data).filter(d => d.high > 0 || d.medium > 0 || d.low > 0);
+
+  return Object.values(result).filter(d => d.high > 0 || d.medium > 0 || d.low > 0);
 };
 
 // KPI computations
-export const getStrategicCoverage = () => {
+export const getStrategicCoverage = (data: Program[] = programs) => {
   const coveredObjectives = new Set<string>();
-  programs.filter(p => p.status !== 'Completed').forEach(p => {
+  data.filter(p => p.status !== 'Completed').forEach(p => {
     p.strategicObjectives.forEach(obj => coveredObjectives.add(obj));
   });
   return {
@@ -479,56 +479,56 @@ export const getStrategicCoverage = () => {
   };
 };
 
-export const getLinesUnderPressure = () => {
+export const getLinesUnderPressure = (data: Program[] = programs) => {
   const pressureByLine: Record<string, number> = {};
-  
+
   productLines.forEach(line => {
     pressureByLine[line] = 0;
   });
-  
-  programs.filter(p => p.status === 'At Risk' || p.status === 'Off Track')
+
+  data.filter(p => p.status === 'At Risk' || p.status === 'Off Track')
     .forEach(p => {
       pressureByLine[p.productLine]++;
     });
-  
+
   const underPressure = Object.entries(pressureByLine)
     .filter(([_, count]) => count >= 2)
     .map(([line, _]) => line);
-  
+
   return {
     count: underPressure.length,
     lines: underPressure,
   };
 };
 
-export const getMilestoneCompletion = () => {
-  const currentMonthMilestones = programs.flatMap(p => p.milestones)
-    .filter(m => m.dueDate.startsWith('2026-02'));
-  
+export const getMilestoneCompletion = (data: Program[] = programs) => {
+  const currentMonthMilestones = data.flatMap(p => p.milestones)
+    .filter(m => m.dueDate?.startsWith('2026-02'));
+
   const completed = currentMonthMilestones.filter(m => m.status === 'Completed').length;
-  
+
   return {
     completed,
     total: currentMonthMilestones.length || 11, // Fallback to show 8 of 11
-    percentage: currentMonthMilestones.length > 0 
+    percentage: currentMonthMilestones.length > 0
       ? Math.round((completed / currentMonthMilestones.length) * 100)
       : 72,
   };
 };
 
-export const getUpcomingLaunches = () => {
+export const getUpcomingLaunches = (data: Program[] = programs) => {
   const thirtyDaysFromNow = new Date('2026-03-03');
   const now = new Date('2026-02-01');
-  
-  const launching = programs.filter(p => {
+
+  const launching = data.filter(p => {
     const launchDate = new Date(p.launchDate);
     return launchDate >= now && launchDate <= thirtyDaysFromNow && p.status !== 'Completed';
   });
-  
-  const nearest = launching.sort((a, b) => 
+
+  const nearest = launching.sort((a, b) =>
     new Date(a.launchDate).getTime() - new Date(b.launchDate).getTime()
   )[0];
-  
+
   return {
     count: launching.length || 4,
     nextDate: nearest?.launchDate || '2026-02-30',
