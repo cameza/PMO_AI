@@ -19,7 +19,7 @@ export function LaunchCadenceChart({ data, compact = false }: LaunchCadenceChart
             <h3 className={`font-semibold text-gray-700 uppercase tracking-wider ${compact ? 'text-xs mb-2' : 'text-sm mb-4'}`}>
                 Launch Cadence
             </h3>
-            <div className={compact ? 'h-24' : 'h-40'}>
+            <div className={compact ? 'h-40' : 'h-40'}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={data}

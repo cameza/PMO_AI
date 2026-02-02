@@ -20,7 +20,7 @@ export function StrategicAlignmentChart({ data, compact = false }: StrategicAlig
             <h3 className={`font-semibold text-gray-700 uppercase tracking-wider ${compact ? 'text-xs mb-2' : 'text-sm mb-4'}`}>
                 Strategic Alignment
             </h3>
-            <div className={compact ? 'h-24' : 'h-48'}>
+            <div className={compact ? 'h-40' : 'h-48'}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={data}
