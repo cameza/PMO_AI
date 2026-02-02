@@ -192,10 +192,11 @@ app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:3000"], ...)
 
 ### F1. Frontend-Backend Integration ⚡ HIGH PRIORITY
 **Files:** `frontend/lib/api.ts`, `frontend/app/page.tsx`, `frontend/app/dashboard-compact/page.tsx`
-- [ ] Replace `mockData.ts` imports with API calls to `http://localhost:8000/api/programs`
-- [ ] Add loading states and error handling
-- [ ] Test with backend running at port 8000
-> **Dependency:** None (can start immediately)
+- [x] Replace `mockData.ts` imports with API calls to `http://localhost:8000/api/programs`
+- [x] Add loading states and error handling
+- [x] Implement field mapping (snake_case to camelCase)
+- [x] Test with backend running at port 8000
+> **Status:** Completed ✓
 
 ### F2. Program Table Filtering
 **File:** `frontend/components/ProgramTable.tsx`

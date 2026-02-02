@@ -603,6 +603,12 @@ The agent uses a hybrid retrieval approach to ground its responses:
 
 ## Changelog
 
+### v1.5 — February 2, 2026
+- **API Integration Core (F1)**: Frontend connected to FastAPI backend. Replaced all static mock data imports with real-time `fetchPrograms` calls.
+- **Data Mapping**: Implemented field transformation layer in `lib/api.ts` to bridge `snake_case` (backend) and `camelCase` (frontend).
+- **Portfolio Table Filtering (F2)**: Added status and product line dropdowns to `ProgramTable.tsx`. Filters are now fully reactive and work with API data.
+- **Client-Side Scalability**: Refactored `mockData.ts` utility functions to accept dynamic data, enabling consistent KPI/Chart computation across layouts.
+
 ### v1.4 — February 2, 2026
 - **Work Planning**: Defined next phase with 12 tasks across Frontend (F1-F5) and Backend (B1-B7)
 - **Frontend Focus**: API integration, program detail page, functional chat widget
