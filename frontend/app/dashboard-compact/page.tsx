@@ -75,50 +75,68 @@ export default function DashboardCompact() {
                     </div>
                 </header>
 
-                {/* Dashboard Content - No Scroll */}
-                <main className="flex-1 p-4 flex flex-col min-h-0 gap-3">
+                {/* Dashboard Content */}
+                <main className="flex-1 p-4 flex flex-col min-h-0 gap-3 overflow-y-auto md:overflow-hidden">
                     {/* KPI Cards Row */}
-                    <div className="grid grid-cols-4 gap-3 flex-shrink-0">
-                        <KPICard
-                            title="Strategic Coverage"
-                            value={`${strategicCoverage.covered} of ${strategicCoverage.total}`}
-                            subtitle={`${strategicCoverage.total - strategicCoverage.covered} objectives uncovered`}
-                            subtitleColor="text-blue-500"
-                        />
-                        <KPICard
-                            title="Lines Under Pressure"
-                            value={`${linesUnderPressure.count} lines`}
-                            tags={linesUnderPressure.lines.map(line => ({
-                                label: line,
-                                color: 'bg-blue-100 text-blue-700'
-                            }))}
-                        />
-                        <KPICard
-                            title="Milestone Completion"
-                            value={`${milestoneCompletion.percentage}%`}
-                            subtitle={`${milestoneCompletion.completed} of ${milestoneCompletion.total} completed`}
-                            subtitleColor="text-gray-500"
-                            progress={milestoneCompletion.percentage}
-                            progressColor="bg-green-500"
-                        />
-                        <KPICard
-                            title="Upcoming Launches"
-                            value={`${upcomingLaunches.count} launching`}
-                            subtitle={`Next: ${formatLaunchDate(upcomingLaunches.nextDate)}`}
-                            subtitleColor="text-blue-500"
-                        />
+                    {/* Mobile: Swipe Carousel, Desktop: Grid */}
+                    <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-2 md:pb-0 md:grid md:grid-cols-4 flex-shrink-0 no-scrollbar">
+                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                            <KPICard
+                                title="Strategic Coverage"
+                                value={`${strategicCoverage.covered} of ${strategicCoverage.total}`}
+                                subtitle={`${strategicCoverage.total - strategicCoverage.covered} objectives uncovered`}
+                                subtitleColor="text-blue-500"
+                            />
+                        </div>
+                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                            <KPICard
+                                title="Lines Under Pressure"
+                                value={`${linesUnderPressure.count} lines`}
+                                tags={linesUnderPressure.lines.map(line => ({
+                                    label: line,
+                                    color: 'bg-blue-100 text-blue-700'
+                                }))}
+                            />
+                        </div>
+                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                            <KPICard
+                                title="Milestone Completion"
+                                value={`${milestoneCompletion.percentage}%`}
+                                subtitle={`${milestoneCompletion.completed} of ${milestoneCompletion.total} completed`}
+                                subtitleColor="text-gray-500"
+                                progress={milestoneCompletion.percentage}
+                                progressColor="bg-green-500"
+                            />
+                        </div>
+                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                            <KPICard
+                                title="Upcoming Launches"
+                                value={`${upcomingLaunches.count} launching`}
+                                subtitle={`Next: ${formatLaunchDate(upcomingLaunches.nextDate)}`}
+                                subtitleColor="text-blue-500"
+                            />
+                        </div>
                     </div>
 
-                    {/* Charts Row - 4 in a row, compact */}
-                    <div className="grid grid-cols-4 gap-3 flex-shrink-0">
-                        <ProgramVelocityChart data={velocityData} compact />
-                        <StrategicAlignmentChart data={alignmentData} compact />
-                        <LaunchCadenceChart data={cadenceData} compact />
-                        <RiskLandscapeChart data={riskData} compact />
+                    {/* Charts Row */}
+                    {/* Mobile: Swipe Carousel, Desktop: Grid */}
+                    <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-2 md:pb-0 md:grid md:grid-cols-4 flex-shrink-0 no-scrollbar">
+                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                            <ProgramVelocityChart data={velocityData} compact />
+                        </div>
+                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                            <StrategicAlignmentChart data={alignmentData} compact />
+                        </div>
+                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                            <LaunchCadenceChart data={cadenceData} compact />
+                        </div>
+                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                            <RiskLandscapeChart data={riskData} compact />
+                        </div>
                     </div>
 
                     {/* Program Table - Takes remaining space */}
-                    <div className="flex-1 min-h-0 overflow-hidden">
+                    <div className="flex-1 min-h-[300px] md:min-h-0 overflow-hidden">
                         <ProgramTable programs={programs} compact />
                     </div>
                 </main>

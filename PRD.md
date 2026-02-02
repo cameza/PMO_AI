@@ -286,6 +286,11 @@ Each chart visually expands on or grounds one of the KPI cards above, giving the
 - [ ] The chat maintains conversation history for the duration of the session (page refreshes may reset)
 - [ ] **Proactive Insight Surfacing** — When the dashboard loads, the agent automatically analyzes the current portfolio state and surfaces one actionable insight before the user types anything.
 
+### Mobile Responsiveness
+- [ ] **Carousels for Cards** — On mobile devices (max-width: 768px), KPI cards and Charts must be displayed in a horizontal carousel where only one item is fully visible at a time ("front and center").
+- [ ] **Swipe Interaction** — Users must be able to swipe horizontally to view the next KPI or Chart.
+- [ ] **Layout Adaptation** — The side-by-side or grid layouts used on desktop must switch to stacked, swipeable rows on mobile.
+
 **Acceptance Criteria — Sample Questions That Must Work:**
 - [ ] "What programs are launching this quarter?"
 - [ ] "Show me all at-risk programs"
