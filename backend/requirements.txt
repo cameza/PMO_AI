@@ -1,0 +1,26 @@
+# Backend dependencies for PMO AI System
+# Python 3.11+
+
+# Web framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+
+# Data validation
+pydantic==2.5.3
+
+# Database
+sqlalchemy==2.0.25
+
+# Environment variables
+python-dotenv==1.0.0
+
+# LLM providers (for Stream D)
+anthropic==0.18.1
+openai==1.12.0
+
+# RAG (for Stream D)
+llama-index==0.10.12
+chromadb==0.4.22
+
+# Utilities
+httpx==0.26.0

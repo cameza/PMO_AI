@@ -1,0 +1,553 @@
+{
+  "strategic_objectives": [
+    "Expand IoT ecosystem",
+    "Improve user retention",
+    "Accelerate cloud migration",
+    "Enhance mobile experience",
+    "Strengthen core platform",
+    "Drive subscription growth",
+    "Enable AI capabilities",
+    "Modernize infrastructure",
+    "International expansion"
+  ],
+  "product_lines": ["Smart Home", "Mobile", "Platform", "Video"],
+  "programs": [
+    {
+      "id": "prog-001",
+      "name": "Project Phoenix",
+      "description": "Next-generation mobile app redesign with enhanced UX",
+      "status": "On Track",
+      "owner": "A. Chen",
+      "team": "Mobile Engineering",
+      "product_line": "Mobile",
+      "pipeline_stage": "In Progress",
+      "strategic_objectives": ["Enhance mobile experience", "Improve user retention"],
+      "launch_date": "2026-02-28",
+      "progress": 75,
+      "risks": [],
+      "milestones": [
+        {
+          "id": "m-001",
+          "program_id": "prog-001",
+          "name": "Beta Release",
+          "due_date": "2026-02-15",
+          "completed_date": "2026-02-14",
+          "status": "Completed"
+        },
+        {
+          "id": "m-002",
+          "program_id": "prog-001",
+          "name": "GA Launch",
+          "due_date": "2026-02-28",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Beta testing complete. On track for Feb 28 launch."
+    },
+    {
+      "id": "prog-002",
+      "name": "Smart Home Hub v3",
+      "description": "Third generation smart home hub with Matter support",
+      "status": "At Risk",
+      "owner": "M. Rose",
+      "team": "Smart Home",
+      "product_line": "Smart Home",
+      "pipeline_stage": "In Progress",
+      "strategic_objectives": ["Expand IoT ecosystem"],
+      "launch_date": "2026-03-15",
+      "progress": 55,
+      "risks": [
+        {
+          "id": "r-001",
+          "program_id": "prog-002",
+          "title": "Hardware supply chain delays",
+          "severity": "High",
+          "description": "Chip shortage affecting Hub v3 production",
+          "mitigation": "Alternative supplier engaged",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-003",
+          "program_id": "prog-002",
+          "name": "Hardware Validation",
+          "due_date": "2026-02-01",
+          "completed_date": null,
+          "status": "Overdue"
+        }
+      ],
+      "last_update": "Supply chain issues causing 3-week delay. Working with backup supplier."
+    },
+    {
+      "id": "prog-003",
+      "name": "Privacy Audit",
+      "description": "Comprehensive privacy compliance audit for Smart Home products",
+      "status": "At Risk",
+      "owner": "M. Rose",
+      "team": "T-Safe",
+      "product_line": "Smart Home",
+      "pipeline_stage": "In Progress",
+      "strategic_objectives": ["Expand IoT ecosystem"],
+      "launch_date": "2026-03-15",
+      "progress": 40,
+      "risks": [
+        {
+          "id": "r-002",
+          "program_id": "prog-003",
+          "title": "Regulatory feedback pending",
+          "severity": "Medium",
+          "description": "Awaiting regulatory body response",
+          "mitigation": "Legal team following up weekly",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-004",
+          "program_id": "prog-003",
+          "name": "Initial Audit Complete",
+          "due_date": "2026-02-10",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Privacy Audit regulatory feedback pending."
+    },
+    {
+      "id": "prog-004",
+      "name": "Legacy Sync",
+      "description": "Legacy system data synchronization for infrastructure migration",
+      "status": "Off Track",
+      "owner": "J. Doe",
+      "team": "T-Infra",
+      "product_line": "Platform",
+      "pipeline_stage": "In Progress",
+      "strategic_objectives": ["Strengthen core platform"],
+      "launch_date": "2026-01-15",
+      "progress": 35,
+      "risks": [
+        {
+          "id": "r-003",
+          "program_id": "prog-004",
+          "title": "Data migration complexity",
+          "severity": "High",
+          "description": "Legacy data formats causing migration issues",
+          "mitigation": "Added dedicated migration team",
+          "status": "Open"
+        },
+        {
+          "id": "r-004",
+          "program_id": "prog-004",
+          "title": "Resource constraints",
+          "severity": "Medium",
+          "description": "Key engineer on leave",
+          "mitigation": "Contractor engaged",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-005",
+          "program_id": "prog-004",
+          "name": "Migration Complete",
+          "due_date": "2026-01-15",
+          "completed_date": null,
+          "status": "Overdue"
+        }
+      ],
+      "last_update": "Project significantly behind schedule. Escalated to leadership."
+    },
+    {
+      "id": "prog-005",
+      "name": "Billing Refresh",
+      "description": "Modernized billing system with subscription support",
+      "status": "Completed",
+      "owner": "S. Kim",
+      "team": "T-Web",
+      "product_line": "Platform",
+      "pipeline_stage": "Completed",
+      "strategic_objectives": ["Drive subscription growth"],
+      "launch_date": "2025-09-12",
+      "progress": 100,
+      "risks": [],
+      "milestones": [
+        {
+          "id": "m-006",
+          "program_id": "prog-005",
+          "name": "Production Deploy",
+          "due_date": "2025-09-12",
+          "completed_date": "2025-09-12",
+          "status": "Completed"
+        }
+      ],
+      "last_update": "Successfully launched. All metrics green."
+    },
+    {
+      "id": "prog-006",
+      "name": "AI Core v2",
+      "description": "Second generation AI engine with improved inference",
+      "status": "On Track",
+      "owner": "A. Chen",
+      "team": "T-Alpha",
+      "product_line": "Platform",
+      "pipeline_stage": "Launching",
+      "strategic_objectives": ["Enable AI capabilities", "Strengthen core platform"],
+      "launch_date": "2026-02-28",
+      "progress": 90,
+      "risks": [],
+      "milestones": [
+        {
+          "id": "m-007",
+          "program_id": "prog-006",
+          "name": "Final Testing",
+          "due_date": "2026-02-25",
+          "completed_date": "2026-02-24",
+          "status": "Completed"
+        }
+      ],
+      "last_update": "All tests passing. Ready for launch."
+    },
+    {
+      "id": "prog-007",
+      "name": "Data Pipeline Refresh",
+      "description": "Modernized data ingestion and processing pipeline",
+      "status": "On Track",
+      "owner": "T. Wong",
+      "team": "Data Engineering",
+      "product_line": "Video",
+      "pipeline_stage": "Planning",
+      "strategic_objectives": ["Accelerate cloud migration"],
+      "launch_date": "2026-06-01",
+      "progress": 15,
+      "risks": [],
+      "milestones": [
+        {
+          "id": "m-008",
+          "program_id": "prog-007",
+          "name": "Architecture Review",
+          "due_date": "2026-02-28",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "In planning phase. Architecture under review."
+    },
+    {
+      "id": "prog-008",
+      "name": "Content Recommendation Engine",
+      "description": "ML-powered content recommendation system",
+      "status": "On Track",
+      "owner": "L. Park",
+      "team": "ML Platform",
+      "product_line": "Video",
+      "pipeline_stage": "Planning",
+      "strategic_objectives": ["Enable AI capabilities", "Improve user retention"],
+      "launch_date": "2026-07-01",
+      "progress": 10,
+      "risks": [],
+      "milestones": [
+        {
+          "id": "m-009",
+          "program_id": "prog-008",
+          "name": "Model Selection",
+          "due_date": "2026-03-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Evaluating ML model options."
+    },
+    {
+      "id": "prog-009",
+      "name": "Next-Gen Streaming",
+      "description": "Ultra-low latency streaming platform upgrade",
+      "status": "On Track",
+      "owner": "R. Singh",
+      "team": "Video Platform",
+      "product_line": "Video",
+      "pipeline_stage": "Discovery",
+      "strategic_objectives": ["Accelerate cloud migration"],
+      "launch_date": "2026-09-01",
+      "progress": 5,
+      "risks": [],
+      "milestones": [
+        {
+          "id": "m-010",
+          "program_id": "prog-009",
+          "name": "Discovery Complete",
+          "due_date": "2026-04-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Early discovery phase. Stakeholder interviews ongoing."
+    },
+    {
+      "id": "prog-010",
+      "name": "Mobile Payments",
+      "description": "In-app payment integration for mobile platform",
+      "status": "On Track",
+      "owner": "K. Patel",
+      "team": "Mobile Payments",
+      "product_line": "Mobile",
+      "pipeline_stage": "In Progress",
+      "strategic_objectives": ["Drive subscription growth", "Enhance mobile experience"],
+      "launch_date": "2026-03-15",
+      "progress": 65,
+      "risks": [
+        {
+          "id": "r-005",
+          "program_id": "prog-010",
+          "title": "Payment gateway integration",
+          "severity": "Low",
+          "description": "Minor API compatibility issues",
+          "mitigation": "Working with vendor",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-011",
+          "program_id": "prog-010",
+          "name": "Payment Integration",
+          "due_date": "2026-02-28",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Integration testing in progress."
+    },
+    {
+      "id": "prog-011",
+      "name": "Voice Assistant 2.0",
+      "description": "Enhanced voice control for Smart Home devices",
+      "status": "On Track",
+      "owner": "E. Martinez",
+      "team": "Voice Platform",
+      "product_line": "Smart Home",
+      "pipeline_stage": "Launching",
+      "strategic_objectives": ["Expand IoT ecosystem", "Enable AI capabilities"],
+      "launch_date": "2026-03-01",
+      "progress": 88,
+      "risks": [],
+      "milestones": [
+        {
+          "id": "m-012",
+          "program_id": "prog-011",
+          "name": "Launch Prep",
+          "due_date": "2026-02-25",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Final QA in progress. Launch on track."
+    },
+    {
+      "id": "prog-012",
+      "name": "IoT Security Suite",
+      "description": "Comprehensive security solution for IoT devices",
+      "status": "At Risk",
+      "owner": "N. Johnson",
+      "team": "Security",
+      "product_line": "Smart Home",
+      "pipeline_stage": "In Progress",
+      "strategic_objectives": ["Expand IoT ecosystem"],
+      "launch_date": "2026-05-01",
+      "progress": 45,
+      "risks": [
+        {
+          "id": "r-006",
+          "program_id": "prog-012",
+          "title": "Security certification delays",
+          "severity": "High",
+          "description": "Third-party audit taking longer than expected",
+          "mitigation": "Expedited review requested",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-013",
+          "program_id": "prog-012",
+          "name": "Security Audit",
+          "due_date": "2026-03-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Certification process delayed. May impact launch."
+    },
+    {
+      "id": "prog-013",
+      "name": "Video Analytics Platform",
+      "description": "Real-time video analytics and insights",
+      "status": "On Track",
+      "owner": "C. Lee",
+      "team": "Analytics",
+      "product_line": "Video",
+      "pipeline_stage": "In Progress",
+      "strategic_objectives": ["Enable AI capabilities"],
+      "launch_date": "2026-05-15",
+      "progress": 50,
+      "risks": [
+        {
+          "id": "r-007",
+          "program_id": "prog-013",
+          "title": "GPU capacity planning",
+          "severity": "Medium",
+          "description": "May need additional GPU resources",
+          "mitigation": "Cloud scaling plan in place",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-014",
+          "program_id": "prog-013",
+          "name": "Alpha Release",
+          "due_date": "2026-04-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Development on schedule. Monitoring resource needs."
+    },
+    {
+      "id": "prog-014",
+      "name": "Mobile AR Features",
+      "description": "Augmented reality features for mobile app",
+      "status": "On Track",
+      "owner": "B. Williams",
+      "team": "AR/VR",
+      "product_line": "Mobile",
+      "pipeline_stage": "Planning",
+      "strategic_objectives": ["Enhance mobile experience"],
+      "launch_date": "2026-05-30",
+      "progress": 20,
+      "risks": [],
+      "milestones": [
+        {
+          "id": "m-015",
+          "program_id": "prog-014",
+          "name": "Prototype Review",
+          "due_date": "2026-03-30",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Planning complete. Moving to prototype development."
+    },
+    {
+      "id": "prog-015",
+      "name": "Connected Car Dashboard",
+      "description": "Dashboard integration for connected vehicle platforms",
+      "status": "At Risk",
+      "owner": "D. Brown",
+      "team": "Automotive",
+      "product_line": "Platform",
+      "pipeline_stage": "In Progress",
+      "strategic_objectives": ["Expand IoT ecosystem", "Strengthen core platform"],
+      "launch_date": "2026-04-15",
+      "progress": 40,
+      "risks": [
+        {
+          "id": "r-008",
+          "program_id": "prog-015",
+          "title": "OEM integration complexity",
+          "severity": "Medium",
+          "description": "Multiple OEM APIs to integrate",
+          "mitigation": "Parallel integration teams",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-016",
+          "program_id": "prog-015",
+          "name": "OEM Partner Sign-off",
+          "due_date": "2026-02-01",
+          "completed_date": null,
+          "status": "Overdue"
+        }
+      ],
+      "last_update": "Milestone overdue. Working to close partner agreements."
+    },
+    {
+      "id": "prog-016",
+      "name": "Legacy App Migration",
+      "description": "Migration of legacy applications to cloud",
+      "status": "Completed",
+      "owner": "H. Taylor",
+      "team": "Platform",
+      "product_line": "Platform",
+      "pipeline_stage": "Completed",
+      "strategic_objectives": ["Accelerate cloud migration"],
+      "launch_date": "2025-11-01",
+      "progress": 100,
+      "risks": [],
+      "milestones": [
+        {
+          "id": "m-017",
+          "program_id": "prog-016",
+          "name": "Full Migration",
+          "due_date": "2025-11-01",
+          "completed_date": "2025-10-28",
+          "status": "Completed"
+        }
+      ],
+      "last_update": "Migration complete. Legacy systems decommissioned."
+    },
+    {
+      "id": "prog-017",
+      "name": "API Gateway v2",
+      "description": "Next generation API gateway with improved rate limiting",
+      "status": "On Track",
+      "owner": "G. Anderson",
+      "team": "Platform",
+      "product_line": "Platform",
+      "pipeline_stage": "Launching",
+      "strategic_objectives": ["Strengthen core platform"],
+      "launch_date": "2026-02-05",
+      "progress": 95,
+      "risks": [],
+      "milestones": [
+        {
+          "id": "m-018",
+          "program_id": "prog-017",
+          "name": "Production Deploy",
+          "due_date": "2026-02-05",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Ready for production deployment this week."
+    },
+    {
+      "id": "prog-018",
+      "name": "Cloud Storage Optimization",
+      "description": "Optimize cloud storage costs and performance",
+      "status": "On Track",
+      "owner": "I. Jackson",
+      "team": "Cloud Ops",
+      "product_line": "Platform",
+      "pipeline_stage": "Discovery",
+      "strategic_objectives": ["Accelerate cloud migration"],
+      "launch_date": "2026-08-01",
+      "progress": 8,
+      "risks": [],
+      "milestones": [
+        {
+          "id": "m-019",
+          "program_id": "prog-018",
+          "name": "Cost Analysis",
+          "due_date": "2026-03-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Discovery phase. Analyzing current storage patterns."
+    }
+  ]
+}

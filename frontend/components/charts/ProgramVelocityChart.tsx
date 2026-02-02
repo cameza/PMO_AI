@@ -26,16 +26,16 @@ export function ProgramVelocityChart({ data, compact = false }: ProgramVelocityC
     };
 
     return (
-        <div className={`bg-white rounded-xl shadow-sm border border-gray-100 ${compact ? 'p-3' : 'p-5'}`}>
+        <div className={`bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col ${compact ? 'p-3 h-full' : 'p-5'}`}>
             <h3 className={`font-semibold text-gray-700 uppercase tracking-wider ${compact ? 'text-xs mb-2' : 'text-sm mb-4'}`}>
                 Program Velocity
             </h3>
-            <div className={compact ? 'h-40' : 'h-48'}>
+            <div className={`flex-1 ${compact ? 'min-h-[160px]' : 'h-48'}`}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         layout="vertical"
                         data={data}
-                        margin={{ top: 5, right: 40, left: compact ? 10 : 80, bottom: 5 }}
+                        margin={{ top: 5, right: 40, left: compact ? 0 : 80, bottom: 5 }}
                     >
                         <XAxis type="number" hide />
                         <YAxis
@@ -44,7 +44,7 @@ export function ProgramVelocityChart({ data, compact = false }: ProgramVelocityC
                             axisLine={false}
                             tickLine={false}
                             tick={{ fontSize: compact ? 10 : 12, fill: '#64748b' }}
-                            width={compact ? 60 : 75}
+                            width={compact ? 65 : 75}
                         />
                         <Bar
                             dataKey="count"

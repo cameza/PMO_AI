@@ -229,19 +229,19 @@ class OpenAIProvider(LLMProvider): ...
 
 The four KPI cards each surface a distinct signal. Together they answer: *Are we aligned? Are we dangerously concentrated? Are we delivering? What's imminent?*
 
-- [ ] **Strategic Coverage Score** — displays the percentage of defined strategic objectives that have at least one active program mapped to them (e.g., "7 of 9 objectives covered"). Subtitle shows which objectives have zero coverage.
-- [ ] **Product Lines Under Pressure** — displays the count of product lines that currently have 2 or more programs in At Risk or Off Track status (e.g., "2 product lines"). Subtitle identifies which product lines are flagged.
-- [ ] **Milestone Completion Rate** — displays the percentage of milestones due in the current month that have been marked Completed (e.g., "72% on track"). Subtitle shows the raw counts (e.g., "8 of 11 completed").
-- [ ] **Upcoming Launches** — displays the count of programs with a launch date within the next 30 days (e.g., "4 launching"). Subtitle shows the nearest launch date.
+- [x] **Strategic Coverage Score** — displays the percentage of defined strategic objectives that have at least one active program mapped to them (e.g., "7 of 9 objectives covered"). Subtitle shows which objectives have zero coverage.
+- [x] **Product Lines Under Pressure** — displays the count of product lines that currently have 2 or more programs in At Risk or Off Track status (e.g., "2 product lines"). Subtitle identifies which product lines are flagged.
+- [x] **Milestone Completion Rate** — displays the percentage of milestones due in the current month that have been marked Completed (e.g., "72% on track"). Subtitle shows the raw counts (e.g., "8 of 11 completed").
+- [x] **Upcoming Launches** — displays the count of programs with a launch date within the next 30 days (e.g., "4 launching"). Subtitle shows the nearest launch date.
 
 **Acceptance Criteria — Charts (Row 2):**
 
 Each chart visually expands on or grounds one of the KPI cards above, giving the exec a reason to look deeper.
 
-- [ ] **Program Velocity** — a horizontal funnel or pipeline chart showing program counts at each stage: Discovery → Planning → In Progress → Launching → Completed. Makes throughput bottlenecks visible (e.g., if programs are pooling in Planning). Recommended chart type: horizontal stacked or segmented bar.
-- [ ] **Strategic Alignment** — a grouped or stacked bar chart with strategic objectives (or product lines) on the x-axis and program count on the y-axis. Bars are segmented by program status (On Track / At Risk / Off Track) so the viewer can see not just how many programs serve each objective, but how healthy that group is. Visually reinforces the Product Lines Under Pressure KPI.
-- [ ] **Launch Cadence** — a monthly bar chart showing the number of programs launching in each of the next 6 months, with the current month visually highlighted. Turns the Upcoming Launches KPI into a forward-looking scheduling view — makes it obvious if launches are dangerously clustered in one month.
-- [ ] **Risk Landscape** — a stacked bar chart with product lines on the x-axis, showing the count of open risks per product line, segmented by severity (High / Medium / Low). Visually grounds the Product Lines Under Pressure KPI by showing *what* is driving the pressure and *where*.
+- [x] **Program Velocity** — a horizontal funnel or pipeline chart showing program counts at each stage: Discovery → Planning → In Progress → Launching → Completed. Makes throughput bottlenecks visible (e.g., if programs are pooling in Planning). Recommended chart type: horizontal stacked or segmented bar.
+- [x] **Strategic Alignment** — a grouped or stacked bar chart with strategic objectives (or product lines) on the x-axis and program count on the y-axis. Bars are segmented by program status (On Track / At Risk / Off Track) so the viewer can see not just how many programs serve each objective, but how healthy that group is. Visually reinforces the Product Lines Under Pressure KPI.
+- [x] **Launch Cadence** — a monthly bar chart showing the number of programs launching in each of the next 6 months, with the current month visually highlighted. Turns the Upcoming Launches KPI into a forward-looking scheduling view — makes it obvious if launches are dangerously clustered in one month.
+- [x] **Risk Landscape** — a stacked bar chart with product lines on the x-axis, showing the count of open risks per product line, segmented by severity (High / Medium / Low). Visually grounds the Product Lines Under Pressure KPI by showing *what* is driving the pressure and *where*.
 
 **Acceptance Criteria — Program Table (Row 3):**
 - [ ] A program table lists all programs with columns: Name, Status, Product Line, Owner, Team, Launch Date, Pipeline Stage
@@ -287,9 +287,9 @@ Each chart visually expands on or grounds one of the KPI cards above, giving the
 - [ ] **Proactive Insight Surfacing** — When the dashboard loads, the agent automatically analyzes the current portfolio state and surfaces one actionable insight before the user types anything.
 
 ### Mobile Responsiveness
-- [ ] **Carousels for Cards** — On mobile devices (max-width: 768px), KPI cards and Charts must be displayed in a horizontal carousel where only one item is fully visible at a time ("front and center").
-- [ ] **Swipe Interaction** — Users must be able to swipe horizontally to view the next KPI or Chart.
-- [ ] **Layout Adaptation** — The side-by-side or grid layouts used on desktop must switch to stacked, swipeable rows on mobile.
+- [x] **Carousels for Cards** — On mobile devices (max-width: 768px), KPI cards and Charts must be displayed in a horizontal carousel where only one item is fully visible at a time ("front and center").
+- [x] **Swipe Interaction** — Users must be able to swipe horizontally to view the next KPI or Chart.
+- [x] **Layout Adaptation** — The side-by-side or grid layouts used on desktop must switch to stacked, swipeable rows on mobile.
 
 **Acceptance Criteria — Sample Questions That Must Work:**
 - [ ] "What programs are launching this quarter?"
@@ -602,6 +602,12 @@ The agent uses a hybrid retrieval approach to ground its responses:
 ---
 
 ## Changelog
+
+### v1.3 — February 2, 2026
+- Implemented **Mobile Responsiveness**: added CSS-based horizontal swipe carousels for KPI cards and charts on mobile viewports
+- Enforced **Visual Consistency**: unified heights across KPI cards and charts using Flexbox/Grid
+- Refined **Chart UI**: added direct value labels to Launch Cadence bars and optimized legend font sizes for compact dashboard layout
+- Fixed various chart data mapping issues to ensure correct bar rendering in all views
 
 ### v1.2 — February 1, 2026
 - Added proactive insight surfacing to AI Chat Widget: agent initiates conversation with a high-level portfolio observation on load

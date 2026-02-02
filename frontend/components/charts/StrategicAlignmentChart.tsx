@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, CartesianGrid } from 'recharts';
 
 interface AlignmentData {
     productLine: string;
@@ -16,45 +16,51 @@ interface StrategicAlignmentChartProps {
 
 export function StrategicAlignmentChart({ data, compact = false }: StrategicAlignmentChartProps) {
     return (
-        <div className={`bg-white rounded-xl shadow-sm border border-gray-100 ${compact ? 'p-3' : 'p-5'}`}>
+        <div className={`bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col ${compact ? 'p-3 h-full' : 'p-5'}`}>
             <h3 className={`font-semibold text-gray-700 uppercase tracking-wider ${compact ? 'text-xs mb-2' : 'text-sm mb-4'}`}>
                 Strategic Alignment
             </h3>
-            <div className={compact ? 'h-40' : 'h-48'}>
+            <div className={`flex-1 ${compact ? 'min-h-[160px]' : 'h-48'}`}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={data}
-                        margin={{ top: 5, right: 10, left: 10, bottom: 20 }}
+                        margin={{ top: 5, right: 5, left: -20, bottom: 0 }}
+                        barSize={compact ? 20 : 32}
                     >
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                         <XAxis
                             dataKey="productLine"
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fontSize: 11, fill: '#64748b' }}
+                            tick={{ fontSize: compact ? 10 : 12, fill: '#64748b' }}
+                            dy={5}
                             interval={0}
                         />
-                        <YAxis hide />
+                        <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fontSize: 10, fill: '#64748b' }}
+                        />
                         <Tooltip
-                            contentStyle={{
-                                backgroundColor: 'white',
-                                border: '1px solid #e5e7eb',
-                                borderRadius: '8px',
-                                fontSize: '12px'
-                            }}
+                            cursor={{ fill: '#f8fafc' }}
+                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                        />
+                        <Legend
+                            wrapperStyle={{ fontSize: compact ? '10px' : '12px', paddingTop: '10px' }}
+                            iconSize={8}
                         />
                         <Bar
                             dataKey="onTrack"
                             name="On Track"
                             stackId="status"
                             fill="#22c55e"
-                            radius={[0, 0, 0, 0]}
+                            radius={[0, 0, 4, 4]}
                         />
                         <Bar
                             dataKey="atRisk"
                             name="At Risk"
                             stackId="status"
                             fill="#f59e0b"
-                            radius={[0, 0, 0, 0]}
                         />
                         <Bar
                             dataKey="offTrack"
@@ -65,20 +71,6 @@ export function StrategicAlignmentChart({ data, compact = false }: StrategicAlig
                         />
                     </BarChart>
                 </ResponsiveContainer>
-            </div>
-            <div className="flex justify-center gap-4 mt-2">
-                <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded-sm bg-green-500" />
-                    <span className="text-xs text-gray-500">On Track</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded-sm bg-amber-500" />
-                    <span className="text-xs text-gray-500">At Risk</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded-sm bg-red-500" />
-                    <span className="text-xs text-gray-500">Off Track</span>
-                </div>
             </div>
         </div>
     );
