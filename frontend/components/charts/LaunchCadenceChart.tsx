@@ -10,15 +10,16 @@ interface CadenceData {
 
 interface LaunchCadenceChartProps {
     data: CadenceData[];
+    compact?: boolean;
 }
 
-export function LaunchCadenceChart({ data }: LaunchCadenceChartProps) {
+export function LaunchCadenceChart({ data, compact = false }: LaunchCadenceChartProps) {
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">
+        <div className={`bg-white rounded-xl shadow-sm border border-gray-100 ${compact ? 'p-3' : 'p-5'}`}>
+            <h3 className={`font-semibold text-gray-700 uppercase tracking-wider ${compact ? 'text-xs mb-2' : 'text-sm mb-4'}`}>
                 Launch Cadence
             </h3>
-            <div className="h-40">
+            <div className={compact ? 'h-24' : 'h-40'}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={data}

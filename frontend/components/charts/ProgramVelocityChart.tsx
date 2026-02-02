@@ -9,9 +9,10 @@ interface VelocityData {
 
 interface ProgramVelocityChartProps {
     data: VelocityData[];
+    compact?: boolean;
 }
 
-export function ProgramVelocityChart({ data }: ProgramVelocityChartProps) {
+export function ProgramVelocityChart({ data, compact = false }: ProgramVelocityChartProps) {
     // Gradient colors for the pipeline stages
     const getBarColor = (index: number) => {
         const colors = [
@@ -25,11 +26,11 @@ export function ProgramVelocityChart({ data }: ProgramVelocityChartProps) {
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">
+        <div className={`bg-white rounded-xl shadow-sm border border-gray-100 ${compact ? 'p-3' : 'p-5'}`}>
+            <h3 className={`font-semibold text-gray-700 uppercase tracking-wider ${compact ? 'text-xs mb-2' : 'text-sm mb-4'}`}>
                 Program Velocity
             </h3>
-            <div className="h-48">
+            <div className={compact ? 'h-28' : 'h-48'}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         layout="vertical"

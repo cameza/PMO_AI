@@ -1,6 +1,7 @@
 'use client';
 
-import { Bell, User } from 'lucide-react';
+import Link from 'next/link';
+import { Bell, LayoutGrid, Rows3 } from 'lucide-react';
 import { KPICard } from '@/components/KPICard';
 import { ProgramVelocityChart } from '@/components/charts/ProgramVelocityChart';
 import { StrategicAlignmentChart } from '@/components/charts/StrategicAlignmentChart';
@@ -48,6 +49,21 @@ export default function Dashboard() {
               <p className="text-xs text-gray-500 uppercase tracking-wide">Executive Dashboard</p>
             </div>
           </div>
+
+          {/* Layout Toggle */}
+          <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+            <div className="p-1.5 rounded bg-white shadow-sm text-blue-600">
+              <Rows3 className="w-4 h-4" />
+            </div>
+            <Link
+              href="/dashboard-compact"
+              className="p-1.5 rounded text-gray-400 hover:text-gray-600 transition-colors"
+              title="Compact Layout"
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </Link>
+          </div>
+
           <div className="flex items-center gap-3">
             <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
               <Bell className="w-5 h-5 text-gray-500" />

@@ -6,6 +6,7 @@ import type { Program } from '@/lib/mockData';
 
 interface ProgramTableProps {
     programs: Program[];
+    compact?: boolean;
 }
 
 const statusColors = {
@@ -31,7 +32,7 @@ const stageColors = {
     'Completed': 'bg-green-500',
 };
 
-export function ProgramTable({ programs }: ProgramTableProps) {
+export function ProgramTable({ programs, compact = false }: ProgramTableProps) {
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
     const [showFilters, setShowFilters] = useState(false);
 
@@ -39,8 +40,9 @@ export function ProgramTable({ programs }: ProgramTableProps) {
         ? programs.filter(p => p.status === statusFilter)
         : programs;
 
-    // Show first 6 programs for the dashboard view
-    const displayedPrograms = filteredPrograms.slice(0, 6);
+    // Show fewer programs in compact mode
+    const maxPrograms = compact ? 4 : 6;
+    const displayedPrograms = filteredPrograms.slice(0, maxPrograms);
 
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">

@@ -11,15 +11,16 @@ interface RiskData {
 
 interface RiskLandscapeChartProps {
     data: RiskData[];
+    compact?: boolean;
 }
 
-export function RiskLandscapeChart({ data }: RiskLandscapeChartProps) {
+export function RiskLandscapeChart({ data, compact = false }: RiskLandscapeChartProps) {
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">
+        <div className={`bg-white rounded-xl shadow-sm border border-gray-100 ${compact ? 'p-3' : 'p-5'}`}>
+            <h3 className={`font-semibold text-gray-700 uppercase tracking-wider ${compact ? 'text-xs mb-2' : 'text-sm mb-4'}`}>
                 Risk Landscape
             </h3>
-            <div className="h-40">
+            <div className={compact ? 'h-24' : 'h-40'}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={data}
