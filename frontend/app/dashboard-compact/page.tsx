@@ -76,11 +76,11 @@ export default function DashboardCompact() {
                 </header>
 
                 {/* Dashboard Content */}
-                <main className="flex-1 p-4 flex flex-col min-h-0 gap-3 overflow-y-auto md:overflow-hidden">
+                <main className="flex-1 p-4 flex flex-col min-h-0 gap-3 overflow-y-auto md:overflow-hidden w-full max-w-[100vw]">
                     {/* KPI Cards Row */}
                     {/* Mobile: Swipe Carousel, Desktop: Grid */}
-                    <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-2 md:pb-0 md:grid md:grid-cols-4 flex-shrink-0 no-scrollbar">
-                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                    <div className="flex w-full overflow-x-auto snap-x snap-mandatory gap-3 pb-2 md:pb-0 md:grid md:grid-cols-4 flex-shrink-0 no-scrollbar">
+                        <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
                             <KPICard
                                 title="Strategic Coverage"
                                 value={`${strategicCoverage.covered} of ${strategicCoverage.total}`}
@@ -88,7 +88,7 @@ export default function DashboardCompact() {
                                 subtitleColor="text-blue-500"
                             />
                         </div>
-                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                        <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
                             <KPICard
                                 title="Lines Under Pressure"
                                 value={`${linesUnderPressure.count} lines`}
@@ -98,7 +98,7 @@ export default function DashboardCompact() {
                                 }))}
                             />
                         </div>
-                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                        <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
                             <KPICard
                                 title="Milestone Completion"
                                 value={`${milestoneCompletion.percentage}%`}
@@ -108,7 +108,7 @@ export default function DashboardCompact() {
                                 progressColor="bg-green-500"
                             />
                         </div>
-                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                        <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
                             <KPICard
                                 title="Upcoming Launches"
                                 value={`${upcomingLaunches.count} launching`}
@@ -120,17 +120,17 @@ export default function DashboardCompact() {
 
                     {/* Charts Row */}
                     {/* Mobile: Swipe Carousel, Desktop: Grid */}
-                    <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-2 md:pb-0 md:grid md:grid-cols-4 flex-shrink-0 no-scrollbar">
-                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                    <div className="flex w-full overflow-x-auto snap-x snap-mandatory gap-3 pb-2 md:pb-0 md:grid md:grid-cols-4 flex-shrink-0 no-scrollbar">
+                        <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
                             <ProgramVelocityChart data={velocityData} compact />
                         </div>
-                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                        <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
                             <StrategicAlignmentChart data={alignmentData} compact />
                         </div>
-                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                        <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
                             <LaunchCadenceChart data={cadenceData} compact />
                         </div>
-                        <div className="min-w-[90vw] md:min-w-0 snap-center">
+                        <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
                             <RiskLandscapeChart data={riskData} compact />
                         </div>
                     </div>
