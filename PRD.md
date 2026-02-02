@@ -604,10 +604,11 @@ The agent uses a hybrid retrieval approach to ground its responses:
 ## Changelog
 
 ### v1.3 — February 2, 2026
-- Implemented **Mobile Responsiveness**: added CSS-based horizontal swipe carousels for KPI cards and charts on mobile viewports
-- Enforced **Visual Consistency**: unified heights across KPI cards and charts using Flexbox/Grid
-- Refined **Chart UI**: added direct value labels to Launch Cadence bars and optimized legend font sizes for compact dashboard layout
-- Fixed various chart data mapping issues to ensure correct bar rendering in all views
+- **Backend Implementation Complete**: SQLite database with 18 synthetic programs, FastAPI with REST endpoints and SSE chat stub
+- **Database Layer**: Pydantic models, SQLite schema, seed script with 18 programs, 8 risks, 19 milestones
+- **API Layer**: `GET /api/programs` (with filters), `GET /api/programs/{id}`, `POST /api/agent/chat` (SSE streaming)
+- **Frontend Polish**: Mobile-responsive dashboard with horizontal carousels, uniform card heights, optimized charts
+- **Integration Ready**: Backend API running at `http://localhost:8000`, frontend can consume real data
 
 ### v1.2 — February 1, 2026
 - Added proactive insight surfacing to AI Chat Widget: agent initiates conversation with a high-level portfolio observation on load
