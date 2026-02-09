@@ -24,6 +24,7 @@ def clear_tables(conn: sqlite3.Connection) -> None:
     cursor.execute("DELETE FROM milestones")
     cursor.execute("DELETE FROM risks")
     cursor.execute("DELETE FROM programs")
+    cursor.execute("DELETE FROM strategic_objectives")
     conn.commit()
     logger.info("Cleared existing data from all tables")
 
@@ -74,11 +75,51 @@ def create_tables(conn: sqlite3.Connection) -> None:
         )
     ''')
     
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS strategic_objectives (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            description TEXT,
+            priority INTEGER DEFAULT 1,
+            owner TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_risks_program ON risks(program_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_milestones_program ON milestones(program_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_strategic_objectives_priority ON strategic_objectives(priority)')
     
     conn.commit()
     logger.info("Database tables created/verified")
+
+
+def seed_strategic_objectives(conn: sqlite3.Connection) -> None:
+    """Seed strategic objectives from PRD constants."""
+    cursor = conn.cursor()
+    
+    strategic_objectives = [
+        ("obj-001", "Expand IoT ecosystem", "Grow our IoT device ecosystem and partnerships", 1, "Product Strategy"),
+        ("obj-002", "Improve user retention", "Increase user engagement and reduce churn", 2, "Product Team"),
+        ("obj-003", "Accelerate cloud migration", "Migrate infrastructure to cloud platforms", 3, "Engineering"),
+        ("obj-004", "Enhance mobile experience", "Improve mobile app UX and performance", 2, "Mobile Team"),
+        ("obj-005", "Strengthen core platform", "Improve platform reliability and scalability", 1, "Platform Engineering"),
+        ("obj-006", "Drive subscription growth", "Increase subscriber base and revenue", 2, "Growth Team"),
+        ("obj-007", "Enable AI capabilities", "Integrate AI features across products", 3, "AI Team"),
+        ("obj-008", "Modernize infrastructure", "Update legacy systems and architecture", 3, "Infrastructure"),
+        ("obj-009", "International expansion", "Expand to international markets", 2, "Business Development"),
+    ]
+    
+    for obj_id, name, description, priority, owner in strategic_objectives:
+        cursor.execute('''
+            INSERT OR IGNORE INTO strategic_objectives (
+                id, name, description, priority, owner
+            ) VALUES (?, ?, ?, ?, ?)
+        ''', (obj_id, name, description, priority, owner))
+    
+    conn.commit()
+    logger.info(f"Seeded {len(strategic_objectives)} strategic objectives")
 
 
 def seed_programs(conn: sqlite3.Connection, programs: list) -> None:
@@ -162,6 +203,7 @@ def main():
     try:
         create_tables(conn)
         clear_tables(conn)
+        seed_strategic_objectives(conn)
         seed_programs(conn, programs)
         
         cursor = conn.cursor()
@@ -171,11 +213,14 @@ def main():
         risk_count = cursor.fetchone()[0]
         cursor.execute("SELECT COUNT(*) FROM milestones")
         milestone_count = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM strategic_objectives")
+        objectives_count = cursor.fetchone()[0]
         
         logger.info(f"Database seeded successfully:")
         logger.info(f"  - Programs: {program_count}")
         logger.info(f"  - Risks: {risk_count}")
         logger.info(f"  - Milestones: {milestone_count}")
+        logger.info(f"  - Strategic Objectives: {objectives_count}")
         
     except sqlite3.Error as e:
         logger.error(f"Database error: {e}")

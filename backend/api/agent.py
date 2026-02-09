@@ -4,6 +4,24 @@ from pydantic import BaseModel
 from typing import List, Optional
 import json
 import asyncio
+import logging
+
+try:
+    from backend.agent.query_handler import (
+        process_query_stream,
+        generate_portfolio_summary,
+        QueryResult,
+        Source as QueryHandlerSource
+    )
+except ImportError:
+    from agent.query_handler import (
+        process_query_stream,
+        generate_portfolio_summary,
+        QueryResult,
+        Source as QueryHandlerSource
+    )
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -35,32 +53,67 @@ class ChatResponse(BaseModel):
     confidence: str = "medium"  # "high", "medium", "low"
 
 
-async def generate_stream(message: str, context: Optional[ChatContext] = None):
-    """
-    Generator for SSE streaming response.
-    
-    This is a stub implementation. The full RAG pipeline will be implemented
-    in the agent/ module (llm_provider.py, rag.py, query_handler.py).
-    """
-    stub_response = (
-        f"I received your question: \"{message}\". "
-        "This is a stub response. The full RAG-powered agent will be implemented "
-        "in the next phase with ChromaDB vector search and LLM integration."
+def _convert_query_handler_source(source: QueryHandlerSource) -> Source:
+    """Convert QueryHandler Source to API Source with proper type mapping."""
+    # Map source types: "risk" and "milestone" → "document"
+    api_type = "program" if source.type == "program" else "document"
+    return Source(
+        type=api_type,
+        id=source.id,
+        title=source.title
     )
-    
-    if context and context.program_id:
-        stub_response += f" (Context: viewing program {context.program_id})"
-    
-    for char in stub_response:
-        yield f"data: {json.dumps({'type': 'token', 'content': char})}\n\n"
-        await asyncio.sleep(0.01)
-    
-    final_response = ChatResponse(
-        answer=stub_response,
-        sources=[],
-        confidence="low"
+
+
+def _convert_query_result_to_response(result: QueryResult) -> ChatResponse:
+    """Convert QueryResult to ChatResponse with source mapping."""
+    sources = [_convert_query_handler_source(s) for s in result.sources]
+    return ChatResponse(
+        answer=result.answer,
+        sources=sources,
+        confidence=result.confidence
     )
-    yield f"data: {json.dumps({'type': 'done', 'response': final_response.model_dump()})}\n\n"
+
+
+async def generate_stream(message: str, history: List[ChatMessage] = None, context: Optional[ChatContext] = None):
+    """
+    Generator for SSE streaming response using the query handler.
+    
+    Args:
+        message: User's chat message
+        history: Previous conversation messages
+        context: Optional context including program_id for context-aware queries
+    """
+    # Convert history format for query handler
+    history_dicts = [{"role": msg.role, "content": msg.content} for msg in (history or [])]
+    
+    # Extract program_id from context for context-aware queries
+    program_id = context.program_id if context and context.program_id else None
+    
+    try:
+        # Stream response from query handler
+        for token, result in process_query_stream(
+            query=message,
+            history=history_dicts,
+            program_id=program_id
+        ):
+            if result is not None:
+                # Final result - send done event
+                response = _convert_query_result_to_response(result)
+                yield f"data: {json.dumps({'type': 'done', 'response': response.model_dump()})}\n\n"
+            else:
+                # Streaming token
+                yield f"data: {json.dumps({'type': 'token', 'content': token})}\n\n"
+                await asyncio.sleep(0.01)  # Small delay for streaming effect
+                
+    except Exception as e:
+        logger.error(f"Error in generate_stream: {e}")
+        # Send error response via SSE
+        error_response = ChatResponse(
+            answer="I encountered an error while processing your question. Please try again.",
+            sources=[],
+            confidence="low"
+        )
+        yield f"data: {json.dumps({'type': 'done', 'response': error_response.model_dump()})}\n\n"
 
 
 @router.post("/agent/chat")
@@ -73,9 +126,10 @@ async def chat(request: ChatRequest):
     - `type: done` event with the complete response and sources
     
     The AI response is grounded in the program dataset via RAG retrieval.
+    Supports context-aware queries when context.programId is provided.
     """
     return StreamingResponse(
-        generate_stream(request.message, request.context),
+        generate_stream(request.message, request.history, request.context),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
@@ -90,10 +144,24 @@ async def generate_summary():
     Generate a portfolio summary.
     
     Called by the Slack notification scheduler for Monday morning summaries.
-    This is a stub - full implementation will use the RAG pipeline.
+    Uses the RAG pipeline to generate a natural language summary of portfolio state.
     """
-    return {
-        "summary": "Portfolio Summary (Stub): 18 programs tracked. "
-                   "4 at risk, 1 off track. 3 launching this month.",
-        "generated_at": "2026-02-02T10:00:00Z"
-    }
+    from datetime import datetime, timezone
+    
+    try:
+        # Generate summary using query handler
+        result = generate_portfolio_summary()
+        
+        return {
+            "summary": result.answer,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "confidence": result.confidence
+        }
+        
+    except Exception as e:
+        logger.error(f"Error generating portfolio summary: {e}")
+        return {
+            "summary": "Unable to generate portfolio summary at this time. Please check the system logs.",
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "confidence": "low"
+        }

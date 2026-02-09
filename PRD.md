@@ -1,9 +1,9 @@
 # Product Requirements Document: Program Portfolio AI System
 
-> **Version:** 1.1  
-> **Last Updated:** February 1, 2026  
+> **Version:** 2.1  
+> **Last Updated:** February 9, 2026  
 > **Owner:** [Your Name/Team]  
-> **Scope:** Prototype (Week 1 Demo)
+> **Scope:** Production SaaS (evolved from Week 1 Prototype)
 
 ---
 
@@ -13,11 +13,19 @@
 Program managers today spend significant time manually compiling status updates, tracking risks across dozens of programs, and communicating portfolio health to stakeholders. Critical risks get buried in spreadsheets and slide decks. Teams lack real-time visibility into portfolio health, and there is no proactive mechanism to surface issues before they escalate. Executives need a single source of truth for program portfolio decisions, and the tools that exist today require manual effort to maintain.
 
 ### Goals
-- Build a working prototype that demonstrates an AI-powered Program Portfolio Management system end-to-end within one week
-- Prove the core value proposition: an AI agent that can answer questions about a program portfolio, grounded in real data, without hallucinating
-- Demonstrate the system working across two interfaces — an executive dashboard and Slack — using the same underlying AI agent
-- Validate the multi-LLM architecture: allow the system to operate with different LLM providers via a bring-your-own-API-key model
-- Establish the prototype as a foundation for a production-grade product and a demo artifact for securing design partners or funding
+- ~~Build a working prototype that demonstrates an AI-powered Program Portfolio Management system end-to-end within one week~~ **DONE**
+- ~~Prove the core value proposition: an AI agent that can answer questions about a program portfolio, grounded in real data, without hallucinating~~ **DONE**
+- ~~Demonstrate the system working across two interfaces — an executive dashboard and Slack — using the same underlying AI agent~~ **DONE**
+- ~~Validate the multi-LLM architecture: allow the system to operate with different LLM providers via a bring-your-own-API-key model~~ **DONE**
+- ~~Establish the prototype as a foundation for a production-grade product and a demo artifact for securing design partners or funding~~ **DONE**
+
+### Production Goals (v2)
+- Deploy as a production SaaS accessible via URL (Vercel-unified infrastructure)
+- Support multi-tenant architecture: multiple companies, each with isolated data and users
+- Enable customers to bring their own LLM API keys via Vercel AI Gateway (BYOK)
+- Integrate with external PM tools (Jira, Linear, Smartsheet) using AI-driven data normalization
+- Provide admin interfaces for configuring AI behavior, strategic objectives, terminology, and integrations
+- Implement authentication, role-based access control, and billing
 
 ### Target Users
 **Primary (Prototype Demo Audience):**
@@ -38,28 +46,28 @@ Program managers today spend significant time manually compiling status updates,
 - Next.js 14 (App Router) with TypeScript
 - Tailwind CSS for styling
 - Recharts for data visualizations (KPI charts, status distribution)
-- Server-Sent Events (SSE) for streaming AI chat responses
-- Starting point: [AI Missions Week 04 Data Analyst](https://github.com/cameza/ai-missions-system/tree/main/Missions/week-04-data-analyst) — provides KPI card, chart, and table components to adapt
+- Vercel AI SDK for chat streaming (production) / SSE for streaming AI chat responses (prototype)
+- Supabase Auth (`@supabase/supabase-js`) for authentication (production)
 
-### Backend
-- Python 3.11+ with FastAPI
-- SQLite for program data storage (prototype only; PostgreSQL targeted for production)
-- ChromaDB (in-memory) for vector storage and RAG retrieval (prototype only; Pinecone or Weaviate targeted for production)
-- LlamaIndex for RAG orchestration and LLM provider abstraction
+### Backend (Hybrid Architecture)
+- **Data CRUD API**: Python 3.11+ with FastAPI, deployed as Vercel Function (Fluid Compute)
+- **AI Chat API**: Next.js API route (`/app/api/chat/route.ts`) using Vercel AI SDK — handles streaming, BYOK, AI Gateway integration
+- **Database**: Supabase PostgreSQL with Row-Level Security for multi-tenancy (production) / SQLite (prototype)
+- **Vector Store**: Supabase pgvector for RAG embeddings (production) / ChromaDB in-memory (prototype)
 
 ### Slack Integration
-- Slack Bolt (Python) for the bot framework
-- Communicates with the same FastAPI backend as the dashboard
+- Slack HTTP/Events API mode with Vercel Functions (production) / Slack Bolt Socket Mode (prototype)
+- Vercel Cron Jobs for Monday morning summary (production) / APScheduler (prototype)
 
-### LLM Providers (Prototype)
-- Anthropic Claude (primary: claude-sonnet-4-20250514)
-- OpenAI GPT-4 (secondary, to demonstrate multi-LLM support)
-- Provider is selected via environment variable; API key is user-supplied
+### LLM Providers
+- **Vercel AI Gateway** (production): One API key → hundreds of models (Claude, GPT-4, Gemini, Llama, etc.). Supports request-scoped BYOK so each customer uses their own API keys. Automatic fallbacks, spend monitoring, embeddings.
+- Custom `llm_provider.py` abstraction layer (prototype): Claude and OpenAI via environment variable switching.
 
-### Infrastructure & Tools (Prototype)
-- Local development only (no cloud deployment required for prototype)
+### Infrastructure
+- **Vercel**: Frontend, FastAPI backend, AI Gateway, Cron Jobs — single platform for all compute
+- **Supabase**: PostgreSQL, Auth, pgvector, Row-Level Security, Vault (encrypted secrets) — single platform for all data
 - Git + GitHub for version control
-- `.env` file for secrets management (API keys, Slack tokens)
+- Vercel environment variables + Supabase Vault for secrets management
 
 ---
 
@@ -67,20 +75,23 @@ Program managers today spend significant time manually compiling status updates,
 
 ### Development
 ```bash
-# Backend
+# Backend (FastAPI — standalone mode)
 cd backend
 python -m venv venv
 source venv/bin/activate          # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-python database/seed.py           # Populate SQLite with synthetic data
 uvicorn main:app --reload --port 8000
 
-# Frontend
-cd frontend
+# Frontend (Next.js — from repo root)
 npm install
 npm run dev                       # http://localhost:3000
+# Frontend proxies /api/py/* to FastAPI at :8000 via next.config.mjs
 
-# Slack Bot
+# Both together (local dev)
+# Terminal 1: cd backend && source venv/bin/activate && uvicorn main:app --reload --port 8000
+# Terminal 2: npm run dev (from repo root)
+
+# Slack Bot (prototype — Socket Mode)
 cd slack-bot
 python -m venv venv
 source venv/bin/activate
@@ -88,10 +99,16 @@ pip install -r requirements.txt
 python app.py
 ```
 
-### Build & Deployment
+### Build & Deployment (Production)
 ```bash
-# Not applicable for prototype — runs locally only
-# Production deployment commands will be defined in a later phase
+# Deploy to Vercel (frontend + backend in monorepo)
+vercel deploy
+
+# Local development with Vercel CLI
+vercel dev
+
+# Supabase migrations
+npx supabase db push
 ```
 
 ---
@@ -99,51 +116,68 @@ python app.py
 ## Project Structure
 
 ```
-program-portfolio-ai-prototype/
-├── .env.example                      # Template for all required API keys and tokens
+pmo-ai/                                  # Vercel monorepo (Next.js at root)
+├── .env.example                          # Template for all required env vars
 ├── README.md
-├── data/
-│   └── synthetic_programs.json       # Seed dataset: ~20 synthetic programs
-├── backend/
-│   ├── main.py                       # FastAPI application entry point
-│   ├── requirements.txt
-│   ├── database/
-│   │   ├── db.py                     # SQLite connection and initialization
-│   │   ├── models.py                 # Pydantic data models for programs, risks, milestones
-│   │   └── seed.py                   # Reads synthetic_programs.json, populates DB
-│   ├── agent/
-│   │   ├── llm_provider.py           # LLM abstraction layer (Claude, OpenAI)
-│   │   ├── rag.py                    # ChromaDB vector store setup and retrieval
-│   │   ├── query_handler.py          # Main agent orchestration: intent → retrieval → generation
-│   │   └── prompts.py                # System prompts and response templates per provider
+├── package.json                          # Next.js + frontend dependencies
+├── next.config.mjs                       # Rewrites /api/py/* → FastAPI in dev
+├── vercel.json                           # Routes /api/py/* → Python Function in prod
+├── requirements.txt                      # Root Python deps (slim, for Vercel bundle)
+├── middleware.ts                          # Supabase Auth middleware (protects routes)
+├── api/
+│   └── index.py                          # Vercel Function entrypoint → imports FastAPI
+├── app/
+│   ├── layout.tsx                        # Root layout, wraps AuthProvider
+│   ├── page.tsx                          # Dashboard home: KPIs + charts + program table
+│   ├── auth/
+│   │   └── page.tsx                      # Login / signup page (Supabase Auth)
+│   ├── admin/
+│   │   └── strategic-objectives/page.tsx # Admin: manage strategic objectives
+│   ├── programs/
+│   │   └── [id]/page.tsx                 # Individual program detail page
 │   └── api/
-│       ├── programs.py               # REST endpoints: list, get, filter programs
-│       └── agent.py                  # Chat endpoint: receives query, returns AI response via SSE
-├── frontend/
-│   ├── package.json
-│   ├── next.config.js
-│   ├── app/
-│   │   ├── layout.tsx                # Global layout, includes ChatWidget
-│   │   ├── page.tsx                  # Dashboard home: KPIs + chart + program table
-│   │   └── programs/
-│   │       └── [id]/page.tsx         # Individual program detail page
-│   ├── components/
-│   │   ├── KPICard.tsx               # Reusable metric card (adapted from AI Missions)
-│   │   ├── ProgramTable.tsx          # Filterable/sortable program list
-│   │   ├── charts/
-│   │   │   ├── ProgramVelocityChart.tsx   # Horizontal funnel: programs by pipeline stage
-│   │   │   ├── StrategicAlignmentChart.tsx # Stacked bar: programs per objective, segmented by status
-│   │   │   ├── LaunchCadenceChart.tsx     # Monthly bar: launches over next 6 months
-│   │   │   └── RiskLandscapeChart.tsx     # Stacked bar: open risks per product line by severity
-│   │   └── ChatWidget.tsx            # Expandable AI chat bubble (bottom-right)
-│   └── lib/
-│       └── api.ts                    # Axios client for backend API calls
+│       └── chat/route.ts                 # AI chat endpoint (Vercel AI SDK)
+├── components/
+│   ├── KPICard.tsx                       # Reusable metric card
+│   ├── ProgramTable.tsx                  # Filterable/sortable program list
+│   ├── ChatWidget.tsx                    # AI chat sidebar (Vercel AI SDK useChat)
+│   ├── StrategicCoverageDetail.tsx       # Strategic coverage drill-down modal
+│   ├── StrategicObjectivesAdmin.tsx      # Admin CRUD for objectives
+│   └── charts/
+│       ├── ProgramVelocityChart.tsx      # Pipeline funnel chart
+│       ├── StrategicAlignmentChart.tsx   # Programs per objective by status
+│       ├── LaunchCadenceChart.tsx        # Monthly launch bar chart
+│       └── PortfolioStatusChart.tsx      # Portfolio health distribution
+├── lib/
+│   ├── api.ts                            # Axios client for FastAPI calls (/api/py/*)
+│   ├── supabase.ts                       # Supabase browser client singleton
+│   ├── auth-context.tsx                  # AuthProvider + useAuth hook
+│   └── mockData.ts                       # KPI/chart computation utilities
+├── data/
+│   └── synthetic_programs.json           # Seed dataset: 30 synthetic programs
+├── backend/
+│   ├── main.py                           # FastAPI app (startup, CORS, routers)
+│   ├── requirements.txt                  # Backend Python deps (includes RAG/LLM)
+│   ├── database/
+│   │   ├── db.py                         # Supabase PostgreSQL client (replaces SQLite)
+│   │   └── models.py                     # Pydantic models: Program, Risk, Milestone, etc.
+│   ├── agent/
+│   │   ├── llm_provider.py              # LLM abstraction layer (Claude, OpenAI)
+│   │   ├── rag.py                        # pgvector + OpenAI embeddings (replaces ChromaDB)
+│   │   ├── query_handler.py             # Agent orchestration: intent → retrieval → generation
+│   │   └── prompts.py                    # System prompts and templates per provider
+│   ├── api/
+│   │   ├── programs.py                   # REST: list, get, filter programs
+│   │   ├── agent.py                      # Chat endpoint: query → AI response via SSE
+│   │   └── strategic_objectives.py       # REST: CRUD for strategic objectives
+│   └── scripts/
+│       └── seed_supabase.py              # Seed Supabase with synthetic data
 └── slack-bot/
-    ├── app.py                        # Slack Bolt application entry point
+    ├── app.py                            # Slack Bolt (prototype, Socket Mode)
     ├── requirements.txt
     └── handlers/
-        ├── messages.py               # Handles DMs and @mentions → calls backend agent API
-        └── notifications.py          # Scheduled job: generates and posts morning summary
+        ├── messages.py                   # DMs and @mentions → backend agent API
+        └── notifications.py              # Scheduled Monday morning summary
 ```
 
 ---
@@ -241,17 +275,20 @@ Each chart visually expands on or grounds one of the KPI cards above, giving the
 - [x] **Program Velocity** — a horizontal funnel or pipeline chart showing program counts at each stage: Discovery → Planning → In Progress → Launching → Completed. Makes throughput bottlenecks visible (e.g., if programs are pooling in Planning). Recommended chart type: horizontal stacked or segmented bar.
 - [x] **Strategic Alignment** — a grouped or stacked bar chart with strategic objectives (or product lines) on the x-axis and program count on the y-axis. Bars are segmented by program status (On Track / At Risk / Off Track) so the viewer can see not just how many programs serve each objective, but how healthy that group is. Visually reinforces the Product Lines Under Pressure KPI.
 - [x] **Launch Cadence** — a monthly bar chart showing the number of programs launching in each of the next 6 months, with the current month visually highlighted. Turns the Upcoming Launches KPI into a forward-looking scheduling view — makes it obvious if launches are dangerously clustered in one month.
-- [x] **Risk Landscape** — a stacked bar chart with product lines on the x-axis, showing the count of open risks per product line, segmented by severity (High / Medium / Low). Visually grounds the Product Lines Under Pressure KPI by showing *what* is driving the pressure and *where*.
+- [x] **Portfolio Status Overview** — a horizontal stacked bar chart showing the count and percentage of programs in each status category (On Track / At Risk / Off Track / Completed) across the entire portfolio. Provides immediate portfolio health triage and visually grounds the "Product Lines Under Pressure" KPI.
 
 **Acceptance Criteria — Program Table (Row 3):**
 - [x] A program table lists all programs with columns: Name, Status, Product Line, Owner, Team, Launch Date, Pipeline Stage
 - [x] The table supports filtering by status (On Track / At Risk / Off Track) and by product line
+- [x] **Sticky Headers**: The table header and "Program Portfolio" title remain fixed at the top while rows scroll.
+- [x] **Internal Scrolling**: Vertical scrolling is contained within the table, keeping the dashboard overview (KPIs/Charts) always visible.
 
 **Technical Notes:**
 - KPI card and chart components adapted from AI Missions Week 04 codebase
 - All four charts use Recharts; component types are specified per chart above
 - A single `GET /api/programs` call on page load returns all data needed to compute KPIs and populate charts client-side — no separate endpoints per widget
 - Strategic objectives are defined as a static config list in the prototype (e.g., 9 objectives). Production will allow admin configuration.
+- **Fixed Layout**: Dashboard uses a `h-screen flex flex-col` structure with `overflow-hidden` at the root and `overflow-auto` within the program list.
 
 #### User Story 1.2 — Program Detail View
 **As a** program manager  
@@ -259,10 +296,10 @@ Each chart visually expands on or grounds one of the KPI cards above, giving the
 **So that** I can review risks, milestones, and recent updates without scrolling through a large table
 
 **Acceptance Criteria:**
-- [ ] Clicking a program in the table navigates to a detail page
-- [ ] Detail page shows: description, status, product line, pipeline stage, owner, team, launch date, progress percentage, strategic objectives mapped
-- [ ] All risks associated with the program are listed with severity and mitigation plan
-- [ ] All milestones are listed with due dates and completion status
+- [x] Clicking a program in the table navigates to a detail page
+- [x] Detail page shows: description, status, product line, pipeline stage, owner, team, launch date, progress percentage, strategic objectives mapped
+- [x] All risks associated with the program are listed with severity and mitigation plan
+- [x] All milestones are listed with due dates and completion status
 
 **Technical Notes:**
 - Route: `/programs/[id]`
@@ -278,13 +315,13 @@ Each chart visually expands on or grounds one of the KPI cards above, giving the
 **So that** I can get instant answers without manually searching through data
 
 **Acceptance Criteria:**
-- [ ] A chat widget is visible in the bottom-right corner of every dashboard page
-- [ ] The widget expands into a conversational interface when clicked
-- [ ] The user can type a question and receive an AI-generated response
-- [ ] Responses stream in real-time (character by character) rather than appearing all at once
-- [ ] The AI's response is grounded in the program dataset — it does not fabricate program names, statuses, or details
-- [ ] The chat maintains conversation history for the duration of the session (page refreshes may reset)
-- [ ] **Proactive Insight Surfacing** — When the dashboard loads, the agent automatically analyzes the current portfolio state and surfaces one actionable insight before the user types anything.
+- [x] A chat widget is visible in the bottom-right corner of every dashboard page
+- [x] The widget expands into a conversational interface when clicked
+- [x] The user can type a question and receive an AI-generated response
+- [x] Responses stream in real-time (character by character) rather than appearing all at once
+- [x] The AI's response is grounded in the program dataset — it does not fabricate program names, statuses, or details
+- [x] The chat maintains conversation history for the duration of the session (page refreshes may reset)
+- [x] **Proactive Insight Surfacing** — When the dashboard loads, the widget displays a static welcome message with prompt suggestions, eliminating unnecessary LLM token usage while guiding users to valuable queries.
 
 ### Mobile Responsiveness
 - [x] **Carousels for Cards** — On mobile devices (max-width: 768px), KPI cards and Charts must be displayed in a horizontal carousel where only one item is fully visible at a time ("front and center").
@@ -292,17 +329,17 @@ Each chart visually expands on or grounds one of the KPI cards above, giving the
 - [x] **Layout Adaptation** — The side-by-side or grid layouts used on desktop must switch to stacked, swipeable rows on mobile.
 
 **Acceptance Criteria — Sample Questions That Must Work:**
-- [ ] "What programs are launching this quarter?"
-- [ ] "Show me all at-risk programs"
-- [ ] "What is the status of Project Phoenix?"
-- [ ] "Which programs in the Smart Home product line are at risk?"
-- [ ] "What are the main risks across all programs?"
-- [ ] "Give me a summary of engineering programs"
+- [x] "What programs are launching this quarter?"
+- [x] "Show me all at-risk programs"
+- [x] "What is the status of Project Phoenix?"
+- [x] "Which programs in the Smart Home product line are at risk?"
+- [x] "What are the main risks across all programs?"
+- [x] "Give me a summary of engineering programs"
 
 **Technical Notes:**
 - Chat widget calls `POST /api/agent/chat` with the user's message and conversation history
-- Backend uses RAG (ChromaDB vector search + SQLite query) to retrieve context before calling the LLM
-- Response streamed back via SSE
+- Backend uses RAG (pgvector similarity search + Supabase PostgreSQL query) to retrieve context before calling the LLM
+- Response streamed back via SSE (prototype) or Vercel AI SDK streaming (production)
 
 #### User Story 2.2 — Context-Aware Chat
 **As a** dashboard user viewing a specific program  
@@ -355,22 +392,191 @@ Each chart visually expands on or grounds one of the KPI cards above, giving the
 
 ---
 
-### Epic 4: Multi-LLM Support
+### Epic 4: Multi-LLM Support via Vercel AI Gateway
 
-#### User Story 4.1 — Swap LLM Providers Without Code Changes
+#### User Story 4.1 — Swap LLM Providers Without Code Changes (Prototype — DONE)
 **As a** developer or system administrator  
 **I want** to switch the AI agent between Claude and OpenAI by changing a config value  
 **So that** the system can work with whatever LLM provider a customer is already paying for
 
 **Acceptance Criteria:**
-- [ ] Setting `LLM_PROVIDER=claude` and providing a valid Anthropic API key makes the agent use Claude
-- [ ] Setting `LLM_PROVIDER=openai` and providing a valid OpenAI API key makes the agent use GPT-4
-- [ ] Both providers return coherent, grounded answers to the same questions
-- [ ] No application code changes are required to switch providers — only `.env` values
+- [x] Setting `LLM_PROVIDER=claude` and providing a valid Anthropic API key makes the agent use Claude
+- [x] Setting `LLM_PROVIDER=openai` and providing a valid OpenAI API key makes the agent use GPT-4
+- [x] Both providers return coherent, grounded answers to the same questions
+- [x] No application code changes are required to switch providers — only `.env` values
 
-**Technical Notes:**
+**Technical Notes (Prototype):**
 - `llm_provider.py` implements a common interface; `query_handler.py` is provider-agnostic
 - Prompt templates in `prompts.py` adapt formatting to the active provider (e.g., XML tags for Claude, standard format for OpenAI)
+
+#### User Story 4.2 — Vercel AI Gateway Integration (Production)
+**As a** SaaS platform  
+**I want** to route all LLM requests through Vercel AI Gateway  
+**So that** customers can use any supported model with their own API keys, with automatic fallbacks and spend monitoring
+
+**Acceptance Criteria:**
+- [ ] All LLM calls route through Vercel AI Gateway (`https://ai-gateway.vercel.sh/v1`)
+- [ ] Customers can bring their own API keys (BYOK) — keys passed per-request, not stored in Vercel env vars
+- [ ] Customer API keys are encrypted at rest in Supabase Vault
+- [ ] If a customer's primary provider fails, AI Gateway automatically falls back to an alternative
+- [ ] Admin can select model from AI Gateway's catalog (Claude, GPT-4, Gemini, Llama, etc.)
+- [ ] Spend monitoring is visible in Vercel dashboard per model/provider
+- [ ] Embeddings for RAG are generated via AI Gateway's embeddings endpoint
+
+**Technical Notes:**
+- Chat endpoint moves to Next.js API route (`/app/api/chat/route.ts`) using Vercel AI SDK
+- FastAPI retains data CRUD endpoints (`/api/programs`, `/api/strategic-objectives`, etc.)
+- Request-scoped BYOK: customer's encrypted API key is decrypted server-side and passed in `providerOptions.gateway.byok` per request
+- Replaces `llm_provider.py`, `ClaudeProvider`, `OpenAIProvider` entirely
+- AI SDK handles streaming natively via `streamText()` / `toUIMessageStreamResponse()`
+
+---
+
+### Epic 5: SaaS Configuration & Customization (Post-Prototype)
+
+#### User Story 5.1 — Configure Organization-Specific Terminology
+**As a** SaaS customer administrator  
+**I want** to teach the AI agent about our organization's specific acronyms, team names, and terminology  
+**So that** the AI understands our context and provides responses using our language
+
+**Acceptance Criteria:**
+- [ ] Admin can upload a terminology dictionary (acronym → full term, team name → description)
+- [ ] AI agent uses organization-specific terminology in responses instead of generic terms
+- [ ] System can handle multiple customer configurations with complete data isolation
+- [ ] Terminology can be updated without redeploying the system
+- [ ] AI maintains accuracy while incorporating custom terminology
+
+**Technical Notes:**
+- Multi-tenant database schema with customer_id isolation
+- Terminology service injects customer-specific context into LLM prompts
+- Vector embeddings are tenant-specific to prevent cross-customer contamination
+
+#### User Story 5.2 — Configure Strategic Objectives
+**As a** SaaS customer administrator  
+**I want** to define our organization's specific strategic objectives  
+**So that** the AI agent can analyze programs against our actual goals, not generic ones
+
+**Acceptance Criteria:**
+- [ ] Admin can create, edit, and delete strategic objectives via admin interface
+- [ ] Programs can be mapped to multiple strategic objectives
+- [ ] AI agent references specific strategic objectives in portfolio analysis
+- [ ] System provides insights about strategic alignment and gaps
+- [ ] Objectives can be weighted for importance in AI analysis
+
+**Technical Notes:**
+- Strategic objectives stored in tenant-specific database tables
+- AI prompts include customer's strategic objectives context
+- RAG retrieval prioritizes content related to strategic objectives
+
+#### User Story 5.3 — Configure Integration Data Sources (AI-Driven Normalization)
+**As a** SaaS customer administrator  
+**I want** to connect our existing project management tools (Jira, Linear, Smartsheet)  
+**So that** the AI agent works with our real project data instead of manual entry
+
+**Acceptance Criteria:**
+- [ ] Admin can authenticate and connect to multiple data sources (OAuth or API key)
+- [ ] On first sync, AI analyzes a sample of raw records and proposes field mappings with confidence scores
+- [ ] Admin reviews AI-proposed mappings — approves high-confidence, corrects low-confidence (one-time)
+- [ ] Learned mappings are cached per organization + tool — no LLM cost on subsequent syncs for known fields
+- [ ] When the external tool's schema changes (new statuses, new custom fields), only the delta triggers AI re-analysis
+- [ ] Admin can view and manually override any mapping at any time via `/settings/integrations/[tool]/mappings`
+- [ ] System syncs data on configurable schedules (hourly, daily) via Vercel Cron Jobs
+- [ ] Webhook support for real-time updates from integrated tools
+- [ ] Integration failures trigger alerts and retry mechanisms
+- [ ] Historical data is preserved for trend analysis
+
+**Technical Notes — Three-Layer Integration Pipeline:**
+
+```
+Layer 1: RAW INGESTION
+  → Thin API adapters per tool (auth + raw JSON fetch only, NO field mapping logic)
+  → Raw records stored in `raw_records` table (JSONB) as-is from external API
+
+Layer 2: AI NORMALIZATION (Span-inspired)
+  → LLM reads raw record + our target schema → outputs mapped fields + confidence + reasoning
+  → Human reviews low-confidence mappings (one-time per field type, not per record)
+  → Corrections stored in `field_mappings` table keyed by (organization_id, tool, source_field)
+  → Cached mappings reused for all future syncs — LLM only called for new/unknown fields
+
+Layer 3: NORMALIZED STORE
+  → Clean data written to standard schema (programs, risks, milestones)
+  → Ready for dashboard, RAG indexing, AI chat
+```
+
+**Per-connector API adapter interface:**
+```python
+class DataSourceAdapter(ABC):
+    def authenticate(self, credentials: dict) -> bool
+    def fetch_raw_projects(self) -> List[dict]   # Raw JSON from external API
+    def fetch_raw_issues(self) -> List[dict]
+    def setup_webhook(self, callback_url: str)    # Real-time updates
+    def test_connection(self) -> bool
+```
+
+**New database tables:**
+```sql
+-- Integration configurations per org
+CREATE TABLE integration_configs (
+  id UUID PRIMARY KEY, organization_id UUID, tool TEXT,
+  credentials_encrypted TEXT, webhook_url TEXT, sync_schedule TEXT,
+  last_sync_at TIMESTAMPTZ, status TEXT
+);
+
+-- Raw ingested records (Layer 1)
+CREATE TABLE raw_records (
+  id UUID PRIMARY KEY, organization_id UUID, integration_id UUID,
+  external_id TEXT, raw_data JSONB, ingested_at TIMESTAMPTZ
+);
+
+-- AI-learned field mappings (Layer 2) — per org + tool
+CREATE TABLE field_mappings (
+  id UUID PRIMARY KEY, organization_id UUID, tool TEXT,
+  source_field TEXT, target_field TEXT, transform_rule TEXT,
+  confidence FLOAT, human_verified BOOLEAN DEFAULT false
+);
+```
+
+**Planned connectors (in priority order):**
+1. Linear (dogfood — we use it ourselves)
+2. Jira Cloud (largest market share)
+3. Smartsheet
+4. CSV/manual upload (fallback for any tool)
+
+#### User Story 5.4 — Configure AI Behavior & Tone
+**As a** SaaS customer administrator  
+**I want** to customize how the AI agent communicates and what it focuses on  
+**So that** the AI matches our organization's communication style and priorities
+
+**Acceptance Criteria:**
+- [ ] Admin can adjust AI tone (formal, casual, technical, executive)
+- [ ] Admin can set analysis priorities (risk focus, timeline focus, budget focus)
+- [ ] Admin can configure response length and detail level
+- [ ] Admin can define custom report templates and formats
+- [ ] Changes apply immediately without system restart
+
+**Technical Notes:**
+- Configurable prompt templates per tenant
+- AI behavior settings stored in customer configuration tables
+- A/B testing framework for prompt optimization
+- Analytics on AI response effectiveness by configuration
+
+#### User Story 5.5 — Multi-Tenant User Management
+**As a** SaaS customer administrator  
+**I want** to manage which team members can access what data and features  
+**So that** sensitive information is properly controlled and users see relevant content
+
+**Acceptance Criteria:**
+- [ ] Admin can invite team members with role-based permissions
+- [ ] Users can be limited to specific programs or product lines
+- [ ] Role-based access control for dashboard, chat, and admin features
+- [ ] Audit log tracks all user actions and data access
+- [ ] SSO integration with customer's identity provider
+
+**Technical Notes:**
+- JWT-based authentication with tenant isolation
+- Row-level security in database queries
+- Middleware for permission checking on all API endpoints
+- Integration with SAML/OIDC identity providers
 
 ---
 
@@ -378,35 +584,56 @@ Each chart visually expands on or grounds one of the KPI cards above, giving the
 
 ### Architecture Overview
 
-The prototype follows a simple three-service architecture. The frontend (Next.js) and the Slack bot both communicate with a single FastAPI backend. The backend owns the AI agent logic: it handles RAG retrieval from ChromaDB, queries the SQLite program database, and calls the configured LLM provider. The LLM provider is abstracted behind a common interface so the agent layer never needs to know which model is active.
+#### Prototype Architecture
+The prototype uses a three-service local architecture: Next.js frontend, FastAPI backend (SQLite + ChromaDB + custom LLM abstraction), and Slack Bolt bot.
+
+#### Production Architecture (Vercel-Unified)
+The production system consolidates onto two managed platforms: **Vercel** (all compute) and **Supabase** (all data). The AI chat endpoint moves to a Next.js API route using Vercel AI SDK, while FastAPI handles data CRUD as a Vercel Function.
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    FRONTEND (Next.js)                        │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │  Dashboard   │  │  KPI Cards   │  │  AI Chat     │      │
-│  │  (Programs)  │  │  & Charts    │  │  Widget      │      │
-│  └──────────────┘  └──────────────┘  └──────────────┘      │
-└────────────────────────────┬────────────────────────────────┘
-                             │ HTTP / SSE
-┌────────────────────────────▼────────────────────────────────┐
-│              BACKEND API (FastAPI)                            │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │  AI Agent Service                                     │   │
-│  │  ├── Query Handler (orchestration)                    │   │
-│  │  ├── LLM Router (Claude / OpenAI)                     │   │
-│  │  └── RAG (ChromaDB in-memory)                         │   │
-│  └──────────────────────────────────────────────────────┘   │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │  Program Data Service (SQLite)                        │   │
-│  └──────────────────────────────────────────────────────┘   │
-└────────────────────────────┬────────────────────────────────┘
-                             │ HTTP
-┌────────────────────────────▼────────────────────────────────┐
-│              SLACK BOT (Bolt)                                 │
-│  ├── Message handler (DMs, @mentions)                        │
-│  └── Notification scheduler (Monday summary)                │
-└──────────────────────────────────────────────────────────────┘
+┌──────────────────────────── VERCEL ────────────────────────────┐
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  FRONTEND (Next.js)                                      │   │
+│  │  ├── Dashboard (KPIs, Charts, Program Table)             │   │
+│  │  ├── Auth Pages (Login, Signup) → Supabase Auth          │   │
+│  │  ├── Admin Settings (AI, Integrations, Objectives)       │   │
+│  │  └── AI Chat Widget                                      │   │
+│  └──────────────────────┬──────────────────────────────────┘   │
+│                          │                                      │
+│  ┌──────────────────────▼──────────────────────────────────┐   │
+│  │  NEXT.JS API ROUTES (AI Chat)                            │   │
+│  │  ├── /api/chat → Vercel AI SDK → AI Gateway (BYOK)      │   │
+│  │  ├── /api/slack/events → Slack HTTP Events handler       │   │
+│  │  └── /api/cron/monday-summary → Cron-triggered summary   │   │
+│  └──────────────────────┬──────────────────────────────────┘   │
+│                          │                                      │
+│  ┌──────────────────────▼──────────────────────────────────┐   │
+│  │  FASTAPI (Vercel Function — Fluid Compute)               │   │
+│  │  ├── /api/programs (CRUD)                                │   │
+│  │  ├── /api/strategic-objectives (CRUD)                    │   │
+│  │  └── /api/integrations (sync, mappings)                  │   │
+│  └──────────────────────┬──────────────────────────────────┘   │
+│                          │                                      │
+│  ┌──────────────────────▼──────────────────────────────────┐   │
+│  │  VERCEL AI GATEWAY                                       │   │
+│  │  ├── Hundreds of models (Claude, GPT-4, Gemini, etc.)   │   │
+│  │  ├── Request-scoped BYOK (customer API keys)             │   │
+│  │  ├── Automatic fallbacks + spend monitoring              │   │
+│  │  └── Embeddings for RAG                                  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                                                                 │
+└────────────────────────────┬────────────────────────────────────┘
+                             │ SQL / Auth / Vectors
+┌────────────────────────────▼────────────────────────────────────┐
+│                        SUPABASE                                  │
+│  ├── PostgreSQL (programs, risks, milestones, orgs, users)      │
+│  ├── pgvector (RAG embeddings, tenant-scoped)                   │
+│  ├── Auth (email, magic link, SSO)                              │
+│  ├── Row-Level Security (multi-tenant isolation)                │
+│  ├── Vault (encrypted customer API keys)                        │
+│  └── raw_records + field_mappings (integration pipeline)        │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ### Data Models
@@ -452,7 +679,7 @@ interface Milestone {
   name: string;
   dueDate: string;
   completedDate: string | null;
-  status: "Upcoming" | "Completed" | "Overdue";
+  status: "Upcoming" | "Pending" | "Completed" | "Overdue";
 }
 ```
 
@@ -497,9 +724,9 @@ interface Source {
 
 ### Synthetic Dataset
 
-The prototype ships with approximately 20 synthetic programs. The dataset is designed so that each KPI card and chart has enough variation to tell a compelling story during a demo — not a flat, uniform distribution, but one with visible patterns and tension.
+The prototype ships with 30 synthetic programs. The dataset is designed so that each KPI card and chart has enough variation to tell a compelling story during a demo — not a flat, uniform distribution, but one with visible patterns and tension.
 
-**Product Lines in the dataset:** Video, Smart Home, Mobile, Platform (4 lines across ~20 programs)
+**Product Lines in the dataset:** Video, Smart Home, Mobile, Platform (4 lines across 30 programs)
 
 **Strategic Objectives in the dataset:** 9 defined objectives. 7 are covered by at least one program; 2 are intentionally uncovered to make the Strategic Coverage Score meaningful (it should read "7 of 9" not "9 of 9").
 
@@ -524,13 +751,25 @@ The prototype ships with approximately 20 synthetic programs. The dataset is des
 | Completed last quarter | Legacy App Migration | Platform | Historical completed program; context for Velocity |
 | In Progress, maps to uncovered objective | Accessibility Toolkit | Mobile | The second uncovered strategic objective; Strategic Coverage Score stays at 7/9 |
 
-### RAG Implementation (Prototype)
+### RAG Implementation
 
 The agent uses a hybrid retrieval approach to ground its responses:
 
-1. **Vector Search (ChromaDB):** Program descriptions, update narratives, and risk descriptions are embedded and indexed at startup. Semantic queries ("What programs have vendor-related risks?") are answered via similarity search.
-2. **Direct DB Query (SQLite):** Structured queries for precise lookups ("How many programs launch this week?", "Which programs are over budget?") are executed against SQLite.
-3. **Context Assembly:** Retrieved chunks from both sources are assembled into the LLM's context window before generation. The prompt instructs the LLM to answer only from the provided context and to flag when it does not have enough information.
+#### Prototype (Legacy — replaced)
+1. ~~**Vector Search (ChromaDB):** Program descriptions, update narratives, and risk descriptions embedded via SentenceTransformers and indexed in-memory at startup.~~
+2. ~~**Direct DB Query (SQLite):** Structured queries for precise lookups.~~
+3. ~~**Context Assembly:** Retrieved chunks assembled into the LLM's context window before generation.~~
+
+#### Current Implementation (Supabase pgvector)
+1. **Vector Search (Supabase pgvector):** 210 documents (30 programs + 90 risks + 90 milestones) embedded via OpenAI `text-embedding-3-small` (1536 dimensions) and stored persistently in Supabase `embeddings` table with ivfflat index. Similarity search via `match_embeddings()` RPC function. Tenant-scoped by `organization_id`.
+2. **Direct DB Query (Supabase PostgreSQL):** Structured queries via `supabase-py` REST client, scoped by `organization_id`.
+3. **Context Assembly:** Retrieved chunks from both sources assembled and passed to LLM.
+4. **Startup Optimization:** Backend checks for existing embeddings on startup — skips re-indexing if present (~2s startup vs ~30s with ChromaDB). Re-indexing triggered only on data changes.
+
+#### Production (Planned Enhancements)
+1. **Embeddings via AI Gateway:** Move embedding generation from direct OpenAI API to Vercel AI Gateway embeddings endpoint for BYOK support.
+2. **Row-Level Security:** Replace service role key with per-user JWT for tenant isolation via RLS policies.
+3. **Incremental Re-indexing:** Only re-embed changed documents on data sync, not full re-index.
 
 ---
 
@@ -543,44 +782,52 @@ The agent uses a hybrid retrieval approach to ground its responses:
 - Keep API keys out of code — use `.env` files exclusively
 
 ### ⚠️ Ask First
-- Adding new LLM providers beyond Claude and OpenAI
-- Changing the synthetic dataset structure (may require re-seeding ChromaDB)
+- Adding new LLM providers beyond what AI Gateway supports
+- Changing the core data schema (programs, risks, milestones) — affects all connectors
 - Adding new Slack interaction patterns (slash commands, buttons, etc.)
+- Modifying Row-Level Security policies
 
 ### 🚫 Never Do
 - Commit API keys, Slack tokens, or other secrets to the repository
 - Allow the AI agent to make claims about programs that are not in the dataset
-- Hard-code any LLM provider — everything must route through the abstraction layer
+- Hard-code any LLM provider — everything must route through Vercel AI Gateway (production) or the abstraction layer (prototype)
 - Return raw database errors to the frontend
+- Store customer API keys in plaintext — must use Supabase Vault
+- Allow cross-tenant data leakage — all queries must be scoped by `organization_id`
 
 ---
 
 ## Constraints & Non-Negotiables
 
-### Prototype Constraints
-- **No authentication** — the prototype runs in a demo mode with no login flow. All users see all data. Authentication is a production requirement and is deferred.
-- **Single tenant** — no multi-tenant isolation in the prototype. The production architecture supports multi-tenancy; this is a scope reduction for speed.
-- **Static data** — the synthetic dataset is seeded once at setup. There are no live ETL pipelines or real-time data updates in the prototype. The production version will integrate with tools like Jira, Asana, and others.
-- **In-memory vector store** — ChromaDB runs in-memory. Data is re-indexed each time the backend starts. Production will use a persistent managed vector database.
-- **Local deployment only** — the prototype is not deployed to a cloud environment. It runs entirely on the developer's machine.
+### Prototype Constraints (Resolved in Production)
+- ~~**No authentication**~~ → Supabase Auth (email, magic link, SSO)
+- ~~**Single tenant**~~ → Multi-tenant with Supabase Row-Level Security
+- ~~**Static data**~~ → AI-driven integration pipeline (Jira, Linear, Smartsheet, CSV)
+- ~~**In-memory vector store**~~ → Supabase pgvector (persistent, tenant-scoped)
+- ~~**Local deployment only**~~ → Vercel (frontend + backend + AI Gateway + cron)
 
-### What This Prototype Does Not Prove (Deferred to Production)
-- Scalability under real-world load
-- Data security and tenant isolation
-- Integration with external PM tools
-- Slash commands in Slack
-- Notification preference management
-- Cost optimization across LLM providers
+### Production Constraints
+- **Serverless functions**: Vercel Functions have max 250MB bundle size and configurable max duration. No persistent processes — Slack bot must use HTTP/Events API mode, not Socket Mode.
+- **Request body size**: 4.5MB max for Vercel Functions. Large data syncs must be chunked.
+- **Vercel Cron**: Minimum interval varies by plan. Monday summary uses `0 14 * * 1` (9 AM ET = 14:00 UTC).
+- **AI Gateway dependency**: All LLM calls route through Vercel AI Gateway. If AI Gateway is unavailable, chat functionality degrades gracefully.
 
 ---
 
 ## Open Questions & Decisions Needed
 
-- [ ] How many synthetic programs are enough to make the demo feel realistic? (Current target: ~20)
-- [ ] Should the Monday summary notification also appear somewhere in the dashboard (e.g., a notification bell), or only in Slack for the prototype?
-- [ ] For the multi-LLM demo: do we show the provider switch live during the demo, or just explain it and show configuration?
-- [ ] Do we need a "reset data" button in the dashboard to re-seed the synthetic dataset for repeated demos?
+- [x] ~~How many synthetic programs are enough to make the demo feel realistic?~~ **RESOLVED**: 30 programs with 3+ risks and 3+ milestones each provides realistic demo data
+- [x] ~~Should the Monday summary notification also appear somewhere in the dashboard (e.g., a notification bell), or only in Slack for the prototype?~~ **RESOLVED**: Slack-only for prototype, structured format perfected
+- [x] ~~For the multi-LLM demo: do we show the provider switch live during the demo, or just explain it and show configuration?~~ **RESOLVED**: Both Claude and OpenAI providers working with environment variable switching
+- [x] ~~Do we need a "reset data" button in the dashboard to re-seed the synthetic dataset for repeated demos?~~ **RESOLVED**: Seed script available, admin database view shows data statistics
+- [x] ~~Is bidirectional Slack communication (user questions → AI responses) working?~~ **RESOLVED**: Full bidirectional communication implemented with proper formatting
 - [ ] Which Slack workspace will we use for testing? (Need workspace with ability to install a custom app)
+- [x] ~~For SaaS production: What pricing model and tier structure for different organization sizes?~~ **RESOLVED**: Free (1 user, 5 programs) / Starter $99/mo (5 users, 50 programs, 1 integration) / Pro $199/mo (unlimited). See Linear Phase 4 project.
+- [ ] For SaaS production: What compliance certifications needed (SOC2, GDPR, etc.)?
+- [x] ~~Infrastructure: Vercel vs Railway vs Render for backend?~~ **RESOLVED**: Vercel-unified (FastAPI as Vercel Function + Next.js API routes for AI chat)
+- [x] ~~LLM management: Custom abstraction vs managed gateway?~~ **RESOLVED**: Vercel AI Gateway with request-scoped BYOK
+- [x] ~~Integration strategy: Manual field mapping vs AI-driven?~~ **RESOLVED**: AI-driven normalization (Span-inspired three-layer pipeline)
+- [x] ~~Chat architecture: FastAPI-only vs hybrid?~~ **RESOLVED**: Hybrid — Next.js API route for AI chat (Vercel AI SDK), FastAPI for data CRUD
 
 ---
 
@@ -592,16 +839,76 @@ The agent uses a hybrid retrieval approach to ground its responses:
 ### Starting Point Codebase
 - [AI Missions Week 04 — Data Analyst Dashboard](https://github.com/cameza/ai-missions-system/tree/main/Missions/week-04-data-analyst) — source of KPI card, chart, and table components for the frontend
 
-### Key Libraries
-- [LlamaIndex](https://docs.llamaindex.ai/) — RAG framework (Python)
-- [ChromaDB](https://docs.trychroma.com/) — In-memory vector store
-- [Slack Bolt for Python](https://api.slack.com/tools/bolt/python) — Slack bot framework
-- [FastAPI](https://fastapi.tiangolo.com/) — Backend API framework
+### Key Libraries & Services
+- [Vercel AI SDK](https://sdk.vercel.ai/) — AI toolkit for TypeScript (chat streaming, BYOK, AI Gateway integration)
+- [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) — Unified LLM API (hundreds of models, BYOK, fallbacks, spend monitoring)
+- [Supabase](https://supabase.com/docs) — PostgreSQL, Auth, pgvector, RLS, Vault
+- [FastAPI](https://fastapi.tiangolo.com/) — Backend API framework (data CRUD, deployed as Vercel Function)
 - [Next.js](https://nextjs.org/docs) — Frontend framework
+- [Recharts](https://recharts.org/) — Data visualization
+- [Slack Events API](https://api.slack.com/events-api) — Slack bot (production, HTTP mode)
+- [Slack Bolt for Python](https://api.slack.com/tools/bolt/python) — Slack bot (prototype, Socket Mode)
+- [LlamaIndex](https://docs.llamaindex.ai/) — RAG framework (prototype)
+- [ChromaDB](https://docs.trychroma.com/) — In-memory vector store (prototype)
+
+### Inspiration
+- [Span.app](https://www.span.app/blog/first-true-view-of-engineering-time) — AI-driven data normalization approach: ingest raw data from tools, use LLMs to classify into consistent schema instead of manual field mapping
 
 ---
 
 ## Changelog
+
+### v2.1 — February 9, 2026
+- **Supabase Auth Integration**: Full authentication flow with `@supabase/supabase-js` + `@supabase/ssr`. Login/signup page (`/auth`), AuthProvider context + `useAuth` hook, Next.js middleware protecting all routes via `createServerClient`. User email and sign-out button in dashboard header. Demo user: `demo@pmo-ai.com`.
+- **Backend → Supabase PostgreSQL**: Replaced SQLite `db.py` with Supabase `supabase-py` client. Same function signatures for drop-in compatibility. All queries scoped by `organization_id`. Strategic objectives use `program_strategic_objectives` join table instead of JSON column.
+- **pgvector RAG (replaces ChromaDB)**: 210 documents embedded via OpenAI `text-embedding-3-small` (1536 dimensions) into Supabase `embeddings` table with ivfflat index. `match_embeddings()` RPC for cosine similarity search. Startup detects existing embeddings and skips re-indexing (~2s vs ~30s). Removes ChromaDB + SentenceTransformers from production path (saves ~500MB bundle).
+- **Supabase Data Seeding**: 30 programs, 90 risks, 90 milestones, 9 strategic objectives, 40 program↔objective mappings inserted into Supabase PostgreSQL, scoped by demo `organization_id`.
+- **Pydantic Model Updates**: Made `Risk`, `Milestone`, `Program` fields `Optional` for Supabase nullable columns. Added `Pending` to `MilestoneStatus` enum. Fixed `Critical` → `High` severity in seeded data.
+- **Monorepo Structure Updated**: Project structure section in PRD updated to reflect repo-root Next.js, `api/index.py` entrypoint, `middleware.ts`, auth files, and Supabase client libs.
+- **`.env.example` Secured**: Replaced real API keys with placeholder values, added Supabase environment variables.
+- **Dependencies**: Added `supabase>=2.0.0` to both `requirements.txt` files. Added `@supabase/ssr` to frontend.
+
+### v2.0 — February 9, 2026
+- **Scope Upgrade**: PRD expanded from prototype-only to production SaaS. All prototype goals marked DONE; production goals defined.
+- **Vercel-Unified Architecture**: Consolidated infrastructure onto Vercel (frontend + FastAPI backend + AI Gateway + Cron Jobs) and Supabase (PostgreSQL + Auth + pgvector + RLS + Vault). Eliminates Railway/Render dependency.
+- **Vercel AI Gateway**: Replaces custom `llm_provider.py` abstraction. One API key → hundreds of models, request-scoped BYOK for customer API keys, automatic fallbacks, spend monitoring, embeddings support.
+- **Hybrid Chat Architecture**: AI chat moves to Next.js API route (`/app/api/chat/route.ts`) using Vercel AI SDK. FastAPI retains data CRUD endpoints as Vercel Function.
+- **Multi-Tenancy**: Supabase Row-Level Security with `organization_id` on all tables. Organizations, user profiles, role-based access.
+- **AI-Driven Integration Pipeline (Span-inspired)**: Three-layer architecture (Raw Ingestion → AI Normalization → Normalized Store). LLM proposes field mappings with confidence scores; human reviews once; cached per org+tool. Replaces manual field-mapping UI.
+- **Per-Client Mapping Customization**: Each org's `field_mappings` table serves as their trained mapping profile. Corrections stored independently per org. Delta re-analysis when external tool schemas change.
+- **Planned Connectors**: Linear (dogfood), Jira Cloud, Smartsheet, CSV/manual upload.
+- **Slack Production Mode**: Socket Mode → HTTP/Events API (serverless-compatible). APScheduler → Vercel Cron Jobs.
+- **New Database Tables**: `organizations`, `user_profiles`, `integration_configs`, `raw_records`, `field_mappings`.
+- **Updated Constraints**: Added production constraints (serverless limits, Vault encryption, cross-tenant isolation rules).
+- **Pricing Tiers Defined**: Free / Starter $99/mo / Pro $199/mo.
+
+### v1.9 — February 6, 2026
+- **RAG Initialization Fix**: Resolved ChromaDB hanging issue during backend startup with pre-download script and 30s timeout wrapper.
+- **Cost Optimization**: Replaced proactive AI-generated summary with static welcome message, eliminating unnecessary LLM token usage on page load.
+- **Chat Widget Improvements**: Added prompt suggestions in welcome message, enhanced markdown rendering with headers and proper bullet points.
+- **Graceful Degradation**: Implemented _rag_ready flag for fallback to structured queries when RAG unavailable.
+- **Enhanced Markdown Rendering**: Fixed bullet point formatting and spacing issues in chat messages.
+- **Model Pre-caching**: Created download_model.py script to pre-cache sentence-transformers embedding model.
+
+### v1.8 — February 5, 2026 (Afternoon)
+- **Bidirectional Slack Communication**: Complete user question → AI response functionality implemented and debugged.
+- **Slack Bot Bug Fixes**: Resolved APScheduler cron trigger error ('monday' → 'mon') and added markdown-to-Slack formatting conversion.
+- **Message Formatting Enhancement**: Added automatic conversion of **bold** and ## headers to Slack-compatible *italic* format.
+- **Full Integration Testing**: Comprehensive validation confirms both Monday Morning Summary (push) and user questions (pull) working perfectly.
+- **Data Accuracy Validation**: 100% verification that all Slack message content is grounded in database data with no hallucinations.
+
+### v1.7 — February 5, 2026 (Morning)
+- **Monday Morning Summary Integration**: Complete end-to-end Slack integration with structured formatting and 100% data accuracy validation.
+- **Slack Bot Scheduling**: APScheduler implemented for automated Monday 9:00 AM postings with error handling and test functions.
+- **Enhanced Summary Prompt**: Refined to produce Slack-compatible formatting with emojis and structured sections (Portfolio Health, Programs Requiring Attention, Upcoming Milestones, Strategic Progress, Resource Allocation).
+- **Data Validation**: Comprehensive validation confirms all Slack message content is 100% grounded in database data with no hallucinations.
+- **Synthetic Data Expansion**: Increased from 18 to 30 programs with 3+ risks and 3+ milestones per program for realistic demos.
+
+### v1.6 — February 4, 2026
+- **Sticky Headers & Fixed Layout**: Refactored dashboard to keep KPIs/Charts pinned at top while only program rows scroll.
+- **UI Color Refinements**: Matched `ProgramTable` stage progress bars with `ProgramVelocityChart` gradient.
+- **Chart Layout Fix**: Corrected stacking order and corner radius in `RiskLandscapeChart` for visual consistency.
+- **Chat & Context Completion**: Marked chat widget and context-aware chat features as completed.
 
 ### v1.5 — February 2, 2026
 - **API Integration Core (F1)**: Frontend connected to FastAPI backend. Replaced all static mock data imports with real-time `fetchPrograms` calls.

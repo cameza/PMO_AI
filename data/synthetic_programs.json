@@ -10,7 +10,12 @@
     "Modernize infrastructure",
     "International expansion"
   ],
-  "product_lines": ["Smart Home", "Mobile", "Platform", "Video"],
+  "product_lines": [
+    "Smart Home",
+    "Mobile",
+    "Platform",
+    "Video"
+  ],
   "programs": [
     {
       "id": "prog-001",
@@ -21,10 +26,41 @@
       "team": "Mobile Engineering",
       "product_line": "Mobile",
       "pipeline_stage": "In Progress",
-      "strategic_objectives": ["Enhance mobile experience", "Improve user retention"],
+      "strategic_objectives": [
+        "Enhance mobile experience",
+        "Improve user retention"
+      ],
       "launch_date": "2026-02-28",
       "progress": 75,
-      "risks": [],
+      "risks": [
+        {
+          "id": "r-019",
+          "program_id": "prog-001",
+          "title": "App Store approval delays",
+          "severity": "Medium",
+          "description": "Extended review time for new app features",
+          "mitigation": "Pre-submission review with Apple guidelines",
+          "status": "Open"
+        },
+        {
+          "id": "r-020",
+          "program_id": "prog-001",
+          "title": "User adoption uncertainty",
+          "severity": "Low",
+          "description": "Resistance to new UI changes",
+          "mitigation": "Gradual rollout with user feedback loops",
+          "status": "Open"
+        },
+        {
+          "id": "r-021",
+          "program_id": "prog-001",
+          "title": "Performance regression",
+          "severity": "Medium",
+          "description": "Potential performance issues with new features",
+          "mitigation": "Comprehensive performance testing",
+          "status": "Open"
+        }
+      ],
       "milestones": [
         {
           "id": "m-001",
@@ -41,6 +77,14 @@
           "due_date": "2026-02-28",
           "completed_date": null,
           "status": "Upcoming"
+        },
+        {
+          "id": "m-041",
+          "program_id": "prog-001",
+          "name": "User Testing Complete",
+          "due_date": "2026-02-20",
+          "completed_date": null,
+          "status": "Upcoming"
         }
       ],
       "last_update": "Beta testing complete. On track for Feb 28 launch."
@@ -54,7 +98,9 @@
       "team": "Smart Home",
       "product_line": "Smart Home",
       "pipeline_stage": "In Progress",
-      "strategic_objectives": ["Expand IoT ecosystem"],
+      "strategic_objectives": [
+        "Expand IoT ecosystem"
+      ],
       "launch_date": "2026-03-15",
       "progress": 55,
       "risks": [
@@ -66,6 +112,24 @@
           "description": "Chip shortage affecting Hub v3 production",
           "mitigation": "Alternative supplier engaged",
           "status": "Open"
+        },
+        {
+          "id": "r-022",
+          "program_id": "prog-002",
+          "title": "Matter protocol compatibility",
+          "severity": "Medium",
+          "description": "Integration issues with third-party Matter devices",
+          "mitigation": "Enhanced testing with partner devices",
+          "status": "Open"
+        },
+        {
+          "id": "r-023",
+          "program_id": "prog-002",
+          "title": "Firmware update complexity",
+          "severity": "Low",
+          "description": "Complex OTA update process for existing hubs",
+          "mitigation": "Staged rollout with rollback capability",
+          "status": "Open"
         }
       ],
       "milestones": [
@@ -76,6 +140,22 @@
           "due_date": "2026-02-01",
           "completed_date": null,
           "status": "Overdue"
+        },
+        {
+          "id": "m-042",
+          "program_id": "prog-002",
+          "name": "Supplier Agreement Signed",
+          "due_date": "2026-02-15",
+          "completed_date": "2026-02-10",
+          "status": "Completed"
+        },
+        {
+          "id": "m-043",
+          "program_id": "prog-002",
+          "name": "Matter Certification",
+          "due_date": "2026-03-01",
+          "completed_date": null,
+          "status": "Upcoming"
         }
       ],
       "last_update": "Supply chain issues causing 3-week delay. Working with backup supplier."
@@ -89,7 +169,9 @@
       "team": "T-Safe",
       "product_line": "Smart Home",
       "pipeline_stage": "In Progress",
-      "strategic_objectives": ["Expand IoT ecosystem"],
+      "strategic_objectives": [
+        "Expand IoT ecosystem"
+      ],
       "launch_date": "2026-03-15",
       "progress": 40,
       "risks": [
@@ -101,6 +183,24 @@
           "description": "Awaiting regulatory body response",
           "mitigation": "Legal team following up weekly",
           "status": "Open"
+        },
+        {
+          "id": "r-024",
+          "program_id": "prog-003",
+          "title": "Data collection scope creep",
+          "severity": "Low",
+          "description": "Expanding audit requirements beyond initial scope",
+          "mitigation": "Clear scope definition with stakeholders",
+          "status": "Open"
+        },
+        {
+          "id": "r-025",
+          "program_id": "prog-003",
+          "title": "Documentation completeness",
+          "severity": "Medium",
+          "description": "Missing documentation for legacy systems",
+          "mitigation": "Dedicated documentation team assigned",
+          "status": "Open"
         }
       ],
       "milestones": [
@@ -109,6 +209,22 @@
           "program_id": "prog-003",
           "name": "Initial Audit Complete",
           "due_date": "2026-02-10",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-044",
+          "program_id": "prog-003",
+          "name": "Stakeholder Review",
+          "due_date": "2026-02-20",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-045",
+          "program_id": "prog-003",
+          "name": "Final Report Submission",
+          "due_date": "2026-03-15",
           "completed_date": null,
           "status": "Upcoming"
         }
@@ -124,7 +240,9 @@
       "team": "T-Infra",
       "product_line": "Platform",
       "pipeline_stage": "In Progress",
-      "strategic_objectives": ["Strengthen core platform"],
+      "strategic_objectives": [
+        "Strengthen core platform"
+      ],
       "launch_date": "2026-01-15",
       "progress": 35,
       "risks": [
@@ -145,6 +263,15 @@
           "description": "Key engineer on leave",
           "mitigation": "Contractor engaged",
           "status": "Open"
+        },
+        {
+          "id": "r-026",
+          "program_id": "prog-004",
+          "title": "System downtime risk",
+          "severity": "High",
+          "description": "Potential service disruption during migration",
+          "mitigation": "Weekend maintenance windows planned",
+          "status": "Open"
         }
       ],
       "milestones": [
@@ -155,6 +282,22 @@
           "due_date": "2026-01-15",
           "completed_date": null,
           "status": "Overdue"
+        },
+        {
+          "id": "m-046",
+          "program_id": "prog-004",
+          "name": "Data Mapping Complete",
+          "due_date": "2026-02-01",
+          "completed_date": null,
+          "status": "Overdue"
+        },
+        {
+          "id": "m-047",
+          "program_id": "prog-004",
+          "name": "Test Migration",
+          "due_date": "2026-02-15",
+          "completed_date": null,
+          "status": "Upcoming"
         }
       ],
       "last_update": "Project significantly behind schedule. Escalated to leadership."
@@ -168,10 +311,40 @@
       "team": "T-Web",
       "product_line": "Platform",
       "pipeline_stage": "Completed",
-      "strategic_objectives": ["Drive subscription growth"],
+      "strategic_objectives": [
+        "Drive subscription growth"
+      ],
       "launch_date": "2025-09-12",
       "progress": 100,
-      "risks": [],
+      "risks": [
+        {
+          "id": "r-027",
+          "program_id": "prog-005",
+          "title": "Customer migration resistance",
+          "severity": "Low",
+          "description": "Users reluctant to migrate to new billing system",
+          "mitigation": "Gradual transition with support",
+          "status": "Open"
+        },
+        {
+          "id": "r-028",
+          "program_id": "prog-005",
+          "title": "Payment processor integration",
+          "severity": "Medium",
+          "description": "Complex integration with multiple payment gateways",
+          "mitigation": "Phased integration approach",
+          "status": "Open"
+        },
+        {
+          "id": "r-029",
+          "program_id": "prog-005",
+          "title": "Tax compliance complexity",
+          "severity": "Medium",
+          "description": "Varying tax regulations across jurisdictions",
+          "mitigation": "Tax compliance software implemented",
+          "status": "Open"
+        }
+      ],
       "milestones": [
         {
           "id": "m-006",
@@ -179,6 +352,22 @@
           "name": "Production Deploy",
           "due_date": "2025-09-12",
           "completed_date": "2025-09-12",
+          "status": "Completed"
+        },
+        {
+          "id": "m-048",
+          "program_id": "prog-005",
+          "name": "Legacy System Decommission",
+          "due_date": "2025-10-01",
+          "completed_date": "2025-09-30",
+          "status": "Completed"
+        },
+        {
+          "id": "m-049",
+          "program_id": "prog-005",
+          "name": "Customer Training Complete",
+          "due_date": "2025-09-20",
+          "completed_date": "2025-09-18",
           "status": "Completed"
         }
       ],
@@ -193,10 +382,41 @@
       "team": "T-Alpha",
       "product_line": "Platform",
       "pipeline_stage": "Launching",
-      "strategic_objectives": ["Enable AI capabilities", "Strengthen core platform"],
+      "strategic_objectives": [
+        "Enable AI capabilities",
+        "Strengthen core platform"
+      ],
       "launch_date": "2026-02-28",
       "progress": 90,
-      "risks": [],
+      "risks": [
+        {
+          "id": "r-030",
+          "program_id": "prog-006",
+          "title": "Model performance degradation",
+          "severity": "Medium",
+          "description": "Potential accuracy issues with new model version",
+          "mitigation": "Comprehensive A/B testing",
+          "status": "Open"
+        },
+        {
+          "id": "r-031",
+          "program_id": "prog-006",
+          "title": "API compatibility",
+          "severity": "Low",
+          "description": "Breaking changes for existing AI API consumers",
+          "mitigation": "Versioned API endpoints",
+          "status": "Open"
+        },
+        {
+          "id": "r-032",
+          "program_id": "prog-006",
+          "title": "Computational resource scaling",
+          "severity": "Medium",
+          "description": "Increased resource requirements for v2 models",
+          "mitigation": "Auto-scaling infrastructure ready",
+          "status": "Open"
+        }
+      ],
       "milestones": [
         {
           "id": "m-007",
@@ -205,6 +425,22 @@
           "due_date": "2026-02-25",
           "completed_date": "2026-02-24",
           "status": "Completed"
+        },
+        {
+          "id": "m-050",
+          "program_id": "prog-006",
+          "name": "Model Validation Complete",
+          "due_date": "2026-02-20",
+          "completed_date": "2026-02-18",
+          "status": "Completed"
+        },
+        {
+          "id": "m-051",
+          "program_id": "prog-006",
+          "name": "Production Rollout",
+          "due_date": "2026-02-28",
+          "completed_date": null,
+          "status": "Upcoming"
         }
       ],
       "last_update": "All tests passing. Ready for launch."
@@ -218,16 +454,62 @@
       "team": "Data Engineering",
       "product_line": "Video",
       "pipeline_stage": "Planning",
-      "strategic_objectives": ["Accelerate cloud migration"],
+      "strategic_objectives": [
+        "Accelerate cloud migration"
+      ],
       "launch_date": "2026-06-01",
       "progress": 15,
-      "risks": [],
+      "risks": [
+        {
+          "id": "r-033",
+          "program_id": "prog-007",
+          "title": "Data quality issues",
+          "severity": "High",
+          "description": "Inconsistent data from legacy sources",
+          "mitigation": "Data validation and cleansing pipeline",
+          "status": "Open"
+        },
+        {
+          "id": "r-034",
+          "program_id": "prog-007",
+          "title": "Pipeline performance",
+          "severity": "Medium",
+          "description": "Processing bottlenecks in data pipeline",
+          "mitigation": "Parallel processing architecture",
+          "status": "Open"
+        },
+        {
+          "id": "r-035",
+          "program_id": "prog-007",
+          "title": "Schema evolution complexity",
+          "severity": "Low",
+          "description": "Changing data schemas from source systems",
+          "mitigation": "Flexible schema management",
+          "status": "Open"
+        }
+      ],
       "milestones": [
         {
           "id": "m-008",
           "program_id": "prog-007",
           "name": "Architecture Review",
           "due_date": "2026-02-28",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-052",
+          "program_id": "prog-007",
+          "name": "Data Sources Mapped",
+          "due_date": "2026-03-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-053",
+          "program_id": "prog-007",
+          "name": "Pipeline Testing",
+          "due_date": "2026-05-01",
           "completed_date": null,
           "status": "Upcoming"
         }
@@ -243,16 +525,63 @@
       "team": "ML Platform",
       "product_line": "Video",
       "pipeline_stage": "Planning",
-      "strategic_objectives": ["Enable AI capabilities", "Improve user retention"],
+      "strategic_objectives": [
+        "Enable AI capabilities",
+        "Improve user retention"
+      ],
       "launch_date": "2026-07-01",
       "progress": 10,
-      "risks": [],
+      "risks": [
+        {
+          "id": "r-036",
+          "program_id": "prog-008",
+          "title": "Model selection paralysis",
+          "severity": "Medium",
+          "description": "Difficulty choosing optimal ML model",
+          "mitigation": "Systematic model evaluation framework",
+          "status": "Open"
+        },
+        {
+          "id": "r-037",
+          "program_id": "prog-008",
+          "title": "Content licensing constraints",
+          "severity": "High",
+          "description": "Legal restrictions on content usage for training",
+          "mitigation": "Legal review of training data",
+          "status": "Open"
+        },
+        {
+          "id": "r-038",
+          "program_id": "prog-008",
+          "title": "Recommendation accuracy",
+          "severity": "Medium",
+          "description": "Risk of poor recommendation quality",
+          "mitigation": "Continuous evaluation and retraining",
+          "status": "Open"
+        }
+      ],
       "milestones": [
         {
           "id": "m-009",
           "program_id": "prog-008",
           "name": "Model Selection",
           "due_date": "2026-03-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-054",
+          "program_id": "prog-008",
+          "name": "Training Data Prepared",
+          "due_date": "2026-04-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-055",
+          "program_id": "prog-008",
+          "name": "Model Training Complete",
+          "due_date": "2026-05-15",
           "completed_date": null,
           "status": "Upcoming"
         }
@@ -268,16 +597,62 @@
       "team": "Video Platform",
       "product_line": "Video",
       "pipeline_stage": "Discovery",
-      "strategic_objectives": ["Accelerate cloud migration"],
+      "strategic_objectives": [
+        "Accelerate cloud migration"
+      ],
       "launch_date": "2026-09-01",
       "progress": 5,
-      "risks": [],
+      "risks": [
+        {
+          "id": "r-039",
+          "program_id": "prog-009",
+          "title": "Network infrastructure limitations",
+          "severity": "High",
+          "description": "Current network may not support ultra-low latency",
+          "mitigation": "Network upgrade planning",
+          "status": "Open"
+        },
+        {
+          "id": "r-040",
+          "program_id": "prog-009",
+          "title": "Codec licensing costs",
+          "severity": "Medium",
+          "description": "Expensive licensing for advanced video codecs",
+          "mitigation": "Open-source codec evaluation",
+          "status": "Open"
+        },
+        {
+          "id": "r-041",
+          "program_id": "prog-009",
+          "title": "CDN integration complexity",
+          "severity": "Low",
+          "description": "Complex integration with multiple CDN providers",
+          "mitigation": "Standardized CDN API layer",
+          "status": "Open"
+        }
+      ],
       "milestones": [
         {
           "id": "m-010",
           "program_id": "prog-009",
           "name": "Discovery Complete",
           "due_date": "2026-04-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-056",
+          "program_id": "prog-009",
+          "name": "Technical Design Complete",
+          "due_date": "2026-05-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-057",
+          "program_id": "prog-009",
+          "name": "Prototype Development",
+          "due_date": "2026-07-01",
           "completed_date": null,
           "status": "Upcoming"
         }
@@ -293,7 +668,10 @@
       "team": "Mobile Payments",
       "product_line": "Mobile",
       "pipeline_stage": "In Progress",
-      "strategic_objectives": ["Drive subscription growth", "Enhance mobile experience"],
+      "strategic_objectives": [
+        "Drive subscription growth",
+        "Enhance mobile experience"
+      ],
       "launch_date": "2026-03-15",
       "progress": 65,
       "risks": [
@@ -305,6 +683,24 @@
           "description": "Minor API compatibility issues",
           "mitigation": "Working with vendor",
           "status": "Open"
+        },
+        {
+          "id": "r-042",
+          "program_id": "prog-010",
+          "title": "Payment security compliance",
+          "severity": "High",
+          "description": "PCI DSS compliance requirements",
+          "mitigation": "Security audit and certification",
+          "status": "Open"
+        },
+        {
+          "id": "r-043",
+          "program_id": "prog-010",
+          "title": "Currency conversion complexity",
+          "severity": "Medium",
+          "description": "Multi-currency support challenges",
+          "mitigation": "Third-party currency service integration",
+          "status": "Open"
         }
       ],
       "milestones": [
@@ -313,6 +709,22 @@
           "program_id": "prog-010",
           "name": "Payment Integration",
           "due_date": "2026-02-28",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-058",
+          "program_id": "prog-010",
+          "name": "Security Audit Complete",
+          "due_date": "2026-03-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-059",
+          "program_id": "prog-010",
+          "name": "Beta Testing",
+          "due_date": "2026-03-15",
           "completed_date": null,
           "status": "Upcoming"
         }
@@ -328,16 +740,63 @@
       "team": "Voice Platform",
       "product_line": "Smart Home",
       "pipeline_stage": "Launching",
-      "strategic_objectives": ["Expand IoT ecosystem", "Enable AI capabilities"],
+      "strategic_objectives": [
+        "Expand IoT ecosystem",
+        "Enable AI capabilities"
+      ],
       "launch_date": "2026-03-01",
       "progress": 88,
-      "risks": [],
+      "risks": [
+        {
+          "id": "r-044",
+          "program_id": "prog-011",
+          "title": "Voice recognition accuracy",
+          "severity": "Medium",
+          "description": "Accuracy issues with diverse accents",
+          "mitigation": "Expanded training data sets",
+          "status": "Open"
+        },
+        {
+          "id": "r-045",
+          "program_id": "prog-011",
+          "title": "Privacy concerns",
+          "severity": "High",
+          "description": "Voice data privacy and storage",
+          "mitigation": "On-device processing where possible",
+          "status": "Open"
+        },
+        {
+          "id": "r-046",
+          "program_id": "prog-011",
+          "title": "Integration compatibility",
+          "severity": "Low",
+          "description": "Compatibility with existing smart home devices",
+          "mitigation": "Comprehensive device testing",
+          "status": "Open"
+        }
+      ],
       "milestones": [
         {
           "id": "m-012",
           "program_id": "prog-011",
           "name": "Launch Prep",
           "due_date": "2026-02-25",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-060",
+          "program_id": "prog-011",
+          "name": "Voice Model Training",
+          "due_date": "2026-02-15",
+          "completed_date": "2026-02-12",
+          "status": "Completed"
+        },
+        {
+          "id": "m-061",
+          "program_id": "prog-011",
+          "name": "Device Integration Testing",
+          "due_date": "2026-02-28",
           "completed_date": null,
           "status": "Upcoming"
         }
@@ -353,7 +812,9 @@
       "team": "Security",
       "product_line": "Smart Home",
       "pipeline_stage": "In Progress",
-      "strategic_objectives": ["Expand IoT ecosystem"],
+      "strategic_objectives": [
+        "Expand IoT ecosystem"
+      ],
       "launch_date": "2026-05-01",
       "progress": 45,
       "risks": [
@@ -365,6 +826,24 @@
           "description": "Third-party audit taking longer than expected",
           "mitigation": "Expedited review requested",
           "status": "Open"
+        },
+        {
+          "id": "r-047",
+          "program_id": "prog-012",
+          "title": "Third-party dependency",
+          "severity": "Medium",
+          "description": "Reliance on external security libraries",
+          "mitigation": "Multiple vendor evaluation",
+          "status": "Open"
+        },
+        {
+          "id": "r-048",
+          "program_id": "prog-012",
+          "title": "Performance overhead",
+          "severity": "Low",
+          "description": "Security features impacting device performance",
+          "mitigation": "Optimization and hardware acceleration",
+          "status": "Open"
         }
       ],
       "milestones": [
@@ -373,6 +852,22 @@
           "program_id": "prog-012",
           "name": "Security Audit",
           "due_date": "2026-03-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-062",
+          "program_id": "prog-012",
+          "name": "Security Framework Complete",
+          "due_date": "2026-04-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-063",
+          "program_id": "prog-012",
+          "name": "Beta Deployment",
+          "due_date": "2026-04-15",
           "completed_date": null,
           "status": "Upcoming"
         }
@@ -388,7 +883,9 @@
       "team": "Analytics",
       "product_line": "Video",
       "pipeline_stage": "In Progress",
-      "strategic_objectives": ["Enable AI capabilities"],
+      "strategic_objectives": [
+        "Enable AI capabilities"
+      ],
       "launch_date": "2026-05-15",
       "progress": 50,
       "risks": [
@@ -400,6 +897,24 @@
           "description": "May need additional GPU resources",
           "mitigation": "Cloud scaling plan in place",
           "status": "Open"
+        },
+        {
+          "id": "r-049",
+          "program_id": "prog-013",
+          "title": "Real-time processing challenges",
+          "severity": "Medium",
+          "description": "Meeting real-time analytics requirements",
+          "mitigation": "Edge computing implementation",
+          "status": "Open"
+        },
+        {
+          "id": "r-050",
+          "program_id": "prog-013",
+          "title": "Data storage costs",
+          "severity": "Low",
+          "description": "High storage costs for video analytics",
+          "mitigation": "Intelligent data retention policies",
+          "status": "Open"
         }
       ],
       "milestones": [
@@ -408,6 +923,22 @@
           "program_id": "prog-013",
           "name": "Alpha Release",
           "due_date": "2026-04-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-064",
+          "program_id": "prog-013",
+          "name": "Infrastructure Ready",
+          "due_date": "2026-03-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-065",
+          "program_id": "prog-013",
+          "name": "Model Deployment",
+          "due_date": "2026-05-01",
           "completed_date": null,
           "status": "Upcoming"
         }
@@ -423,16 +954,62 @@
       "team": "AR/VR",
       "product_line": "Mobile",
       "pipeline_stage": "Planning",
-      "strategic_objectives": ["Enhance mobile experience"],
+      "strategic_objectives": [
+        "Enhance mobile experience"
+      ],
       "launch_date": "2026-05-30",
       "progress": 20,
-      "risks": [],
+      "risks": [
+        {
+          "id": "r-051",
+          "program_id": "prog-014",
+          "title": "Device compatibility",
+          "severity": "High",
+          "description": "AR features not supported on older devices",
+          "mitigation": "Graceful degradation and fallback options",
+          "status": "Open"
+        },
+        {
+          "id": "r-052",
+          "program_id": "prog-014",
+          "title": "Battery drain concerns",
+          "severity": "Medium",
+          "description": "AR features consuming excessive battery",
+          "mitigation": "Power optimization algorithms",
+          "status": "Open"
+        },
+        {
+          "id": "r-053",
+          "program_id": "prog-014",
+          "title": "User experience complexity",
+          "severity": "Low",
+          "description": "Complex AR interactions may confuse users",
+          "mitigation": "Simplified UI and tutorials",
+          "status": "Open"
+        }
+      ],
       "milestones": [
         {
           "id": "m-015",
           "program_id": "prog-014",
           "name": "Prototype Review",
           "due_date": "2026-03-30",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-066",
+          "program_id": "prog-014",
+          "name": "AR Engine Development",
+          "due_date": "2026-04-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-067",
+          "program_id": "prog-014",
+          "name": "Device Testing",
+          "due_date": "2026-05-15",
           "completed_date": null,
           "status": "Upcoming"
         }
@@ -448,7 +1025,10 @@
       "team": "Automotive",
       "product_line": "Platform",
       "pipeline_stage": "In Progress",
-      "strategic_objectives": ["Expand IoT ecosystem", "Strengthen core platform"],
+      "strategic_objectives": [
+        "Expand IoT ecosystem",
+        "Strengthen core platform"
+      ],
       "launch_date": "2026-04-15",
       "progress": 40,
       "risks": [
@@ -460,6 +1040,24 @@
           "description": "Multiple OEM APIs to integrate",
           "mitigation": "Parallel integration teams",
           "status": "Open"
+        },
+        {
+          "id": "r-054",
+          "program_id": "prog-015",
+          "title": "Data synchronization delays",
+          "severity": "Medium",
+          "description": "Real-time data sync challenges with vehicles",
+          "mitigation": "Optimized sync protocols",
+          "status": "Open"
+        },
+        {
+          "id": "r-055",
+          "program_id": "prog-015",
+          "title": "Connectivity reliability",
+          "severity": "High",
+          "description": "Unstable vehicle connectivity issues",
+          "mitigation": "Offline mode and caching",
+          "status": "Open"
         }
       ],
       "milestones": [
@@ -470,6 +1068,22 @@
           "due_date": "2026-02-01",
           "completed_date": null,
           "status": "Overdue"
+        },
+        {
+          "id": "m-068",
+          "program_id": "prog-015",
+          "name": "API Development Complete",
+          "due_date": "2026-03-01",
+          "completed_date": "2026-02-28",
+          "status": "Completed"
+        },
+        {
+          "id": "m-069",
+          "program_id": "prog-015",
+          "name": "Integration Testing",
+          "due_date": "2026-03-30",
+          "completed_date": null,
+          "status": "Upcoming"
         }
       ],
       "last_update": "Milestone overdue. Working to close partner agreements."
@@ -483,10 +1097,40 @@
       "team": "Platform",
       "product_line": "Platform",
       "pipeline_stage": "Completed",
-      "strategic_objectives": ["Accelerate cloud migration"],
+      "strategic_objectives": [
+        "Accelerate cloud migration"
+      ],
       "launch_date": "2025-11-01",
       "progress": 100,
-      "risks": [],
+      "risks": [
+        {
+          "id": "r-056",
+          "program_id": "prog-016",
+          "title": "Legacy system dependencies",
+          "severity": "Medium",
+          "description": "Unexpected dependencies on legacy systems",
+          "mitigation": "Comprehensive dependency mapping",
+          "status": "Open"
+        },
+        {
+          "id": "r-057",
+          "program_id": "prog-016",
+          "title": "Data loss prevention",
+          "severity": "High",
+          "description": "Risk of data loss during migration",
+          "mitigation": "Multiple backup strategies",
+          "status": "Open"
+        },
+        {
+          "id": "r-058",
+          "program_id": "prog-016",
+          "title": "User training requirements",
+          "severity": "Low",
+          "description": "Staff training on new cloud systems",
+          "mitigation": "Comprehensive training program",
+          "status": "Open"
+        }
+      ],
       "milestones": [
         {
           "id": "m-017",
@@ -494,6 +1138,22 @@
           "name": "Full Migration",
           "due_date": "2025-11-01",
           "completed_date": "2025-10-28",
+          "status": "Completed"
+        },
+        {
+          "id": "m-070",
+          "program_id": "prog-016",
+          "name": "Data Validation Complete",
+          "due_date": "2025-10-15",
+          "completed_date": "2025-10-12",
+          "status": "Completed"
+        },
+        {
+          "id": "m-071",
+          "program_id": "prog-016",
+          "name": "Legacy Decommission",
+          "due_date": "2025-11-15",
+          "completed_date": "2025-11-10",
           "status": "Completed"
         }
       ],
@@ -508,16 +1168,62 @@
       "team": "Platform",
       "product_line": "Platform",
       "pipeline_stage": "Launching",
-      "strategic_objectives": ["Strengthen core platform"],
+      "strategic_objectives": [
+        "Strengthen core platform"
+      ],
       "launch_date": "2026-02-05",
       "progress": 95,
-      "risks": [],
+      "risks": [
+        {
+          "id": "r-059",
+          "program_id": "prog-017",
+          "title": "Rate limiting accuracy",
+          "severity": "Medium",
+          "description": "Fine-tuning rate limits without blocking legitimate users",
+          "mitigation": "Machine learning-based rate limiting",
+          "status": "Open"
+        },
+        {
+          "id": "r-060",
+          "program_id": "prog-017",
+          "title": "API version migration",
+          "severity": "Low",
+          "description": "Migrating existing consumers to new API version",
+          "mitigation": "Gradual deprecation and migration support",
+          "status": "Open"
+        },
+        {
+          "id": "r-061",
+          "program_id": "prog-017",
+          "title": "Performance impact",
+          "severity": "Medium",
+          "description": "Gateway overhead affecting API response times",
+          "mitigation": "Performance optimization and caching",
+          "status": "Open"
+        }
+      ],
       "milestones": [
         {
           "id": "m-018",
           "program_id": "prog-017",
           "name": "Production Deploy",
           "due_date": "2026-02-05",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-072",
+          "program_id": "prog-017",
+          "name": "Load Testing Complete",
+          "due_date": "2026-02-01",
+          "completed_date": "2026-01-30",
+          "status": "Completed"
+        },
+        {
+          "id": "m-073",
+          "program_id": "prog-017",
+          "name": "Migration Support",
+          "due_date": "2026-03-01",
           "completed_date": null,
           "status": "Upcoming"
         }
@@ -533,10 +1239,40 @@
       "team": "Cloud Ops",
       "product_line": "Platform",
       "pipeline_stage": "Discovery",
-      "strategic_objectives": ["Accelerate cloud migration"],
+      "strategic_objectives": [
+        "Accelerate cloud migration"
+      ],
       "launch_date": "2026-08-01",
       "progress": 8,
-      "risks": [],
+      "risks": [
+        {
+          "id": "r-062",
+          "program_id": "prog-018",
+          "title": "Data migration complexity",
+          "severity": "High",
+          "description": "Complex data migration to optimized storage",
+          "mitigation": "Phased migration approach",
+          "status": "Open"
+        },
+        {
+          "id": "r-063",
+          "program_id": "prog-018",
+          "title": "Cost optimization accuracy",
+          "severity": "Medium",
+          "description": "Balancing cost savings with performance",
+          "mitigation": "Comprehensive cost-benefit analysis",
+          "status": "Open"
+        },
+        {
+          "id": "r-064",
+          "program_id": "prog-018",
+          "title": "Vendor lock-in concerns",
+          "severity": "Low",
+          "description": "Dependency on specific cloud storage provider",
+          "mitigation": "Multi-cloud strategy evaluation",
+          "status": "Open"
+        }
+      ],
       "milestones": [
         {
           "id": "m-019",
@@ -545,9 +1281,881 @@
           "due_date": "2026-03-15",
           "completed_date": null,
           "status": "Upcoming"
+        },
+        {
+          "id": "m-074",
+          "program_id": "prog-018",
+          "name": "Storage Analysis Complete",
+          "due_date": "2026-04-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-075",
+          "program_id": "prog-018",
+          "name": "Optimization Plan",
+          "due_date": "2026-06-01",
+          "completed_date": null,
+          "status": "Upcoming"
         }
       ],
       "last_update": "Discovery phase. Analyzing current storage patterns."
+    },
+    {
+      "id": "prog-019",
+      "name": "International Localization",
+      "description": "Multi-language support and regional adaptation for global markets",
+      "status": "On Track",
+      "owner": "M. Rodriguez",
+      "team": "Internationalization",
+      "product_line": "Mobile",
+      "pipeline_stage": "In Progress",
+      "strategic_objectives": [
+        "International expansion",
+        "Enhance mobile experience"
+      ],
+      "launch_date": "2026-04-30",
+      "progress": 60,
+      "risks": [
+        {
+          "id": "r-009",
+          "program_id": "prog-019",
+          "title": "Translation quality assurance",
+          "severity": "Medium",
+          "description": "Maintaining translation consistency across languages",
+          "mitigation": "Professional translation services engaged",
+          "status": "Open"
+        },
+        {
+          "id": "r-065",
+          "program_id": "prog-019",
+          "title": "Cultural adaptation",
+          "severity": "Medium",
+          "description": "Cultural nuances in localization",
+          "mitigation": "Local market research and adaptation",
+          "status": "Open"
+        },
+        {
+          "id": "r-066",
+          "program_id": "prog-019",
+          "title": "Regional compliance",
+          "severity": "High",
+          "description": "Varying regulations across regions",
+          "mitigation": "Regional compliance teams",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-020",
+          "program_id": "prog-019",
+          "name": "Language Pack v1",
+          "due_date": "2026-03-15",
+          "completed_date": "2026-03-10",
+          "status": "Completed"
+        },
+        {
+          "id": "m-021",
+          "program_id": "prog-019",
+          "name": "Regional Testing",
+          "due_date": "2026-04-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-076",
+          "program_id": "prog-019",
+          "name": "Cultural Adaptation Complete",
+          "due_date": "2026-04-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "First language packs deployed. Regional testing in progress."
+    },
+    {
+      "id": "prog-020",
+      "name": "Developer Portal v3",
+      "description": "Next-generation developer platform with enhanced APIs and documentation",
+      "status": "On Track",
+      "owner": "T. Kumar",
+      "team": "Developer Experience",
+      "product_line": "Platform",
+      "pipeline_stage": "Planning",
+      "strategic_objectives": [
+        "Strengthen core platform"
+      ],
+      "launch_date": "2026-07-15",
+      "progress": 25,
+      "risks": [
+        {
+          "id": "r-010",
+          "program_id": "prog-020",
+          "title": "API versioning complexity",
+          "severity": "Low",
+          "description": "Backward compatibility concerns with new API structure",
+          "mitigation": "Comprehensive migration plan in development",
+          "status": "Open"
+        },
+        {
+          "id": "r-067",
+          "program_id": "prog-020",
+          "title": "Developer adoption",
+          "severity": "Medium",
+          "description": "Getting developers to use new portal",
+          "mitigation": "Migration incentives and support",
+          "status": "Open"
+        },
+        {
+          "id": "r-068",
+          "program_id": "prog-020",
+          "title": "Documentation completeness",
+          "severity": "Low",
+          "description": "Comprehensive documentation requirements",
+          "mitigation": "Technical writing team expansion",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-022",
+          "program_id": "prog-020",
+          "name": "API Design Review",
+          "due_date": "2026-03-30",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-023",
+          "program_id": "prog-020",
+          "name": "Beta Portal Launch",
+          "due_date": "2026-05-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-077",
+          "program_id": "prog-020",
+          "name": "Developer Feedback Incorporated",
+          "due_date": "2026-04-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "API design phase. Gathering developer feedback."
+    },
+    {
+      "id": "prog-021",
+      "name": "GDPR Compliance Suite",
+      "description": "Comprehensive GDPR compliance tools and data governance framework",
+      "status": "At Risk",
+      "owner": "S. Laurent",
+      "team": "Compliance",
+      "product_line": "Platform",
+      "pipeline_stage": "In Progress",
+      "strategic_objectives": [
+        "International expansion"
+      ],
+      "launch_date": "2026-03-31",
+      "progress": 70,
+      "risks": [
+        {
+          "id": "r-011",
+          "program_id": "prog-021",
+          "title": "Legal review timeline",
+          "severity": "High",
+          "description": "Extended legal review process delaying implementation",
+          "mitigation": "External legal counsel engaged",
+          "status": "Open"
+        },
+        {
+          "id": "r-012",
+          "program_id": "prog-021",
+          "title": "Data migration complexity",
+          "severity": "Medium",
+          "description": "Complex data mapping for compliance requirements",
+          "mitigation": "Specialized data team assigned",
+          "status": "Open"
+        },
+        {
+          "id": "r-069",
+          "program_id": "prog-021",
+          "title": "Cross-border data transfers",
+          "severity": "High",
+          "description": "International data transfer compliance",
+          "mitigation": "Regional data hosting strategy",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-024",
+          "program_id": "prog-021",
+          "name": "Legal Framework Complete",
+          "due_date": "2026-02-28",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-025",
+          "program_id": "prog-021",
+          "name": "Compliance Audit",
+          "due_date": "2026-03-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-078",
+          "program_id": "prog-021",
+          "name": "Compliance Certification",
+          "due_date": "2026-03-31",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Legal review causing delays. May impact Q1 launch."
+    },
+    {
+      "id": "prog-022",
+      "name": "Container Platform Migration",
+      "description": "Migration to Kubernetes-based container orchestration platform",
+      "status": "On Track",
+      "owner": "J. Martinez",
+      "team": "Infrastructure",
+      "product_line": "Platform",
+      "pipeline_stage": "In Progress",
+      "strategic_objectives": [
+        "Modernize infrastructure",
+        "Accelerate cloud migration"
+      ],
+      "launch_date": "2026-05-15",
+      "progress": 45,
+      "risks": [
+        {
+          "id": "r-013",
+          "program_id": "prog-022",
+          "title": "Service disruption risk",
+          "severity": "Medium",
+          "description": "Potential downtime during migration",
+          "mitigation": "Blue-green deployment strategy",
+          "status": "Open"
+        },
+        {
+          "id": "r-070",
+          "program_id": "prog-022",
+          "title": "Container security",
+          "severity": "Medium",
+          "description": "Security vulnerabilities in containerized apps",
+          "mitigation": "Container security scanning",
+          "status": "Open"
+        },
+        {
+          "id": "r-071",
+          "program_id": "prog-022",
+          "title": "Team skill gaps",
+          "severity": "Low",
+          "description": "Kubernetes expertise gaps in team",
+          "mitigation": "Training and certification programs",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-026",
+          "program_id": "prog-022",
+          "name": "Test Cluster Deploy",
+          "due_date": "2026-03-01",
+          "completed_date": "2026-02-28",
+          "status": "Completed"
+        },
+        {
+          "id": "m-027",
+          "program_id": "prog-022",
+          "name": "Production Migration",
+          "due_date": "2026-05-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-079",
+          "program_id": "prog-022",
+          "name": "Production Readiness",
+          "due_date": "2026-04-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Test cluster successful. Production migration planning underway."
+    },
+    {
+      "id": "prog-023",
+      "name": "Customer Success Platform",
+      "description": "Unified customer success management and analytics platform",
+      "status": "On Track",
+      "owner": "A. Thompson",
+      "team": "Customer Experience",
+      "product_line": "Platform",
+      "pipeline_stage": "Planning",
+      "strategic_objectives": [
+        "Improve user retention"
+      ],
+      "launch_date": "2026-06-30",
+      "progress": 15,
+      "risks": [
+        {
+          "id": "r-072",
+          "program_id": "prog-023",
+          "title": "Data integration complexity",
+          "severity": "High",
+          "description": "Integrating data from multiple customer systems",
+          "mitigation": "Standardized data integration framework",
+          "status": "Open"
+        },
+        {
+          "id": "r-073",
+          "program_id": "prog-023",
+          "title": "User adoption",
+          "severity": "Medium",
+          "description": "Customer success team adoption challenges",
+          "mitigation": "Change management and training",
+          "status": "Open"
+        },
+        {
+          "id": "r-074",
+          "program_id": "prog-023",
+          "title": "ROI measurement",
+          "severity": "Low",
+          "description": "Measuring platform impact on customer success",
+          "mitigation": "Comprehensive analytics and KPIs",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-028",
+          "program_id": "prog-023",
+          "name": "Requirements Gathering",
+          "due_date": "2026-03-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-029",
+          "program_id": "prog-023",
+          "name": "MVP Development",
+          "due_date": "2026-05-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-080",
+          "program_id": "prog-023",
+          "name": "Platform Integration",
+          "due_date": "2026-05-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Requirements gathering phase. Stakeholder interviews complete."
+    },
+    {
+      "id": "prog-024",
+      "name": "Data Privacy Framework",
+      "description": "Enterprise-grade data privacy and consent management system",
+      "status": "At Risk",
+      "owner": "R. Chen",
+      "team": "Privacy Engineering",
+      "product_line": "Platform",
+      "pipeline_stage": "In Progress",
+      "strategic_objectives": [
+        "International expansion"
+      ],
+      "launch_date": "2026-04-30",
+      "progress": 55,
+      "risks": [
+        {
+          "id": "r-014",
+          "program_id": "prog-024",
+          "title": "Consent management complexity",
+          "severity": "High",
+          "description": "Complex consent flow requirements across jurisdictions",
+          "mitigation": "Jurisdiction-specific implementations planned",
+          "status": "Open"
+        },
+        {
+          "id": "r-075",
+          "program_id": "prog-024",
+          "title": "Consent fatigue",
+          "severity": "Medium",
+          "description": "User fatigue from frequent consent requests",
+          "mitigation": "Simplified consent interfaces",
+          "status": "Open"
+        },
+        {
+          "id": "r-076",
+          "program_id": "prog-024",
+          "title": "Regulatory changes",
+          "severity": "High",
+          "description": "Frequent changes in privacy regulations",
+          "mitigation": "Agile compliance framework",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-030",
+          "program_id": "prog-024",
+          "name": "Privacy Framework v1",
+          "due_date": "2026-03-31",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-081",
+          "program_id": "prog-024",
+          "name": "Consent Flow Testing",
+          "due_date": "2026-04-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-082",
+          "program_id": "prog-024",
+          "name": "Legal Review Complete",
+          "due_date": "2026-04-30",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Framework development progressing. Consent flows being refined."
+    },
+    {
+      "id": "prog-025",
+      "name": "Performance Optimization Suite",
+      "description": "Application performance monitoring and optimization platform",
+      "status": "On Track",
+      "owner": "L. Wang",
+      "team": "Performance Engineering",
+      "product_line": "Platform",
+      "pipeline_stage": "Discovery",
+      "strategic_objectives": [
+        "Strengthen core platform"
+      ],
+      "launch_date": "2026-08-15",
+      "progress": 10,
+      "risks": [
+        {
+          "id": "r-077",
+          "program_id": "prog-025",
+          "title": "Monitoring overhead",
+          "severity": "Medium",
+          "description": "Performance monitoring impacting system performance",
+          "mitigation": "Optimized monitoring strategies",
+          "status": "Open"
+        },
+        {
+          "id": "r-078",
+          "program_id": "prog-025",
+          "title": "Alert fatigue",
+          "severity": "Low",
+          "description": "Too many performance alerts causing fatigue",
+          "mitigation": "Intelligent alert prioritization",
+          "status": "Open"
+        },
+        {
+          "id": "r-079",
+          "program_id": "prog-025",
+          "title": "Tool selection complexity",
+          "severity": "Medium",
+          "description": "Difficulty choosing optimal performance tools",
+          "mitigation": "Comprehensive tool evaluation",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-031",
+          "program_id": "prog-025",
+          "name": "Performance Baseline",
+          "due_date": "2026-04-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-032",
+          "program_id": "prog-025",
+          "name": "Tool Selection",
+          "due_date": "2026-05-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-083",
+          "program_id": "prog-025",
+          "name": "Tool Evaluation Complete",
+          "due_date": "2026-05-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Discovery phase. Current performance analysis underway."
+    },
+    {
+      "id": "prog-026",
+      "name": "Smart Energy Management",
+      "description": "AI-powered energy optimization for Smart Home ecosystem",
+      "status": "On Track",
+      "owner": "K. Schmidt",
+      "team": "Smart Energy",
+      "product_line": "Smart Home",
+      "pipeline_stage": "Planning",
+      "strategic_objectives": [
+        "Expand IoT ecosystem",
+        "Enable AI capabilities"
+      ],
+      "launch_date": "2026-06-01",
+      "progress": 20,
+      "risks": [
+        {
+          "id": "r-015",
+          "program_id": "prog-026",
+          "title": "Hardware compatibility",
+          "severity": "Medium",
+          "description": "Legacy device integration challenges",
+          "mitigation": "Adapter development planned",
+          "status": "Open"
+        },
+        {
+          "id": "r-080",
+          "program_id": "prog-026",
+          "title": "AI model accuracy",
+          "severity": "Medium",
+          "description": "Energy optimization model accuracy",
+          "mitigation": "Continuous model training and validation",
+          "status": "Open"
+        },
+        {
+          "id": "r-081",
+          "program_id": "prog-026",
+          "title": "User behavior prediction",
+          "severity": "Low",
+          "description": "Difficulty predicting user energy usage patterns",
+          "mitigation": "Machine learning with user feedback",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-033",
+          "program_id": "prog-026",
+          "name": "Energy Model Development",
+          "due_date": "2026-03-30",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-034",
+          "program_id": "prog-026",
+          "name": "Beta Testing",
+          "due_date": "2026-05-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-084",
+          "program_id": "prog-026",
+          "name": "Energy Model Validation",
+          "due_date": "2026-04-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Energy modeling in progress. Hardware team addressing compatibility."
+    },
+    {
+      "id": "prog-027",
+      "name": "Mobile Gaming Platform",
+      "description": "Cloud-based mobile gaming infrastructure and SDK",
+      "status": "On Track",
+      "owner": "P. Nguyen",
+      "team": "Gaming Platform",
+      "product_line": "Mobile",
+      "pipeline_stage": "Discovery",
+      "strategic_objectives": [
+        "Enhance mobile experience",
+        "Drive subscription growth"
+      ],
+      "launch_date": "2026-09-01",
+      "progress": 5,
+      "risks": [
+        {
+          "id": "r-082",
+          "program_id": "prog-027",
+          "title": "Game performance optimization",
+          "severity": "High",
+          "description": "Optimizing games for diverse mobile devices",
+          "mitigation": "Device-specific optimization",
+          "status": "Open"
+        },
+        {
+          "id": "r-083",
+          "program_id": "prog-027",
+          "title": "Developer SDK adoption",
+          "severity": "Medium",
+          "description": "Getting game developers to adopt SDK",
+          "mitigation": "Developer incentives and support",
+          "status": "Open"
+        },
+        {
+          "id": "r-084",
+          "program_id": "prog-027",
+          "title": "Cloud gaming latency",
+          "severity": "Medium",
+          "description": "Network latency affecting gaming experience",
+          "mitigation": "Edge computing deployment",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-035",
+          "program_id": "prog-027",
+          "name": "Market Research",
+          "due_date": "2026-04-30",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-036",
+          "program_id": "prog-027",
+          "name": "SDK Architecture",
+          "due_date": "2026-06-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-085",
+          "program_id": "prog-027",
+          "name": "SDK Beta Release",
+          "due_date": "2026-07-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Market research phase. Gaming industry analysis in progress."
+    },
+    {
+      "id": "prog-028",
+      "name": "Video Transcoding Service",
+      "description": "Cloud-native video transcoding and optimization service",
+      "status": "At Risk",
+      "owner": "M. Foster",
+      "team": "Video Infrastructure",
+      "product_line": "Video",
+      "pipeline_stage": "In Progress",
+      "strategic_objectives": [
+        "Accelerate cloud migration"
+      ],
+      "launch_date": "2026-04-15",
+      "progress": 40,
+      "risks": [
+        {
+          "id": "r-016",
+          "program_id": "prog-028",
+          "title": "Encoding performance",
+          "severity": "High",
+          "description": "Meeting real-time transcoding requirements",
+          "mitigation": "Hardware acceleration evaluation",
+          "status": "Open"
+        },
+        {
+          "id": "r-017",
+          "program_id": "prog-028",
+          "title": "Cost optimization",
+          "severity": "Medium",
+          "description": "Cloud processing costs exceeding budget",
+          "mitigation": "Efficiency improvements in progress",
+          "status": "Open"
+        },
+        {
+          "id": "r-085",
+          "program_id": "prog-028",
+          "title": "Quality assurance complexity",
+          "severity": "Medium",
+          "description": "Ensuring video quality across formats",
+          "mitigation": "Automated quality testing",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-037",
+          "program_id": "prog-028",
+          "name": "Performance Benchmarks",
+          "due_date": "2026-03-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-086",
+          "program_id": "prog-028",
+          "name": "Performance Optimization",
+          "due_date": "2026-03-30",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-087",
+          "program_id": "prog-028",
+          "name": "Production Deployment",
+          "due_date": "2026-04-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Performance optimization challenges. Hardware acceleration being evaluated."
+    },
+    {
+      "id": "prog-029",
+      "name": "Partner Integration Hub",
+      "description": "Unified platform for third-party integrations and partnerships",
+      "status": "On Track",
+      "owner": "C. Davis",
+      "team": "Partnerships",
+      "product_line": "Platform",
+      "pipeline_stage": "Planning",
+      "strategic_objectives": [
+        "Strengthen core platform"
+      ],
+      "launch_date": "2026-07-01",
+      "progress": 30,
+      "risks": [
+        {
+          "id": "r-086",
+          "program_id": "prog-029",
+          "title": "Partner API reliability",
+          "severity": "Medium",
+          "description": "Dependence on third-party partner APIs",
+          "mitigation": "Multiple fallback options",
+          "status": "Open"
+        },
+        {
+          "id": "r-087",
+          "program_id": "prog-029",
+          "title": "Integration testing complexity",
+          "severity": "Low",
+          "description": "Complex testing scenarios with partners",
+          "mitigation": "Automated integration testing",
+          "status": "Open"
+        },
+        {
+          "id": "r-088",
+          "program_id": "prog-029",
+          "title": "Partner relationship management",
+          "severity": "Medium",
+          "description": "Maintaining strong partner relationships",
+          "mitigation": "Dedicated partner management team",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-038",
+          "program_id": "prog-029",
+          "name": "Partner API Standards",
+          "due_date": "2026-04-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-039",
+          "program_id": "prog-029",
+          "name": "Integration Framework",
+          "due_date": "2026-05-30",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-088",
+          "program_id": "prog-029",
+          "name": "Partner Onboarding",
+          "due_date": "2026-06-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "API standards development. Partner feedback being incorporated."
+    },
+    {
+      "id": "prog-030",
+      "name": "Edge Computing Platform",
+      "description": "Distributed edge computing infrastructure for low-latency applications",
+      "status": "On Track",
+      "owner": "S. Patel",
+      "team": "Edge Infrastructure",
+      "product_line": "Platform",
+      "pipeline_stage": "Discovery",
+      "strategic_objectives": [
+        "Modernize infrastructure"
+      ],
+      "launch_date": "2026-10-01",
+      "progress": 8,
+      "risks": [
+        {
+          "id": "r-018",
+          "program_id": "prog-030",
+          "title": "Edge node deployment",
+          "severity": "Medium",
+          "description": "Geographic distribution complexity",
+          "mitigation": "Phased rollout strategy planned",
+          "status": "Open"
+        },
+        {
+          "id": "r-089",
+          "program_id": "prog-030",
+          "title": "Edge security challenges",
+          "severity": "High",
+          "description": "Security challenges in distributed edge infrastructure",
+          "mitigation": "Edge-specific security frameworks",
+          "status": "Open"
+        },
+        {
+          "id": "r-090",
+          "program_id": "prog-030",
+          "title": "Latency measurement",
+          "severity": "Medium",
+          "description": "Accurately measuring edge latency improvements",
+          "mitigation": "Comprehensive latency monitoring",
+          "status": "Open"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m-040",
+          "program_id": "prog-030",
+          "name": "Edge Architecture",
+          "due_date": "2026-05-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-089",
+          "program_id": "prog-030",
+          "name": "Edge Node Deployment",
+          "due_date": "2026-06-01",
+          "completed_date": null,
+          "status": "Upcoming"
+        },
+        {
+          "id": "m-090",
+          "program_id": "prog-030",
+          "name": "Latency Testing",
+          "due_date": "2026-07-15",
+          "completed_date": null,
+          "status": "Upcoming"
+        }
+      ],
+      "last_update": "Architecture discovery phase. Use case analysis in progress."
     }
   ]
 }

@@ -1,50 +1,47 @@
 # Program Portfolio AI System
 
-An AI-powered Program Portfolio Management system with an executive dashboard and Slack integration.
+AI-powered Program Portfolio Management SaaS — executive dashboard, AI chat, Slack integration.
 
-## Quick Start
-
-### Frontend (Dashboard)
+## Quick Start (Local Dev)
 
 ```bash
-cd frontend
-npm install
-npm run dev
+# Terminal 1: Backend
+cd backend && source venv/bin/activate && uvicorn main:app --reload --port 8000
+
+# Terminal 2: Frontend (from repo root)
+npm install && npm run dev
 # Open http://localhost:3000
-```
-
-### Backend (Not yet implemented)
-
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-python database/seed.py   # Populate with synthetic data
-uvicorn main:app --reload --port 8000
+# Frontend proxies /api/py/* → FastAPI at :8000
 ```
 
 ## Tech Stack
 
 - **Frontend**: Next.js 14, TypeScript, Tailwind CSS, Recharts
-- **Backend**: Python, FastAPI, SQLite, ChromaDB (planned)
-- **AI**: Claude/OpenAI via LlamaIndex (planned)
-- **Slack**: Bolt for Python (planned)
+- **Backend**: FastAPI (Vercel Function), Supabase PostgreSQL + pgvector
+- **AI**: Vercel AI Gateway (BYOK, multi-model) / Claude + OpenAI (prototype)
+- **Auth**: Supabase Auth + Row-Level Security
+- **Slack**: HTTP/Events API + Vercel Functions
 
 ## Project Structure
 
 ```
-├── frontend/          # Next.js dashboard application
-├── backend/           # FastAPI server (planned)
-├── slack-bot/         # Slack integration (planned)
+├── app/               # Next.js App Router (pages, layouts)
+├── components/        # React components (KPIs, charts, chat widget)
+├── lib/               # Frontend utilities (API client, mock data)
+├── api/index.py       # Vercel Function entrypoint → imports FastAPI
+├── backend/           # Python source (FastAPI, database, agent)
+├── slack-bot/         # Slack bot (prototype mode)
 ├── data/              # Synthetic program data
-└── PRD.md             # Product requirements
+├── vercel.json        # Vercel routing + function config
+├── next.config.mjs    # Next.js config with API proxy rewrites
+├── requirements.txt   # Python deps (for Vercel)
+└── PRD.md             # Product requirements (v2.0)
 ```
 
-## Features
+## Deploy
 
-- **Executive Dashboard**: KPI cards, velocity funnel, strategic alignment, risk landscape
-- **AI Assistant**: Context-aware Q&A with proactive insights
-- **Program Table**: Filterable view of all programs with status tracking
+```bash
+vercel deploy
+```
 
-See [PRD.md](./PRD.md) for full requirements.
+See [PRD.md](./PRD.md) for full requirements and architecture.

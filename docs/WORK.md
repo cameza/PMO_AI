@@ -1,9 +1,9 @@
 # Current Work - Week of Feb 2, 2026
 
 ## Active Feature Branches
-- `feature/frontend-integration` (Frontend) → Stream F: Integration & Features
-- `feature/backend-agent` (Backend) → Stream B: AI Agent Core
-- `feature/slack-bot` (Backend) → Stream S: Slack Integration
+- `feature/frontend-integration` (Antigravity) → Stream F: Integration & Features ✓
+- `feature/backend-agent` (Backend) → Stream B: AI Agent Core ✓
+- `feature/slack-bot` (Backend) → Stream S: Slack Integration [/]
 
 ### Completed Branches
 - `feature/backend-data-db` (Windsurf) → Stream C: Data & Database ✓
@@ -147,7 +147,6 @@ app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:3000"], ...)
 **File:** `backend/api/agent.py`
 - [x] `POST /api/agent/chat` - Streaming SSE endpoint (stub, RAG TBD)
 - [x] `POST /api/agent/summary` - Portfolio summary endpoint (stub)
-
 ---
 
 ## Integration Points This Week
@@ -160,7 +159,8 @@ app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:3000"], ...)
 ## Completed This Week
 - **Stream C**: SQLite database with 18 programs, 8 risks, 19 milestones
 - **Stream D**: FastAPI with REST endpoints and SSE chat stub
-- **Stream E**: Mobile-responsive dashboard with polished UI
+- **Stream E**: Mobile-responsive dashboard with unified compact UI
+- **Stream F**: Functional SSE chat widget with RAG integration and proactive summaries
  
 ---
  
@@ -183,11 +183,6 @@ app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:3000"], ...)
  
 ---
  
-## Blocked/Questions
-- None currently
-
----
-
 ## Stream F: Frontend — Integration & Features
 
 ### F1. Frontend-Backend Integration ⚡ HIGH PRIORITY
@@ -206,25 +201,32 @@ app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:3000"], ...)
 
 ### F3. Program Detail Page
 **File:** `frontend/app/programs/[id]/page.tsx` (new)
-- [ ] Create dynamic route for individual program view
-- [ ] Display: description, status, product line, pipeline stage, owner, team, launch date, progress, strategic objectives
-- [ ] List all risks with severity and mitigation
-- [ ] List all milestones with due dates and completion status
-- [ ] Fetch from `GET /api/programs/:id`
-> **Dependency:** F1 (needs API integration pattern established)
+- [x] Create dynamic route for individual program view
+- [x] Display: description, status, product line, pipeline stage, owner, team, launch date, progress, strategic objectives
+- [x] List all risks with severity and mitigation
+- [x] List all milestones with due dates and completion status
+- [x] Fetch from `GET /api/programs/:id`
+> **Status:** Completed ✓
 
 ### F4. Functional Chat Widget
 **File:** `frontend/components/ChatWidget.tsx`
-- [ ] Connect to `POST /api/agent/chat` SSE endpoint
-- [ ] Implement streaming response display (character by character)
-- [ ] Maintain conversation history in session state
-- [ ] Add proactive insight on dashboard load (call agent on mount)
-> **Dependency:** B4 (backend agent endpoint must be functional)
+- [x] Connect to `POST /api/agent/chat` SSE endpoint
+- [x] Implement streaming response display (character by character)
+- [x] Maintain conversation history in session state
+- [x] Add proactive insight on dashboard load (call agent on mount)
+> **Status:** Completed ✓
 
 ### F5. Context-Aware Chat
 **File:** `frontend/components/ChatWidget.tsx`
-- [ ] Pass `context.programId` when chat opened on `/programs/[id]` page
-> **Dependency:** F3 + F4 (needs detail page and functional chat)
+- [x] Pass `context.programId` when chat opened on `/programs/[id]` page
+> **Status:** Completed ✓
+
+### F6. Dashboard Consolidation
+**Files:** `frontend/app/page.tsx`, `frontend/app/dashboard-compact/`
+- [x] Unify dashboard UI around the Compact Layout
+- [x] Remove standard layout and layout toggle buttons
+- [x] Delete redundant `dashboard-compact` route/directory
+> **Status:** Completed ✓
 
 ---
 
@@ -232,42 +234,46 @@ app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:3000"], ...)
 
 ### B1. LLM Provider Abstraction ⚡ HIGH PRIORITY
 **Files:** `backend/agent/llm_provider.py` (new), `backend/agent/prompts.py` (new)
-- [ ] Create `LLMProvider` base class with `generate()` and `stream()` methods
-- [ ] Implement `ClaudeProvider` (Anthropic claude-sonnet-4-20250514)
-- [ ] Implement `OpenAIProvider` (GPT-4)
-- [ ] Provider selected via `LLM_PROVIDER` env var
-- [ ] Prompt templates adapt to provider (XML tags for Claude)
-> **Dependency:** None (can start immediately)
+- [x] Create `LLMProvider` base class with `generate()` and `stream()` methods
+- [x] Implement `ClaudeProvider` (Anthropic claude-sonnet-4-20250514)
+- [x] Implement `OpenAIProvider` (GPT-4)
+- [x] Provider selected via `LLM_PROVIDER` env var
+- [x] Prompt templates adapt to provider (XML tags for Claude)
+> **Status:** Completed ✓
 
 ### B2. RAG Implementation
 **File:** `backend/agent/rag.py` (new)
-- [ ] Set up ChromaDB in-memory vector store
-- [ ] Embed program descriptions, update narratives, risk descriptions at startup
-- [ ] Implement semantic search function for retrieval
-> **Dependency:** B1 (needs LLM provider for embeddings or sentence-transformers)
+- [x] Set up ChromaDB in-memory vector store
+- [x] Embed program descriptions, update narratives, risk descriptions at startup
+- [x] Implement semantic search function for retrieval
+> **Status:** Completed ✓
+> **Notes:** 45 documents indexed (18 programs + 8 risks + 19 milestones). Functions: `index_portfolio_data()`, `semantic_search()`, `get_context_for_query()`, `get_rag_stats()`. Health endpoint now includes RAG status.
 
 ### B3. Query Handler — Agent Orchestration
 **File:** `backend/agent/query_handler.py` (new)
-- [ ] Receive user query + conversation history
-- [ ] Determine if query needs vector search, SQL query, or both
-- [ ] Assemble context from retrieved chunks
-- [ ] Call LLM with grounded context
-- [ ] Return streaming response
-- [ ] Handle "I don't have information on that" gracefully
-> **Dependency:** B1 + B2 (needs LLM provider and RAG)
+- [x] Receive user query + conversation history
+- [x] Determine if query needs vector search, SQL query, or both
+- [x] Assemble context from retrieved chunks
+- [x] Call LLM with grounded context
+- [x] Return streaming response
+- [x] Handle "I don't have information on that" gracefully
+> **Status:** Completed ✓
+> **Notes:** Hybrid retrieval implemented (semantic + structured). Functions: `process_query()`, `process_query_stream()`, `generate_proactive_insight()`, `generate_portfolio_summary()`. Query type detection routes to appropriate retrieval strategy.
 
 ### B4. Wire Agent to Chat Endpoint
 **File:** `backend/api/agent.py`
-- [ ] Replace stub with actual query_handler calls
-- [ ] Implement proper SSE streaming from LLM
-- [ ] Accept optional `context.programId` for context-aware responses
-> **Dependency:** B3 (needs query handler complete)
+- [x] Replace stub with actual query_handler calls
+- [x] Implement proper SSE streaming from LLM
+- [x] Accept optional `context.programId` for context-aware responses
+> **Status:** Completed ✓
+> **Notes:** Full integration with query_handler complete. Source type mapping implemented (risk/milestone → document). Error handling with graceful degradation. Chat streaming and summary endpoints now use real RAG pipeline.
 
 ### B5. Portfolio Summary Endpoint
 **File:** `backend/api/agent.py`
-- [ ] Implement `POST /api/agent/summary`
-- [ ] Query DB for portfolio state, assemble context, generate narrative summary
-> **Dependency:** B3 (needs query handler for LLM generation)
+- [x] Implement `POST /api/agent/summary`
+- [x] Query DB for portfolio state, assemble context, generate narrative summary
+> **Status:** Completed ✓
+> **Notes:** Implemented as part of B4. Uses generate_portfolio_summary() with RAG pipeline. Returns structured response with summary, timestamp, and confidence.
 
 ---
 
@@ -275,18 +281,141 @@ app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:3000"], ...)
 
 ### B6. Slack Bot Core
 **Files:** `slack-bot/app.py` (new), `slack-bot/handlers/messages.py` (new), `slack-bot/requirements.txt` (new)
-- [ ] Set up Slack Bolt app
-- [ ] Handle `message.im` (DMs) and `app_mention` events
-- [ ] Forward messages to `POST /api/agent/chat`
-- [ ] Post responses back to Slack
-> **Dependency:** B4 (agent endpoint must be functional)
+- [x] Set up Slack Bolt app
+- [x] Handle `message.im` (DMs) and `app_mention` events
+- [x] Forward messages to `POST /api/agent/chat`
+- [x] Post responses back to Slack
+> **Status:** Completed ✓
+> **Notes:** Socket Mode implementation with event handlers for DMs and @mentions. SSE streaming from backend, responds in-thread for channel mentions. Error handling with graceful fallback messages.
 
 ### B7. Monday Morning Summary
 **File:** `slack-bot/handlers/notifications.py` (new)
-- [ ] Implement scheduler (APScheduler) for Monday 9 AM
-- [ ] Call `POST /api/agent/summary`
-- [ ] Post generated summary to configured Slack channel
+- [x] Implement scheduler (APScheduler) for Monday 9 AM
+- [x] Call `POST /api/agent/summary`
+- [x] Post generated summary to configured Slack channel
 > **Dependency:** B5 + B6 (needs summary endpoint and Slack bot running)
+> **Status:** Completed ✓
+> **Notes:** APScheduler integrated with cron trigger for Mondays 9AM. Includes graceful shutdown, error handling, and test function. Requires SLACK_CHANNEL_ID environment variable.
+
+---
+
+## Final Polish Tasks (Feb 4 Day Tasks)
+
+### P1. UI Cleanup
+**File:** `frontend/components/ChatWidget.tsx`
+- [x] Remove "Generate Report" and "Notify Team" buttons (not in PRD)
+> **Status:** Completed ✓
+
+### P2. Dashboard Sticky Layout & UI Polish
+**File:** `frontend/app/page.tsx`, `frontend/components/ProgramTable.tsx`, `frontend/components/charts/RiskLandscapeChart.tsx`
+- [x] Fix main page scrolling issue (overflow-hidden preventing scroll)
+- [x] Remove ProgramTable maxPrograms limit and enable internal scroll
+- [x] Implement fixed dashboard layout (KPIs/Charts pinned at top)
+- [x] Implement sticky table headers and portfolio title
+- [x] Match table stage colors with Velocity chart gradient
+- [x] Fix Risk Landscape chart stacking order and corner radius
+> **Status:** Completed ✓
+
+### P3. Chat Functionality Testing
+- [x] Verify backend running at port 8000
+- [x] Test chat widget with real LLM responses  
+- [x] Debug any SSE streaming issues
+> **Status:** Completed ✓
+> **Notes:** Backend running with .env loaded, chat functional in fallback mode (RAG disabled for startup)
+
+### P4. Admin Database View (Optional)
+**File:** `frontend/app/admin/page.tsx` (new)
+- [x] Create admin page to view full database
+- [x] Show programs, risks, milestones tables with all columns
+- [x] Add database statistics
+> **Status:** Completed ✓
+
+### P5. Synthetic Data Enhancement (Optional)
+**File:** `data/synthetic_programs.json`
+- [x] Expand from 18 to 30 programs
+- [x] Add 3+ risks and 3+ milestones per program
+> **Status:** Completed ✓
+---
+
+## Tomorrow's Tasks (Feb 5)
+
+### T1. RAG Initialization Investigation
+**Priority:** HIGH
+- [x] Investigate why ChromaDB embedding model hangs during startup
+- [x] Test different embedding models or configurations
+- [x] Re-enable RAG with proper timeout/async handling
+- [x] Verify chat responses are grounded in vector search data
+> **Status:** Completed ✓
+> **Solution:** Implemented pre-download script for sentence-transformers model, async RAG initialization with 30s timeout, and _rag_ready flag for graceful degradation. RAG now initializes successfully with 210 documents indexed.
+> **Context:** RAG initialization was hanging for 8+ minutes, temporarily disabled for quick startup
+
+### T2. Full Monday Morning Summary Integration Test
+**Priority:** HIGH
+- [x] Start backend service with all dependencies
+- [x] Launch Slack bot with scheduler initialized  
+- [x] Test summary generation via backend API
+- [x] Execute test_summary_now() to post to Slack
+- [x] Validate message appears in Slack channel correctly
+- [x] Verify all program names match database data
+- [x] Confirm message format and structure are correct
+> **Status:** Completed ✓
+> **Results:** Successfully posted 2026-character Monday Morning Summary to Slack channel C0AC8CGDJT1 with Message ID 1770308028.605059. All 30 programs referenced correctly, structured format with emojis working perfectly.
+
+### T3. Bidirectional Slack Communication Implementation
+**Priority:** HIGH
+- [x] Debug Slack bot startup issues (APScheduler cron trigger)
+- [x] Fix APScheduler configuration ('monday' → 'mon')
+- [x] Implement markdown-to-Slack formatting conversion
+- [x] Test user @mention → AI response functionality
+- [x] Validate proper formatting in Slack threads
+- [x] Confirm bidirectional communication working end-to-end
+> **Status:** Completed ✓
+> **Results:** Full bidirectional Slack communication implemented. Users can @mention PMO_AI with questions and receive properly formatted AI responses in threads. Markdown **bold** automatically converted to Slack *italic* format.
+
+### T4. Comprehensive Data Validation
+**Priority:** HIGH
+- [x] Validate Monday Morning Summary data accuracy
+- [x] Verify all program names exist in database
+- [x] Confirm status calculations are mathematically correct
+- [x] Check milestone data alignment
+- [x] Test AI responses for hallucination prevention
+> **Status:** Completed ✓
+> **Results:** 100% data accuracy confirmed. All Slack content grounded in database with no hallucinations detected.
+
+### T5. Dashboard Chart Enhancements
+**Priority:** HIGH
+- [x] Replace Risk Landscape Chart with Portfolio Status Overview donut chart
+- [x] Convert horizontal stacked bar to donut chart with percentage labels
+- [x] Implement Launch Cadence database-driven calculation
+- [x] Remove hardcoded mock data and use actual program launch dates
+- [x] Update dashboard layout to prioritize portfolio status
+- [x] Test chart responsiveness and visual consistency
+> **Status:** Completed ✓
+> **Results:** Successfully implemented donut chart for Portfolio Status Overview and database-driven Launch Cadence. Charts now use real program data, eliminating hardcoded values. Current month (February) correctly highlighted in Launch Cadence.
+
+---
+
+## Today's Completed Tasks (Feb 6)
+
+### T5. RAG Initialization Fix
+**Priority:** HIGH
+- [x] Created pre-download script for sentence-transformers model
+- [x] Implemented async RAG initialization with 30s timeout
+- [x] Added _rag_ready flag for graceful degradation
+- [x] Updated query_handler to check RAG state before semantic search
+- [x] Re-enabled RAG initialization in main.py
+> **Status:** Completed ✓
+> **Results:** RAG initializes successfully with 210 documents. Backend starts quickly without hanging.
+
+### T6. Chat Widget Optimization
+**Priority:** MEDIUM
+- [x] Replaced proactive AI summary with static welcome message
+- [x] Added prompt suggestions in welcome message
+- [x] Enhanced markdown rendering (headers, bullet points)
+- [x] Fixed bullet point formatting and spacing issues
+- [x] Filtered welcome message from chat history
+> **Status:** Completed ✓
+> **Results:** Eliminated unnecessary LLM token usage, improved chat UX with proper formatting.
 
 ---
 
@@ -307,6 +436,7 @@ B1 (LLM Provider) → B2 (RAG) → B3 (Query Handler) → B4 (Chat Endpoint) →
 | F3 | After F1 |
 | F4 | After B4 complete |
 | F5 | After F3 + F4 |
+| F6 | After F4 |
 
 ### Tasks Ready to Assign Now
 - **Frontend:** F1, F2

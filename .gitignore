@@ -1,9 +1,13 @@
 # Dependencies
 node_modules/
 .next/
+out/
 venv/
 __pycache__/
 *.pyc
+.pnp
+.pnp.js
+.yarn/install-state.gz
 
 # Environment
 .env
@@ -13,6 +17,8 @@ __pycache__/
 # Logs
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # OS
 .DS_Store
@@ -30,3 +36,13 @@ Thumbs.db
 # Build
 dist/
 build/
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Testing
+/coverage

@@ -1,2 +1,2 @@
 # API module for PMO AI System
-from . import programs, agent
+from . import programs, agent, strategic_objectives
