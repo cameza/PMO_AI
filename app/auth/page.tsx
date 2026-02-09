@@ -16,6 +16,7 @@ export default function AuthPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    console.log('[Auth] handleSubmit fired, isSignUp:', isSignUp, 'email:', email);
     setError(null);
     setSuccess(null);
     setSubmitting(true);

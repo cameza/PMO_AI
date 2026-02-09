@@ -46,9 +46,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(programs.router, prefix="/api", tags=["programs"])
-app.include_router(agent.router, prefix="/api", tags=["agent"])
-app.include_router(strategic_objectives.router)
+# On Vercel, requests arrive as /api/py/... (via vercel.json rewrite).
+# Locally, next.config.mjs rewrites /api/py/:path* → localhost:8000/api/:path*
+IS_VERCEL = bool(os.environ.get("VERCEL"))
+API_PREFIX = "/api/py" if IS_VERCEL else "/api"
+
+app.include_router(programs.router, prefix=API_PREFIX, tags=["programs"])
+app.include_router(agent.router, prefix=API_PREFIX, tags=["agent"])
+app.include_router(strategic_objectives.router, prefix=f"{API_PREFIX}/strategic-objectives")
 
 
 def _check_existing_embeddings() -> int:
@@ -119,6 +124,7 @@ async def startup_event():
         set_rag_ready(False)
 
 
+@app.get(f"{API_PREFIX}/health")
 @app.get("/health")
 async def health_check():
     """Health check endpoint."""

@@ -24,7 +24,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/strategic-objectives", tags=["strategic-objectives"])
+router = APIRouter(tags=["strategic-objectives"])
 
 
 @router.get("/", response_model=List[StrategicObjective])
