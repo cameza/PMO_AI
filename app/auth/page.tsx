@@ -34,10 +34,12 @@ export default function AuthPage() {
           setError(error.message);
         } else {
           router.push('/');
+          router.refresh();
         }
       }
-    } catch {
-      setError('An unexpected error occurred.');
+    } catch (err) {
+      console.error('Auth error:', err);
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
     } finally {
       setSubmitting(false);
     }

@@ -21,23 +21,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    getSupabase().auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    let subscription: { unsubscribe: () => void } | null = null;
 
-    // Listen for auth changes
-    const { data: { subscription } } = getSupabase().auth.onAuthStateChange(
-      (_event, session) => {
+    try {
+      const sb = getSupabase();
+
+      // Get initial session
+      sb.auth.getSession().then(({ data: { session } }) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
-      }
-    );
+      }).catch((err) => {
+        console.error('Failed to get session:', err);
+        setLoading(false);
+      });
 
-    return () => subscription.unsubscribe();
+      // Listen for auth changes
+      const { data } = sb.auth.onAuthStateChange(
+        (_event, session) => {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      );
+      subscription = data.subscription;
+    } catch (err) {
+      console.error('Supabase init error:', err);
+      setLoading(false);
+    }
+
+    return () => subscription?.unsubscribe();
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
