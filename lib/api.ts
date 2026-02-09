@@ -13,11 +13,11 @@ const api = axios.create({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapProgram = (p: any): Program => ({
     ...p,
-    productLine: p.product_line,
-    pipelineStage: p.pipeline_stage,
-    launchDate: p.launch_date,
-    strategicObjectives: p.strategic_objectives,
-    lastUpdate: p.last_update,
+    productLine: p.product_line || '',
+    pipelineStage: p.pipeline_stage || '',
+    launchDate: p.launch_date || '',
+    strategicObjectives: p.strategic_objectives || [],
+    lastUpdate: p.last_update || '',
     // Risks also need mapping if their fields differ, let's check.
     // Backend Risk: id, program_id, title, severity, description, mitigation, status
     // Frontend Risk: id, programId, title, severity, description, mitigation, status
