@@ -123,12 +123,13 @@ pmo-ai/                                  # Vercel monorepo (Next.js at root)
 ├── next.config.mjs                       # Rewrites /api/py/* → FastAPI in dev
 ├── vercel.json                           # Routes /api/py/* → Python Function in prod
 ├── requirements.txt                      # Root Python deps (slim, for Vercel bundle)
-├── middleware.ts                          # Supabase Auth middleware (protects routes)
+├── middleware.ts                          # Supabase SSR middleware (refreshes session cookies)
 ├── api/
 │   └── index.py                          # Vercel Function entrypoint → imports FastAPI
 ├── app/
 │   ├── layout.tsx                        # Root layout, wraps AuthProvider
-│   ├── page.tsx                          # Dashboard home: KPIs + charts + program table
+│   ├── page.tsx                          # Dashboard home: KPIs + charts + program table (client-side auth guard)
+│   ├── error.tsx                         # Error boundary for client-side exceptions
 │   ├── auth/
 │   │   └── page.tsx                      # Login / signup page (Supabase Auth)
 │   ├── admin/
@@ -150,13 +151,13 @@ pmo-ai/                                  # Vercel monorepo (Next.js at root)
 │       └── PortfolioStatusChart.tsx      # Portfolio health distribution
 ├── lib/
 │   ├── api.ts                            # Axios client for FastAPI calls (/api/py/*)
-│   ├── supabase.ts                       # Supabase browser client singleton
+│   ├── supabase.ts                       # Lazy Supabase client via getSupabase() (SSG-safe)
 │   ├── auth-context.tsx                  # AuthProvider + useAuth hook
 │   └── mockData.ts                       # KPI/chart computation utilities
 ├── data/
 │   └── synthetic_programs.json           # Seed dataset: 30 synthetic programs
 ├── backend/
-│   ├── main.py                           # FastAPI app (startup, CORS, routers)
+│   ├── main.py                           # FastAPI app (dynamic /api or /api/py prefix, CORS, routers)
 │   ├── requirements.txt                  # Backend Python deps (includes RAG/LLM)
 │   ├── database/
 │   │   ├── db.py                         # Supabase PostgreSQL client (replaces SQLite)
@@ -857,6 +858,18 @@ The agent uses a hybrid retrieval approach to ground its responses:
 ---
 
 ## Changelog
+
+### v2.2 — February 9, 2026
+- **Vercel Deployment Fixes**: Resolved full deployment pipeline — app now live at `pmo-ai.vercel.app`.
+  - **Dynamic API Prefix**: FastAPI routers mount at `/api/py` on Vercel (detected via `VERCEL` env var) and `/api` locally. Fixes 404s caused by `vercel.json` rewrite passing original path to Python function.
+  - **Auth Redirect Loop Fix**: Removed server-side middleware redirect. Middleware now only refreshes Supabase session cookies. Auth guard moved to client-side (`app/page.tsx` checks `useAuth()` and redirects to `/auth`).
+  - **Lazy Supabase Client**: `lib/supabase.ts` exports `getSupabase()` function instead of module-level client. Prevents `supabaseUrl is required` crash during Next.js static page generation.
+  - **Auth Page Fix**: Uses `window.location.href` instead of `router.push()` for post-login redirect, ensuring middleware sees fresh auth cookies on full page load.
+  - **Data Mapping Hardening**: `mapProgram()` in `lib/api.ts` defaults `strategicObjectives` to `[]` and other mapped fields to `''` to prevent `forEach` crash on null backend data.
+  - **Error Boundary**: Added `app/error.tsx` to surface client-side exceptions with stack traces instead of generic Next.js error page.
+  - **Slim Python Bundle**: Removed `sqlalchemy`, `anthropic`, `openai` from root `requirements.txt`. Made imports conditional in `llm_provider.py`. Stays under Vercel 250MB limit.
+  - **Environment Variables**: All secrets configured in Vercel dashboard as sensitive env vars (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `OPENAI_API_KEY`, Slack tokens).
+- **Known Gaps** (next session): Portfolio Assistant chat not working, program detail pages not loading, Strategic Objectives admin page failing.
 
 ### v2.1 — February 9, 2026
 - **Supabase Auth Integration**: Full authentication flow with `@supabase/supabase-js` + `@supabase/ssr`. Login/signup page (`/auth`), AuthProvider context + `useAuth` hook, Next.js middleware protecting all routes via `createServerClient`. User email and sign-out button in dashboard header. Demo user: `demo@pmo-ai.com`.
