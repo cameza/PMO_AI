@@ -30,16 +30,19 @@ export default function AuthPage() {
           setSuccess('Check your email for a confirmation link.');
         }
       } else {
+        console.log('[Auth] calling signIn...');
         const { error } = await signIn(email, password);
+        console.log('[Auth] signIn result, error:', error);
         if (error) {
           setError(error.message);
         } else {
+          console.log('[Auth] sign-in success, redirecting to /');
           router.push('/');
           router.refresh();
         }
       }
     } catch (err) {
-      console.error('Auth error:', err);
+      console.error('[Auth] caught error:', err);
       setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
     } finally {
       setSubmitting(false);
