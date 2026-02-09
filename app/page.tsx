@@ -29,10 +29,18 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isStrategicDetailOpen, setIsStrategicDetailOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const router = useRouter();
 
+  // Client-side auth guard — redirect to /auth if not logged in
   useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/auth');
+    }
+  }, [authLoading, user, router]);
+
+  useEffect(() => {
+    if (authLoading || !user) return;
     async function loadData() {
       try {
         setIsLoading(true);
@@ -47,7 +55,7 @@ export default function Dashboard() {
       }
     }
     loadData();
-  }, []);
+  }, [authLoading, user]);
 
   // Compute KPI data
   const strategicCoverage = useMemo(() => getStrategicCoverage(fetchedPrograms), [fetchedPrograms]);
@@ -62,7 +70,7 @@ export default function Dashboard() {
   // Launch Cadence uses actual program data for dynamic calculation
   const cadenceData = useMemo(() => getLaunchCadenceData(fetchedPrograms), [fetchedPrograms]);
 
-  if (isLoading) {
+  if (authLoading || !user || isLoading) {
     return (
       <div className="h-screen bg-deep flex items-center justify-center font-jakarta">
         <div className="flex flex-col items-center gap-4">
