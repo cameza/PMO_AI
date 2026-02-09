@@ -16,7 +16,6 @@ export default function AuthPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log('[Auth] handleSubmit fired, isSignUp:', isSignUp, 'email:', email);
     setError(null);
     setSuccess(null);
     setSubmitting(true);
@@ -30,15 +29,12 @@ export default function AuthPage() {
           setSuccess('Check your email for a confirmation link.');
         }
       } else {
-        console.log('[Auth] calling signIn...');
         const { error } = await signIn(email, password);
-        console.log('[Auth] signIn result, error:', error);
         if (error) {
           setError(error.message);
         } else {
-          console.log('[Auth] sign-in success, redirecting to /');
-          router.push('/');
-          router.refresh();
+          // Full page navigation so middleware sees the fresh auth cookies
+          window.location.href = '/';
         }
       }
     } catch (err) {
