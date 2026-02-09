@@ -1,7 +1,7 @@
 # Root requirements.txt — used by Vercel for Python Function deployment
 # Keep slim to stay under 250MB bundle limit
-# Heavy deps (llama-index, chromadb, sentence-transformers) excluded — 
-# RAG moves to Supabase pgvector in production
+# LLM calls go through Next.js API route (Vercel AI SDK), not FastAPI
+# anthropic, openai, sqlalchemy NOT needed here — only in backend/requirements.txt
 
 # Web framework
 fastapi==0.109.0
@@ -11,14 +11,9 @@ pydantic==2.5.3
 
 # Database (Supabase PostgreSQL)
 supabase>=2.0.0
-sqlalchemy==2.0.25
 
 # Environment variables
 python-dotenv==1.0.0
 
-# LLM providers (temporary — will be replaced by Vercel AI Gateway)
-anthropic==0.18.1
-openai==1.12.0
-
-# Utilities
+# HTTP client (used by rag.py for OpenAI embeddings API)
 httpx==0.26.0

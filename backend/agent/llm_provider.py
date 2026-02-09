@@ -8,8 +8,15 @@ Provider is selected via LLM_PROVIDER environment variable.
 import os
 from abc import ABC, abstractmethod
 from typing import Iterator, List, Dict, Any, Optional
-from anthropic import Anthropic
-from openai import OpenAI
+try:
+    from anthropic import Anthropic
+except ImportError:
+    Anthropic = None  # type: ignore[assignment,misc]
+
+try:
+    from openai import OpenAI
+except ImportError:
+    OpenAI = None  # type: ignore[assignment,misc]
 
 
 class LLMProvider(ABC):
