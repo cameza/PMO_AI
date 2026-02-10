@@ -170,21 +170,34 @@ function formatProgram(p: ProgramRow, risks: RiskRow[], milestones: MilestoneRow
 }
 
 export async function POST(req: Request) {
-  const { messages, programContext } = await req.json();
+  try {
+    const { messages, programContext } = await req.json();
 
-  const portfolioData = await fetchPortfolioContext(programContext);
+    const portfolioData = await fetchPortfolioContext(programContext);
 
-  const systemPrompt = `${BASE_SYSTEM_PROMPT}
+    const systemPrompt = `${BASE_SYSTEM_PROMPT}
 
 --- PORTFOLIO DATA ---
 ${portfolioData}
 --- END PORTFOLIO DATA ---`;
 
-  const result = streamText({
-    model: getModel(),
-    system: systemPrompt,
-    messages,
-  });
+    const result = streamText({
+      model: getModel(),
+      system: systemPrompt,
+      messages,
+    });
 
-  return result.toDataStreamResponse();
+    return result.toDataStreamResponse();
+  } catch (error: any) {
+    console.error('[Chat API Error]', error?.message || error);
+    return new Response(
+      JSON.stringify({
+        error: error?.message || 'Chat failed',
+        hint: !process.env.OPENAI_API_KEY && !process.env.ANTHROPIC_API_KEY
+          ? 'No LLM API key configured (OPENAI_API_KEY or ANTHROPIC_API_KEY)'
+          : undefined,
+      }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 }

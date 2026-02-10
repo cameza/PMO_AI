@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["strategic-objectives"])
 
 
-@router.get("/", response_model=List[StrategicObjective])
+@router.get("", response_model=List[StrategicObjective])
 async def get_strategic_objectives():
     """Get all strategic objectives."""
     try:
@@ -62,7 +62,7 @@ async def get_strategic_objective(objective_id: str):
         )
 
 
-@router.post("/", response_model=StrategicObjective, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=StrategicObjective, status_code=status.HTTP_201_CREATED)
 async def create_new_strategic_objective(objective: StrategicObjective):
     """Create a new strategic objective."""
     try:

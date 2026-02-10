@@ -59,13 +59,12 @@ app.include_router(strategic_objectives.router, prefix=f"{API_PREFIX}/strategic-
 def _check_existing_embeddings() -> int:
     """Check if embeddings already exist in pgvector."""
     try:
-        from backend.database.db import _get_client, _get_org_id
+        from backend.database.db import _get, _get_org_id
     except ImportError:
-        from database.db import _get_client, _get_org_id
-    client = _get_client()
+        from database.db import _get, _get_org_id
     org_id = _get_org_id()
-    resp = client.table("embeddings").select("id", count="exact").eq("organization_id", org_id).limit(1).execute()
-    return resp.count or 0
+    rows = _get("embeddings", {"select": "id", "organization_id": f"eq.{org_id}", "limit": "1"})
+    return len(rows)
 
 
 def init_rag_with_timeout(timeout: int = 60) -> int:
