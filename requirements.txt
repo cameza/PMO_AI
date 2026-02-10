@@ -1,7 +1,7 @@
 # Root requirements.txt — used by Vercel for Python Function deployment
 # Keep slim to stay under 250MB bundle limit
 # LLM calls go through Next.js API route (Vercel AI SDK), not FastAPI
-# anthropic, openai, sqlalchemy NOT needed here — only in backend/requirements.txt
+# supabase-py REMOVED — too heavy (~250MB). Using direct httpx PostgREST calls instead.
 
 # Web framework
 fastapi==0.109.0
@@ -9,10 +9,8 @@ fastapi==0.109.0
 # Data validation
 pydantic==2.5.3
 
-# Database (Supabase PostgreSQL)
-supabase==2.4.0
-
 # Environment variables
 python-dotenv==1.0.0
 
-# HTTP client (transitive via supabase; no explicit pin needed)
+# HTTP client (direct PostgREST + OpenAI embedding calls)
+httpx==0.25.2

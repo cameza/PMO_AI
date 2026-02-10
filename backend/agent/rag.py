@@ -12,9 +12,9 @@ from typing import List, Dict, Any, Optional
 import httpx
 
 try:
-    from backend.database.db import get_all_programs, _get_client, _get_org_id
+    from backend.database.db import get_all_programs, _get, _post, _delete, rpc, _get_org_id
 except ImportError:
-    from database.db import get_all_programs, _get_client, _get_org_id
+    from database.db import get_all_programs, _get, _post, _delete, rpc, _get_org_id
 
 logger = logging.getLogger(__name__)
 
@@ -116,12 +116,11 @@ def index_portfolio_data() -> int:
     Returns:
         Number of documents indexed
     """
-    client = _get_client()
     org_id = _get_org_id()
 
     # Clear existing embeddings for this org
     try:
-        client.table("embeddings").delete().eq("organization_id", org_id).execute()
+        _delete("embeddings", {"organization_id": f"eq.{org_id}"})
         logger.info("Cleared existing embeddings for re-indexing")
     except Exception as e:
         logger.warning(f"Could not clear embeddings: {e}")
@@ -195,7 +194,7 @@ def index_portfolio_data() -> int:
     batch_size = 100
     for i in range(0, len(rows), batch_size):
         batch = rows[i : i + batch_size]
-        client.table("embeddings").insert(batch).execute()
+        _post("embeddings", batch)
         logger.info(f"Inserted embeddings batch {i // batch_size + 1}")
 
     logger.info(f"Indexed {len(documents)} documents into pgvector")
@@ -228,11 +227,10 @@ def semantic_search(
         # Generate query embedding
         query_embedding = _embed_texts([query])[0]
 
-        client = _get_client()
         org_id = _get_org_id()
 
         # Call the match function
-        resp = client.rpc(
+        results = rpc(
             "match_embeddings",
             {
                 "query_embedding": query_embedding,
@@ -241,9 +239,7 @@ def semantic_search(
                 "filter_org_id": org_id,
                 "filter_type": filter_type,
             },
-        ).execute()
-
-        results = resp.data or []
+        ) or []
 
         # Post-filter by program_id if needed
         if filter_program_id:
@@ -326,10 +322,9 @@ def get_rag_stats() -> Dict[str, Any]:
                 "store": "pgvector",
                 "status": "not_initialized"
             }
-        client = _get_client()
         org_id = _get_org_id()
-        resp = client.table("embeddings").select("id", count="exact").eq("organization_id", org_id).execute()
-        count = resp.count or 0
+        rows = _get("embeddings", {"select": "id", "organization_id": f"eq.{org_id}"})
+        count = len(rows)
         return {
             "indexed_documents": count,
             "store": "pgvector",
