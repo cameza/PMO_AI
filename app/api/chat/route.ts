@@ -170,6 +170,37 @@ function formatProgram(p: ProgramRow, risks: RiskRow[], milestones: MilestoneRow
 }
 
 export async function POST(req: Request) {
+  // Early validation: ensure at least one LLM API key is configured
+  const provider = process.env.LLM_PROVIDER || 'openai';
+  const hasOpenAI = !!process.env.OPENAI_API_KEY;
+  const hasAnthropic = !!process.env.ANTHROPIC_API_KEY;
+
+  if (!hasOpenAI && !hasAnthropic) {
+    console.error('[Chat API] No LLM API key configured. Set OPENAI_API_KEY or ANTHROPIC_API_KEY in Vercel env vars.');
+    return new Response(
+      JSON.stringify({
+        error: 'No LLM API key configured. An admin must set OPENAI_API_KEY or ANTHROPIC_API_KEY in the environment.',
+      }),
+      { status: 503, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
+  if (provider === 'openai' && !hasOpenAI) {
+    console.error('[Chat API] LLM_PROVIDER=openai but OPENAI_API_KEY is missing.');
+    return new Response(
+      JSON.stringify({ error: 'OPENAI_API_KEY is not configured but LLM_PROVIDER is set to openai.' }),
+      { status: 503, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
+  if ((provider === 'anthropic' || provider === 'claude') && !hasAnthropic) {
+    console.error(`[Chat API] LLM_PROVIDER=${provider} but ANTHROPIC_API_KEY is missing.`);
+    return new Response(
+      JSON.stringify({ error: 'ANTHROPIC_API_KEY is not configured but LLM_PROVIDER is set to anthropic.' }),
+      { status: 503, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
     const { messages, programContext } = await req.json();
 
@@ -187,16 +218,29 @@ ${portfolioData}
       messages,
     });
 
-    return result.toDataStreamResponse();
+    return result.toDataStreamResponse({
+      getErrorMessage: (error) => {
+        const msg = error instanceof Error ? error.message : String(error);
+        console.error('[Chat Stream Error]', msg);
+        // Surface the real error to the client
+        if (msg.includes('401') || msg.includes('Incorrect API key')) {
+          return 'LLM API key is invalid or expired. Please contact an admin.';
+        }
+        if (msg.includes('429') || msg.includes('quota') || msg.includes('rate')) {
+          return 'LLM rate limit or quota exceeded. Please try again later.';
+        }
+        if (msg.includes('model')) {
+          return `LLM model error: ${msg}`;
+        }
+        return `Chat error: ${msg}`;
+      },
+    });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     console.error('[Chat API Error]', msg);
     return new Response(
       JSON.stringify({
-        error: msg || 'Chat failed',
-        hint: !process.env.OPENAI_API_KEY && !process.env.ANTHROPIC_API_KEY
-          ? 'No LLM API key configured (OPENAI_API_KEY or ANTHROPIC_API_KEY)'
-          : undefined,
+        error: msg || 'Chat request failed',
       }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );

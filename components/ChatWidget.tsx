@@ -114,7 +114,8 @@ export function ChatWidget({ programContext }: ChatWidgetProps) {
 
                 {error && (
                     <div className="bg-accent-rose/10 border border-accent-rose/20 rounded-2xl p-3.5 text-sm text-accent-rose">
-                        Sorry, I encountered an error. Please check that your API keys are configured.
+                        <p className="font-medium">Something went wrong</p>
+                        <p className="mt-1 text-accent-rose/80">{error.message || 'An unexpected error occurred. Please try again.'}</p>
                     </div>
                 )}
 
