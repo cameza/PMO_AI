@@ -188,11 +188,12 @@ ${portfolioData}
     });
 
     return result.toDataStreamResponse();
-  } catch (error: any) {
-    console.error('[Chat API Error]', error?.message || error);
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error('[Chat API Error]', msg);
     return new Response(
       JSON.stringify({
-        error: error?.message || 'Chat failed',
+        error: msg || 'Chat failed',
         hint: !process.env.OPENAI_API_KEY && !process.env.ANTHROPIC_API_KEY
           ? 'No LLM API key configured (OPENAI_API_KEY or ANTHROPIC_API_KEY)'
           : undefined,
