@@ -15,5 +15,4 @@ supabase==2.4.0
 # Environment variables
 python-dotenv==1.0.0
 
-# HTTP client (used by rag.py for OpenAI embeddings API)
-httpx==0.26.0
+# HTTP client (transitive via supabase; no explicit pin needed)
