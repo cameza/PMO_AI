@@ -10,7 +10,7 @@ fastapi==0.109.0
 pydantic==2.5.3
 
 # Database (Supabase PostgreSQL)
-supabase>=2.0.0
+supabase==2.4.0
 
 # Environment variables
 python-dotenv==1.0.0
