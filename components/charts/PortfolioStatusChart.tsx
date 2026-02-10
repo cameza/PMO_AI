@@ -12,6 +12,7 @@ interface StatusData {
 interface PortfolioStatusChartProps {
   data: Program[];
   compact?: boolean;
+  onSegmentClick?: (status: string) => void;
 }
 
 // Gradient ID mapping per status
@@ -24,7 +25,7 @@ const STATUS_GRADIENTS: Record<string, { id: string; from: string; to: string }>
 
 const getStatusColor = (status: string) => STATUS_GRADIENTS[status]?.from ?? '#64748b';
 
-export function PortfolioStatusChart({ data, compact = false }: PortfolioStatusChartProps) {
+export function PortfolioStatusChart({ data, compact = false, onSegmentClick }: PortfolioStatusChartProps) {
   // Calculate status distribution
   const statusCounts = data.reduce((acc, program) => {
     acc[program.status] = (acc[program.status] || 0) + 1;
@@ -111,6 +112,8 @@ export function PortfolioStatusChart({ data, compact = false }: PortfolioStatusC
               nameKey="status"
               stroke="rgba(10, 11, 16, 0.5)"
               strokeWidth={2}
+              cursor={onSegmentClick ? 'pointer' : undefined}
+              onClick={onSegmentClick ? (_: unknown, index: number) => onSegmentClick(statusData[index].status) : undefined}
             >
               {statusData.map((entry, index) => (
                 <Cell
@@ -127,7 +130,11 @@ export function PortfolioStatusChart({ data, compact = false }: PortfolioStatusC
       {/* Legend — matches Recharts Legend style from other charts */}
       <div className={`flex flex-wrap gap-x-3 gap-y-1 ${compact ? 'mt-1' : 'mt-2'} justify-center`}>
         {statusData.map((item) => (
-          <div key={item.status} className="flex items-center gap-1.5">
+          <div
+            key={item.status}
+            className={`flex items-center gap-1.5 ${onSegmentClick ? 'cursor-pointer hover:opacity-80' : ''}`}
+            onClick={onSegmentClick ? () => onSegmentClick(item.status) : undefined}
+          >
             <div
               className="w-2 h-2 rounded-sm"
               style={{ backgroundColor: getStatusColor(item.status) }}

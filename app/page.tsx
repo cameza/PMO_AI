@@ -9,6 +9,10 @@ import { PortfolioStatusChart } from '@/components/charts/PortfolioStatusChart';
 import { ProgramTable } from '@/components/ProgramTable';
 import { ChatWidget } from '@/components/ChatWidget';
 import { StrategicCoverageDetail } from '@/components/StrategicCoverageDetail';
+import { LinesUnderPressureDetail } from '@/components/LinesUnderPressureDetail';
+import { MilestoneCompletionDetail } from '@/components/MilestoneCompletionDetail';
+import { UpcomingLaunchesDetail } from '@/components/UpcomingLaunchesDetail';
+import { ProgramDetailModal } from '@/components/ProgramDetailModal';
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchPrograms, fetchOrgDataSource } from '@/lib/api';
@@ -30,8 +34,21 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isStrategicDetailOpen, setIsStrategicDetailOpen] = useState(false);
+  const [isLinesDetailOpen, setIsLinesDetailOpen] = useState(false);
+  const [isMilestoneDetailOpen, setIsMilestoneDetailOpen] = useState(false);
+  const [isLaunchesDetailOpen, setIsLaunchesDetailOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<'manual' | 'synced'>('manual');
+
+  // Chart → Table filter state
+  const [chartFilter, setChartFilter] = useState<{
+    status?: string | null;
+    productLine?: string | null;
+    pipelineStage?: string | null;
+    launchMonth?: string | null;
+  }>({});
+  const clearChartFilter = () => setChartFilter({});
   const { user, loading: authLoading, signOut } = useAuth();
   const router = useRouter();
 
@@ -176,6 +193,8 @@ export default function Dashboard() {
                   color: 'bg-accent-amber/20 text-accent-amber'
                 }))}
                 glowColor="amber"
+                onClick={() => setIsLinesDetailOpen(true)}
+                className="cursor-pointer hover:border-white/30 transition-colors"
               />
             </div>
             <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
@@ -187,15 +206,19 @@ export default function Dashboard() {
                 progress={milestoneCompletion.percentage}
                 progressColor="bg-accent-emerald"
                 glowColor="emerald"
+                onClick={() => setIsMilestoneDetailOpen(true)}
+                className="cursor-pointer hover:border-white/30 transition-colors"
               />
             </div>
             <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
               <KPICard
                 title="Upcoming Launches"
                 value={`${upcomingLaunches.count} launching`}
-                subtitle={`Next: ${formatLaunchDate(upcomingLaunches.nextDate)}`}
+                subtitle={upcomingLaunches.nextDate ? `Next: ${formatLaunchDate(upcomingLaunches.nextDate)}` : 'None in next 30 days'}
                 subtitleColor="text-accent-violet"
                 glowColor="blue"
+                onClick={() => setIsLaunchesDetailOpen(true)}
+                className="cursor-pointer hover:border-white/30 transition-colors"
               />
             </div>
           </div>
@@ -204,16 +227,16 @@ export default function Dashboard() {
           {/* Mobile: Swipe Carousel, Desktop: Grid */}
           <div className="flex w-full overflow-x-auto snap-x snap-mandatory gap-3 pb-2 md:pb-0 md:grid md:grid-cols-4 flex-shrink-0 no-scrollbar">
             <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
-              <PortfolioStatusChart data={fetchedPrograms} compact />
+              <PortfolioStatusChart data={fetchedPrograms} compact onSegmentClick={(status) => setChartFilter({ status })} />
             </div>
             <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
-              <ProgramVelocityChart data={velocityData} compact />
+              <ProgramVelocityChart data={velocityData} compact onBarClick={(stage) => setChartFilter({ pipelineStage: stage })} />
             </div>
             <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
-              <StrategicAlignmentChart data={alignmentData} compact />
+              <StrategicAlignmentChart data={alignmentData} compact onBarClick={(status, productLine) => setChartFilter({ status, productLine })} />
             </div>
             <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
-              <LaunchCadenceChart data={cadenceData} compact />
+              <LaunchCadenceChart data={cadenceData} compact onBarClick={(month) => setChartFilter({ launchMonth: month })} />
             </div>
           </div>
 
@@ -223,7 +246,13 @@ export default function Dashboard() {
               programs={fetchedPrograms}
               compact
               onCreateProgram={() => setIsCreateModalOpen(true)}
+              onRowClick={(id) => setSelectedProgramId(id)}
               dataSource={dataSource}
+              externalStatusFilter={chartFilter.status}
+              externalProductLineFilter={chartFilter.productLine}
+              externalPipelineStageFilter={chartFilter.pipelineStage}
+              externalLaunchMonth={chartFilter.launchMonth}
+              onClearExternalFilter={clearChartFilter}
             />
           </div>
         </main>
@@ -243,6 +272,42 @@ export default function Dashboard() {
         covered={strategicCoverage.covered}
         total={strategicCoverage.total}
         uncovered={strategicCoverage.uncovered}
+      />
+
+      {/* Lines Under Pressure Detail Modal */}
+      <LinesUnderPressureDetail
+        isOpen={isLinesDetailOpen}
+        onClose={() => setIsLinesDetailOpen(false)}
+        programs={fetchedPrograms}
+        onProgramClick={(id) => { setIsLinesDetailOpen(false); setSelectedProgramId(id); }}
+      />
+
+      {/* Milestone Completion Detail Modal */}
+      <MilestoneCompletionDetail
+        isOpen={isMilestoneDetailOpen}
+        onClose={() => setIsMilestoneDetailOpen(false)}
+        programs={fetchedPrograms}
+        completed={milestoneCompletion.completed}
+        total={milestoneCompletion.total}
+        percentage={milestoneCompletion.percentage}
+        onProgramClick={(id) => { setIsMilestoneDetailOpen(false); setSelectedProgramId(id); }}
+      />
+
+      {/* Upcoming Launches Detail Modal */}
+      <UpcomingLaunchesDetail
+        isOpen={isLaunchesDetailOpen}
+        onClose={() => setIsLaunchesDetailOpen(false)}
+        programs={fetchedPrograms}
+        onProgramClick={(id) => { setIsLaunchesDetailOpen(false); setSelectedProgramId(id); }}
+      />
+
+      {/* Program Detail Modal */}
+      <ProgramDetailModal
+        programId={selectedProgramId}
+        isOpen={!!selectedProgramId}
+        onClose={() => setSelectedProgramId(null)}
+        onProgramDeleted={reloadPrograms}
+        onProgramUpdated={reloadPrograms}
       />
 
       {/* Create Program Modal */}

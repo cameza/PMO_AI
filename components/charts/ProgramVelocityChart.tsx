@@ -10,9 +10,10 @@ interface VelocityData {
 interface ProgramVelocityChartProps {
     data: VelocityData[];
     compact?: boolean;
+    onBarClick?: (stage: string) => void;
 }
 
-export function ProgramVelocityChart({ data, compact = false }: ProgramVelocityChartProps) {
+export function ProgramVelocityChart({ data, compact = false, onBarClick }: ProgramVelocityChartProps) {
     // Custom Y-axis tick that never wraps text
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const renderTick = (props: any) => {
@@ -64,6 +65,9 @@ export function ProgramVelocityChart({ data, compact = false }: ProgramVelocityC
                             radius={[0, 4, 4, 0]}
                             barSize={compact ? 24 : 28}
                             fill="url(#velocityGradient)"
+                            cursor={onBarClick ? 'pointer' : undefined}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            onClick={onBarClick ? (entry: any) => onBarClick(entry.stage) : undefined}
                         >
                             <LabelList
                                 dataKey="count"

@@ -9,7 +9,13 @@ interface ProgramTableProps {
     programs: Program[];
     compact?: boolean;
     onCreateProgram?: () => void;
+    onRowClick?: (programId: string) => void;
     dataSource?: 'manual' | 'synced';
+    externalStatusFilter?: string | null;
+    externalProductLineFilter?: string | null;
+    externalPipelineStageFilter?: string | null;
+    externalLaunchMonth?: string | null;
+    onClearExternalFilter?: () => void;
 }
 
 const statusColors = {
@@ -36,19 +42,28 @@ const stageColors = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function ProgramTable({ programs, compact = false, onCreateProgram, dataSource = 'manual' }: ProgramTableProps) {
+export function ProgramTable({ programs, compact = false, onCreateProgram, onRowClick, dataSource = 'manual', externalStatusFilter, externalProductLineFilter, externalPipelineStageFilter, externalLaunchMonth, onClearExternalFilter }: ProgramTableProps) {
     const router = useRouter();
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
     const [productLineFilter, setProductLineFilter] = useState<string | null>(null);
     const [showFilters, setShowFilters] = useState(false);
 
+    const hasExternalFilter = !!(externalStatusFilter || externalProductLineFilter || externalPipelineStageFilter || externalLaunchMonth);
+    const activeStatus = externalStatusFilter || statusFilter;
+    const activeProductLine = externalProductLineFilter || productLineFilter;
+
     // Get unique product lines from programs
     const productLines = Array.from(new Set(programs.map(p => p.productLine))).sort();
 
     const filteredPrograms = programs.filter(p => {
-        const matchesStatus = !statusFilter || p.status === statusFilter;
-        const matchesProductLine = !productLineFilter || p.productLine === productLineFilter;
-        return matchesStatus && matchesProductLine;
+        const matchesStatus = !activeStatus || p.status === activeStatus;
+        const matchesProductLine = !activeProductLine || p.productLine === activeProductLine;
+        const matchesPipelineStage = !externalPipelineStageFilter || p.pipelineStage === externalPipelineStageFilter;
+        const matchesLaunchMonth = !externalLaunchMonth || (() => {
+            const d = new Date(p.launchDate);
+            return d.toLocaleDateString('en-US', { month: 'short' }) === externalLaunchMonth;
+        })();
+        return matchesStatus && matchesProductLine && matchesPipelineStage && matchesLaunchMonth;
     });
 
     const displayedPrograms = filteredPrograms;
@@ -59,7 +74,11 @@ export function ProgramTable({ programs, compact = false, onCreateProgram, dataS
     };
 
     const handleRowClick = (id: string) => {
-        router.push(`/programs/${id}`);
+        if (onRowClick) {
+            onRowClick(id);
+        } else {
+            router.push(`/programs/${id}`);
+        }
     };
 
     return (
@@ -69,7 +88,16 @@ export function ProgramTable({ programs, compact = false, onCreateProgram, dataS
                     Program Portfolio
                 </h3>
                 <div className="flex gap-2 items-center">
-                    {(statusFilter || productLineFilter) && (
+                    {hasExternalFilter && (
+                        <button
+                            onClick={onClearExternalFilter}
+                            className="flex items-center gap-1.5 text-xs text-accent-amber hover:text-accent-amber/80 font-medium px-2 py-1 bg-accent-amber/10 rounded-lg"
+                        >
+                            <span className="w-1.5 h-1.5 bg-accent-amber rounded-full animate-pulse" />
+                            Chart filter active — Clear
+                        </button>
+                    )}
+                    {!hasExternalFilter && (statusFilter || productLineFilter) && (
                         <button
                             onClick={resetFilters}
                             className="text-xs text-accent-violet hover:text-accent-violet/80 font-medium"

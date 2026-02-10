@@ -540,8 +540,9 @@ export const getMilestoneCompletion = (data: Program[] = programs) => {
 };
 
 export const getUpcomingLaunches = (data: Program[] = programs) => {
-  const thirtyDaysFromNow = new Date('2026-03-03');
-  const now = new Date('2026-02-01');
+  const now = new Date();
+  const thirtyDaysFromNow = new Date(now);
+  thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
 
   const launching = data.filter(p => {
     const launchDate = new Date(p.launchDate);
@@ -553,7 +554,8 @@ export const getUpcomingLaunches = (data: Program[] = programs) => {
   )[0];
 
   return {
-    count: launching.length || 4,
-    nextDate: nearest?.launchDate || '2026-02-30',
+    count: launching.length,
+    nextDate: nearest?.launchDate || '',
+    programs: launching,
   };
 };

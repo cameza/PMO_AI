@@ -12,9 +12,17 @@ interface AlignmentData {
 interface StrategicAlignmentChartProps {
     data: AlignmentData[];
     compact?: boolean;
+    onBarClick?: (status: string, productLine: string) => void;
 }
 
-export function StrategicAlignmentChart({ data, compact = false }: StrategicAlignmentChartProps) {
+export function StrategicAlignmentChart({ data, compact = false, onBarClick }: StrategicAlignmentChartProps) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleClick = (statusKey: string) => (entry: any) => {
+        if (onBarClick) {
+            const statusMap: Record<string, string> = { onTrack: 'On Track', atRisk: 'At Risk', offTrack: 'Off Track' };
+            onBarClick(statusMap[statusKey], entry.productLine);
+        }
+    };
     return (
         <div className={`bg-surface rounded-xl border border-white/10 flex flex-col ${compact ? 'p-3 h-full' : 'p-5'}`}>
             <h3 className={`font-semibold text-slate-400 uppercase tracking-wider ${compact ? 'text-xs mb-2' : 'text-sm mb-4'}`}>
@@ -70,12 +78,16 @@ export function StrategicAlignmentChart({ data, compact = false }: StrategicAlig
                             stackId="status"
                             fill="url(#onTrackGradient)"
                             radius={[0, 0, 4, 4]}
+                            cursor={onBarClick ? 'pointer' : undefined}
+                            onClick={onBarClick ? handleClick('onTrack') : undefined}
                         />
                         <Bar
                             dataKey="atRisk"
                             name="At Risk"
                             stackId="status"
                             fill="url(#atRiskGradient)"
+                            cursor={onBarClick ? 'pointer' : undefined}
+                            onClick={onBarClick ? handleClick('atRisk') : undefined}
                         />
                         <Bar
                             dataKey="offTrack"
@@ -83,6 +95,8 @@ export function StrategicAlignmentChart({ data, compact = false }: StrategicAlig
                             stackId="status"
                             fill="url(#offTrackGradient)"
                             radius={[4, 4, 0, 0]}
+                            cursor={onBarClick ? 'pointer' : undefined}
+                            onClick={onBarClick ? handleClick('offTrack') : undefined}
                         />
                     </BarChart>
                 </ResponsiveContainer>

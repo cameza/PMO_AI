@@ -11,9 +11,10 @@ interface CadenceData {
 interface LaunchCadenceChartProps {
     data: CadenceData[];
     compact?: boolean;
+    onBarClick?: (month: string) => void;
 }
 
-export function LaunchCadenceChart({ data, compact = false }: LaunchCadenceChartProps) {
+export function LaunchCadenceChart({ data, compact = false, onBarClick }: LaunchCadenceChartProps) {
     return (
         <div className={`bg-surface rounded-xl border border-white/10 flex flex-col ${compact ? 'p-3 h-full' : 'p-5'}`}>
             <h3 className={`font-semibold text-slate-400 uppercase tracking-wider ${compact ? 'text-xs mb-2' : 'text-sm mb-4'}`}>
@@ -62,6 +63,9 @@ export function LaunchCadenceChart({ data, compact = false }: LaunchCadenceChart
                             dataKey="count"
                             name="Launches"
                             radius={[4, 4, 0, 0]}
+                            cursor={onBarClick ? 'pointer' : undefined}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            onClick={onBarClick ? (entry: any) => onBarClick(entry.month) : undefined}
                         >
                             {data.map((entry, index) => (
                                 <Cell
