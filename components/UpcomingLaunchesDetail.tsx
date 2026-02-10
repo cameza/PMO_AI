@@ -57,7 +57,7 @@ export function UpcomingLaunchesDetail({ isOpen, onClose, programs, onProgramCli
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-3">
-          {launching.map((p, idx) => (
+          {launching.map((p) => (
             <div
               key={p.id}
               className="bg-white/5 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:bg-white/10 transition-colors border border-white/5"

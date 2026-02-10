@@ -881,6 +881,14 @@ The agent uses a hybrid retrieval approach to ground its responses:
 
 ## Changelog
 
+### v2.4 — February 10, 2026
+- **Interactive KPI Card Modals**: All 4 KPI cards now open drill-down modals on click with backdrop blur. Lines Under Pressure shows product lines with 2+ flagged programs; Milestone Completion lists milestones due this month grouped by status; Upcoming Launches shows programs launching within 30 days with countdown. Clicking a program inside any KPI modal opens the program detail modal.
+- **Program Detail Modal**: Program table rows now open a full detail modal on the dashboard instead of navigating to `/programs/[id]`. The modal supports full CRUD for risks and milestones, program editing/deletion, and displays strategic objectives — all without leaving the dashboard.
+- **Chart↔Table Filtering**: Clicking any chart segment filters the program table. Portfolio Status (donut) filters by status, Program Velocity (bars) by pipeline stage, Strategic Alignment (stacked bars) by status + product line, Launch Cadence (bars) by launch month. An amber "Chart filter active — Clear" indicator appears in the table header.
+- **ProgramTable External Filter Props**: `ProgramTable` component now accepts `externalStatusFilter`, `externalProductLineFilter`, `externalPipelineStageFilter`, `externalLaunchMonth`, and `onClearExternalFilter` callback props for chart-driven filtering. Also accepts `onRowClick` callback to support modal navigation.
+- **Bug Fix — Upcoming Launches**: `getUpcomingLaunches()` now uses dynamic `new Date()` instead of hardcoded dates. Removed stale fallback `count: 4`.
+- **New Components**: `LinesUnderPressureDetail`, `MilestoneCompletionDetail`, `UpcomingLaunchesDetail`, `ProgramDetailModal`.
+
 ### v2.3 — February 10, 2026
 - **Full CRUD for Programs, Risks, Milestones (MCS-149)**: Added create, update, and delete operations for programs, risks, and milestones via FastAPI REST endpoints. Frontend includes inline forms for risks/milestones on the program detail page and a modal form with strategic objectives multi-select picker for programs.
 - **Data Source Mode Architecture**: Per-organization `data_source` column (`manual` | `synced`) controls whether CRUD UI is visible. Manual mode shows full create/edit/delete controls; synced mode hides them (reserved for future integration sync).
