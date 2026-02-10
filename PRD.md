@@ -1,7 +1,7 @@
 # Product Requirements Document: Program Portfolio AI System
 
-> **Version:** 2.1  
-> **Last Updated:** February 9, 2026  
+> **Version:** 2.3  
+> **Last Updated:** February 10, 2026  
 > **Owner:** [Your Name/Team]  
 > **Scope:** Production SaaS (evolved from Week 1 Prototype)
 
@@ -680,7 +680,7 @@ interface Milestone {
   name: string;
   dueDate: string;
   completedDate: string | null;
-  status: "Upcoming" | "Pending" | "Completed" | "Overdue";
+  status: "Pending" | "In Progress" | "Completed" | "Overdue" | "At Risk";
 }
 ```
 
@@ -716,6 +716,28 @@ interface Source {
 |--------|----------|-------------|
 | GET | `/api/programs` | List all programs. Supports `?status=` filter |
 | GET | `/api/programs/:id` | Get a single program by ID (includes risks, milestones) |
+| POST | `/api/programs` | Create a new program |
+| PATCH | `/api/programs/:id` | Update a program |
+| DELETE | `/api/programs/:id` | Delete a program (cascades risks, milestones) |
+
+#### Risks (sub-resource of Programs)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/programs/:id/risks` | Add a risk to a program |
+| PATCH | `/api/programs/:id/risks/:riskId` | Update a risk |
+| DELETE | `/api/programs/:id/risks/:riskId` | Delete a risk |
+
+#### Milestones (sub-resource of Programs)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/programs/:id/milestones` | Add a milestone to a program |
+| PATCH | `/api/programs/:id/milestones/:milestoneId` | Update a milestone |
+| DELETE | `/api/programs/:id/milestones/:milestoneId` | Delete a milestone |
+
+#### Organization
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/org/data-source` | Get org data source mode (manual or synced) |
 
 #### AI Agent
 | Method | Endpoint | Description |
@@ -858,6 +880,14 @@ The agent uses a hybrid retrieval approach to ground its responses:
 ---
 
 ## Changelog
+
+### v2.3 — February 10, 2026
+- **Full CRUD for Programs, Risks, Milestones (MCS-149)**: Added create, update, and delete operations for programs, risks, and milestones via FastAPI REST endpoints. Frontend includes inline forms for risks/milestones on the program detail page and a modal form with strategic objectives multi-select picker for programs.
+- **Data Source Mode Architecture**: Per-organization `data_source` column (`manual` | `synced`) controls whether CRUD UI is visible. Manual mode shows full create/edit/delete controls; synced mode hides them (reserved for future integration sync).
+- **Strategic Objectives Resolution**: Backend now resolves strategic objective UUIDs to display names when returning program data, so the frontend receives human-readable objective names.
+- **Milestone Status Alignment**: Fixed milestone status enum mismatch between application code and database CHECK constraint. Statuses are now: `Pending`, `In Progress`, `Completed`, `Overdue`, `At Risk` (previously included `Upcoming` which was not in the DB constraint).
+- **Milestone Timeline Visual States**: Added distinct visual treatments for each milestone status in the timeline component: completed (violet + checkmark), in progress (violet border + pulse), at risk (amber + warning triangle + pulse), overdue (rose + alert circle), pending (gray border).
+- **API Endpoints Expanded**: PRD API table updated to document all CRUD routes for programs, risks, milestones, and org data source.
 
 ### v2.2 — February 9, 2026
 - **Vercel Deployment Fixes**: Resolved full deployment pipeline — app now live at `pmo-ai.vercel.app`.

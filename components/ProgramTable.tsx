@@ -1,13 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { Program } from '@/lib/mockData';
 
 interface ProgramTableProps {
     programs: Program[];
     compact?: boolean;
+    onCreateProgram?: () => void;
+    dataSource?: 'manual' | 'synced';
 }
 
 const statusColors = {
@@ -34,7 +36,7 @@ const stageColors = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function ProgramTable({ programs, compact = false }: ProgramTableProps) {
+export function ProgramTable({ programs, compact = false, onCreateProgram, dataSource = 'manual' }: ProgramTableProps) {
     const router = useRouter();
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
     const [productLineFilter, setProductLineFilter] = useState<string | null>(null);
@@ -66,7 +68,7 @@ export function ProgramTable({ programs, compact = false }: ProgramTableProps) {
                 <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
                     Program Portfolio
                 </h3>
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                     {(statusFilter || productLineFilter) && (
                         <button
                             onClick={resetFilters}
@@ -81,6 +83,15 @@ export function ProgramTable({ programs, compact = false }: ProgramTableProps) {
                     >
                         <SlidersHorizontal className="w-4 h-4 text-slate-500" />
                     </button>
+                    {dataSource === 'manual' && onCreateProgram && (
+                        <button
+                            onClick={onCreateProgram}
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-accent-violet rounded-lg hover:bg-accent-violet/80 transition-colors"
+                        >
+                            <Plus className="w-3.5 h-3.5" />
+                            New Program
+                        </button>
+                    )}
                 </div>
             </div>
 

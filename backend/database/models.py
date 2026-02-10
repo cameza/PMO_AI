@@ -32,10 +32,11 @@ class RiskStatus(str, Enum):
 
 
 class MilestoneStatus(str, Enum):
-    UPCOMING = "Upcoming"
     PENDING = "Pending"
+    IN_PROGRESS = "In Progress"
     COMPLETED = "Completed"
     OVERDUE = "Overdue"
+    AT_RISK = "At Risk"
 
 
 class StrategicObjective(BaseModel):
@@ -76,17 +77,13 @@ class Program(BaseModel):
     team: Optional[str] = None
     product_line: Optional[str] = None
     pipeline_stage: Optional[PipelineStage] = None
-    strategic_objective_ids: List[str] = []  # Changed from strategic_objectives to strategic_objective_ids
+    strategic_objective_ids: List[str] = []
+    strategic_objectives: List[str] = []  # Resolved names for frontend display
     launch_date: Optional[str] = None
     progress: int = 0
     risks: List[Risk] = []
     milestones: List[Milestone] = []
     last_update: Optional[str] = None
-    
-    # Computed property for backward compatibility
-    @property
-    def strategic_objectives(self) -> List[str]:
-        return self.strategic_objective_ids
 
 
 # Constants matching PRD specifications
@@ -103,3 +100,65 @@ STRATEGIC_OBJECTIVES = [
 ]
 
 PRODUCT_LINES = ["Smart Home", "Mobile", "Platform", "Video"]
+
+
+# ---------------------------------------------------------------------------
+# Request models for CRUD operations
+# ---------------------------------------------------------------------------
+
+class ProgramCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    status: ProgramStatus = ProgramStatus.ON_TRACK
+    owner: Optional[str] = None
+    team: Optional[str] = None
+    product_line: Optional[str] = None
+    pipeline_stage: Optional[PipelineStage] = None
+    launch_date: Optional[str] = None
+    progress: int = 0
+    last_update: Optional[str] = None
+    strategic_objective_ids: List[str] = []
+
+
+class ProgramUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[ProgramStatus] = None
+    owner: Optional[str] = None
+    team: Optional[str] = None
+    product_line: Optional[str] = None
+    pipeline_stage: Optional[PipelineStage] = None
+    launch_date: Optional[str] = None
+    progress: Optional[int] = None
+    last_update: Optional[str] = None
+    strategic_objective_ids: Optional[List[str]] = None
+
+
+class RiskCreate(BaseModel):
+    title: str
+    severity: RiskSeverity
+    description: Optional[str] = None
+    mitigation: Optional[str] = None
+    status: RiskStatus = RiskStatus.OPEN
+
+
+class RiskUpdate(BaseModel):
+    title: Optional[str] = None
+    severity: Optional[RiskSeverity] = None
+    description: Optional[str] = None
+    mitigation: Optional[str] = None
+    status: Optional[RiskStatus] = None
+
+
+class MilestoneCreate(BaseModel):
+    name: str
+    due_date: Optional[str] = None
+    completed_date: Optional[str] = None
+    status: MilestoneStatus = MilestoneStatus.PENDING
+
+
+class MilestoneUpdate(BaseModel):
+    name: Optional[str] = None
+    due_date: Optional[str] = None
+    completed_date: Optional[str] = None
+    status: Optional[MilestoneStatus] = None

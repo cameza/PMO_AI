@@ -34,7 +34,7 @@ export interface Milestone {
   name: string;
   dueDate: string;
   completedDate: string | null;
-  status: 'Upcoming' | 'Completed' | 'Overdue';
+  status: 'Pending' | 'In Progress' | 'Completed' | 'Overdue' | 'At Risk';
 }
 
 // Strategic Objectives (9 total, 7 covered, 2 uncovered)
@@ -70,7 +70,7 @@ export const programs: Program[] = [
     risks: [],
     milestones: [
       { id: 'm-001', programId: 'prog-001', name: 'Beta Release', dueDate: '2026-02-15', completedDate: '2026-02-14', status: 'Completed' },
-      { id: 'm-002', programId: 'prog-001', name: 'GA Launch', dueDate: '2026-02-28', completedDate: null, status: 'Upcoming' },
+      { id: 'm-002', programId: 'prog-001', name: 'GA Launch', dueDate: '2026-02-28', completedDate: null, status: 'In Progress' },
     ],
     lastUpdate: 'Beta testing complete. On track for Feb 28 launch.',
   },
@@ -110,7 +110,7 @@ export const programs: Program[] = [
       { id: 'r-002', programId: 'prog-003', title: 'Regulatory feedback pending', severity: 'Medium', description: 'Awaiting regulatory body response', mitigation: 'Legal team following up weekly', status: 'Open' },
     ],
     milestones: [
-      { id: 'm-004', programId: 'prog-003', name: 'Initial Audit Complete', dueDate: '2026-02-10', completedDate: null, status: 'Upcoming' },
+      { id: 'm-004', programId: 'prog-003', name: 'Initial Audit Complete', dueDate: '2026-02-10', completedDate: null, status: 'In Progress' },
     ],
     lastUpdate: 'Privacy Audit regulatory feedback pending.',
   },
@@ -185,7 +185,7 @@ export const programs: Program[] = [
     progress: 15,
     risks: [],
     milestones: [
-      { id: 'm-008', programId: 'prog-007', name: 'Architecture Review', dueDate: '2026-02-28', completedDate: null, status: 'Upcoming' },
+      { id: 'm-008', programId: 'prog-007', name: 'Architecture Review', dueDate: '2026-02-28', completedDate: null, status: 'In Progress' },
     ],
     lastUpdate: 'In planning phase. Architecture under review.',
   },
@@ -203,7 +203,7 @@ export const programs: Program[] = [
     progress: 10,
     risks: [],
     milestones: [
-      { id: 'm-009', programId: 'prog-008', name: 'Model Selection', dueDate: '2026-03-15', completedDate: null, status: 'Upcoming' },
+      { id: 'm-009', programId: 'prog-008', name: 'Model Selection', dueDate: '2026-03-15', completedDate: null, status: 'In Progress' },
     ],
     lastUpdate: 'Evaluating ML model options.',
   },
@@ -221,7 +221,7 @@ export const programs: Program[] = [
     progress: 5,
     risks: [],
     milestones: [
-      { id: 'm-010', programId: 'prog-009', name: 'Discovery Complete', dueDate: '2026-04-01', completedDate: null, status: 'Upcoming' },
+      { id: 'm-010', programId: 'prog-009', name: 'Discovery Complete', dueDate: '2026-04-01', completedDate: null, status: 'In Progress' },
     ],
     lastUpdate: 'Early discovery phase. Stakeholder interviews ongoing.',
   },
@@ -241,7 +241,7 @@ export const programs: Program[] = [
       { id: 'r-005', programId: 'prog-010', title: 'Payment gateway integration', severity: 'Low', description: 'Minor API compatibility issues', mitigation: 'Working with vendor', status: 'Open' },
     ],
     milestones: [
-      { id: 'm-011', programId: 'prog-010', name: 'Payment Integration', dueDate: '2026-02-28', completedDate: null, status: 'Upcoming' },
+      { id: 'm-011', programId: 'prog-010', name: 'Payment Integration', dueDate: '2026-02-28', completedDate: null, status: 'In Progress' },
     ],
     lastUpdate: 'Integration testing in progress.',
   },
@@ -259,7 +259,7 @@ export const programs: Program[] = [
     progress: 88,
     risks: [],
     milestones: [
-      { id: 'm-012', programId: 'prog-011', name: 'Launch Prep', dueDate: '2026-02-25', completedDate: null, status: 'Upcoming' },
+      { id: 'm-012', programId: 'prog-011', name: 'Launch Prep', dueDate: '2026-02-25', completedDate: null, status: 'In Progress' },
     ],
     lastUpdate: 'Final QA in progress. Launch on track.',
   },
@@ -279,7 +279,7 @@ export const programs: Program[] = [
       { id: 'r-006', programId: 'prog-012', title: 'Security certification delays', severity: 'High', description: 'Third-party audit taking longer than expected', mitigation: 'Expedited review requested', status: 'Open' },
     ],
     milestones: [
-      { id: 'm-013', programId: 'prog-012', name: 'Security Audit', dueDate: '2026-03-15', completedDate: null, status: 'Upcoming' },
+      { id: 'm-013', programId: 'prog-012', name: 'Security Audit', dueDate: '2026-03-15', completedDate: null, status: 'In Progress' },
     ],
     lastUpdate: 'Certification process delayed. May impact launch.',
   },
@@ -299,7 +299,7 @@ export const programs: Program[] = [
       { id: 'r-007', programId: 'prog-013', title: 'GPU capacity planning', severity: 'Medium', description: 'May need additional GPU resources', mitigation: 'Cloud scaling plan in place', status: 'Open' },
     ],
     milestones: [
-      { id: 'm-014', programId: 'prog-013', name: 'Alpha Release', dueDate: '2026-04-01', completedDate: null, status: 'Upcoming' },
+      { id: 'm-014', programId: 'prog-013', name: 'Alpha Release', dueDate: '2026-04-01', completedDate: null, status: 'In Progress' },
     ],
     lastUpdate: 'Development on schedule. Monitoring resource needs.',
   },
@@ -317,7 +317,7 @@ export const programs: Program[] = [
     progress: 20,
     risks: [],
     milestones: [
-      { id: 'm-015', programId: 'prog-014', name: 'Prototype Review', dueDate: '2026-03-30', completedDate: null, status: 'Upcoming' },
+      { id: 'm-015', programId: 'prog-014', name: 'Prototype Review', dueDate: '2026-03-30', completedDate: null, status: 'In Progress' },
     ],
     lastUpdate: 'Planning complete. Moving to prototype development.',
   },
@@ -373,7 +373,7 @@ export const programs: Program[] = [
     progress: 95,
     risks: [],
     milestones: [
-      { id: 'm-018', programId: 'prog-017', name: 'Production Deploy', dueDate: '2026-02-05', completedDate: null, status: 'Upcoming' },
+      { id: 'm-018', programId: 'prog-017', name: 'Production Deploy', dueDate: '2026-02-05', completedDate: null, status: 'In Progress' },
     ],
     lastUpdate: 'Ready for production deployment this week.',
   },
@@ -391,7 +391,7 @@ export const programs: Program[] = [
     progress: 8,
     risks: [],
     milestones: [
-      { id: 'm-019', programId: 'prog-018', name: 'Cost Analysis', dueDate: '2026-03-15', completedDate: null, status: 'Upcoming' },
+      { id: 'm-019', programId: 'prog-018', name: 'Cost Analysis', dueDate: '2026-03-15', completedDate: null, status: 'In Progress' },
     ],
     lastUpdate: 'Discovery phase. Analyzing current storage patterns.',
   },

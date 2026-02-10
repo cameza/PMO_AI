@@ -11,7 +11,8 @@ import { ChatWidget } from '@/components/ChatWidget';
 import { StrategicCoverageDetail } from '@/components/StrategicCoverageDetail';
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchPrograms } from '@/lib/api';
+import { fetchPrograms, fetchOrgDataSource } from '@/lib/api';
+import { ProgramFormModal } from '@/components/ProgramFormModal';
 import { useAuth } from '@/lib/auth-context';
 import type { Program } from '@/lib/mockData';
 import {
@@ -29,6 +30,8 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isStrategicDetailOpen, setIsStrategicDetailOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [dataSource, setDataSource] = useState<'manual' | 'synced'>('manual');
   const { user, loading: authLoading, signOut } = useAuth();
   const router = useRouter();
 
@@ -39,13 +42,26 @@ export default function Dashboard() {
     }
   }, [authLoading, user, router]);
 
+  const reloadPrograms = async () => {
+    try {
+      const data = await fetchPrograms();
+      setFetchedPrograms(data);
+    } catch (err) {
+      console.error('Error reloading programs:', err);
+    }
+  };
+
   useEffect(() => {
     if (authLoading || !user) return;
     async function loadData() {
       try {
         setIsLoading(true);
-        const data = await fetchPrograms();
+        const [data, ds] = await Promise.all([
+          fetchPrograms(),
+          fetchOrgDataSource(),
+        ]);
         setFetchedPrograms(data);
+        setDataSource(ds);
         setError(null);
       } catch (err) {
         console.error('Error loading programs:', err);
@@ -203,7 +219,12 @@ export default function Dashboard() {
 
           {/* Program Table - Takes remaining space */}
           <div className="flex-1 min-h-[300px] md:min-h-0 flex flex-col">
-            <ProgramTable programs={fetchedPrograms} compact />
+            <ProgramTable
+              programs={fetchedPrograms}
+              compact
+              onCreateProgram={() => setIsCreateModalOpen(true)}
+              dataSource={dataSource}
+            />
           </div>
         </main>
 
@@ -222,6 +243,15 @@ export default function Dashboard() {
         covered={strategicCoverage.covered}
         total={strategicCoverage.total}
         uncovered={strategicCoverage.uncovered}
+      />
+
+      {/* Create Program Modal */}
+      <ProgramFormModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSaved={() => {
+          reloadPrograms();
+        }}
       />
     </div>
   );

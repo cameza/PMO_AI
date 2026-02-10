@@ -162,4 +162,177 @@ export async function updateProgramStrategicObjectives(programId: string, object
     }
 }
 
+// ---------------------------------------------------------------------------
+// Organization data source
+// ---------------------------------------------------------------------------
+
+export async function fetchOrgDataSource(): Promise<'manual' | 'synced'> {
+    try {
+        const response = await api.get<{ data_source: string }>('/api/py/org/data-source');
+        return response.data.data_source as 'manual' | 'synced';
+    } catch (error) {
+        console.error('Failed to fetch org data source:', error);
+        return 'manual';
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Program CRUD
+// ---------------------------------------------------------------------------
+
+export interface ProgramCreateRequest {
+    name: string;
+    description?: string;
+    status?: string;
+    owner?: string;
+    team?: string;
+    product_line?: string;
+    pipeline_stage?: string;
+    launch_date?: string;
+    progress?: number;
+    last_update?: string;
+    strategic_objective_ids?: string[];
+}
+
+export interface ProgramUpdateRequest {
+    name?: string;
+    description?: string;
+    status?: string;
+    owner?: string;
+    team?: string;
+    product_line?: string;
+    pipeline_stage?: string;
+    launch_date?: string;
+    progress?: number;
+    last_update?: string;
+    strategic_objective_ids?: string[];
+}
+
+export async function createProgram(data: ProgramCreateRequest): Promise<Program> {
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const response = await api.post<any>('/api/py/programs', data);
+        return mapProgram(response.data);
+    } catch (error) {
+        console.error('Failed to create program:', error);
+        throw error;
+    }
+}
+
+export async function updateProgram(id: string, data: ProgramUpdateRequest): Promise<Program> {
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const response = await api.patch<any>(`/api/py/programs/${id}`, data);
+        return mapProgram(response.data);
+    } catch (error) {
+        console.error('Failed to update program:', error);
+        throw error;
+    }
+}
+
+export async function deleteProgram(id: string): Promise<void> {
+    try {
+        await api.delete(`/api/py/programs/${id}`);
+    } catch (error) {
+        console.error('Failed to delete program:', error);
+        throw error;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Risk CRUD
+// ---------------------------------------------------------------------------
+
+export interface RiskCreateRequest {
+    title: string;
+    severity: 'High' | 'Medium' | 'Low';
+    description?: string;
+    mitigation?: string;
+    status?: 'Open' | 'Mitigated' | 'Closed';
+}
+
+export interface RiskUpdateRequest {
+    title?: string;
+    severity?: 'High' | 'Medium' | 'Low';
+    description?: string;
+    mitigation?: string;
+    status?: 'Open' | 'Mitigated' | 'Closed';
+}
+
+export async function createRisk(programId: string, data: RiskCreateRequest) {
+    try {
+        const response = await api.post(`/api/py/programs/${programId}/risks`, data);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to create risk:', error);
+        throw error;
+    }
+}
+
+export async function updateRisk(programId: string, riskId: string, data: RiskUpdateRequest) {
+    try {
+        const response = await api.patch(`/api/py/programs/${programId}/risks/${riskId}`, data);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to update risk:', error);
+        throw error;
+    }
+}
+
+export async function deleteRisk(programId: string, riskId: string): Promise<void> {
+    try {
+        await api.delete(`/api/py/programs/${programId}/risks/${riskId}`);
+    } catch (error) {
+        console.error('Failed to delete risk:', error);
+        throw error;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Milestone CRUD
+// ---------------------------------------------------------------------------
+
+export interface MilestoneCreateRequest {
+    name: string;
+    due_date?: string;
+    completed_date?: string;
+    status?: 'Pending' | 'In Progress' | 'Completed' | 'Overdue' | 'At Risk';
+}
+
+export interface MilestoneUpdateRequest {
+    name?: string;
+    due_date?: string;
+    completed_date?: string;
+    status?: 'Pending' | 'In Progress' | 'Completed' | 'Overdue' | 'At Risk';
+}
+
+export async function createMilestone(programId: string, data: MilestoneCreateRequest) {
+    try {
+        const response = await api.post(`/api/py/programs/${programId}/milestones`, data);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to create milestone:', error);
+        throw error;
+    }
+}
+
+export async function updateMilestone(programId: string, milestoneId: string, data: MilestoneUpdateRequest) {
+    try {
+        const response = await api.patch(`/api/py/programs/${programId}/milestones/${milestoneId}`, data);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to update milestone:', error);
+        throw error;
+    }
+}
+
+export async function deleteMilestone(programId: string, milestoneId: string): Promise<void> {
+    try {
+        await api.delete(`/api/py/programs/${programId}/milestones/${milestoneId}`);
+    } catch (error) {
+        console.error('Failed to delete milestone:', error);
+        throw error;
+    }
+}
+
 export default api;
