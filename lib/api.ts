@@ -13,6 +13,11 @@ const api = axios.create({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapProgram = (p: any): Program => ({
     ...p,
+    name: p.name || 'Unnamed Program',
+    owner: p.owner || 'Unassigned',
+    status: p.status || 'On Track',
+    description: p.description || '',
+    progress: p.progress ?? 0,
     productLine: p.product_line || '',
     pipelineStage: p.pipeline_stage || '',
     launchDate: p.launch_date || '',
@@ -108,7 +113,7 @@ export interface CreateStrategicObjectiveRequest {
 
 export async function fetchStrategicObjectives(): Promise<StrategicObjective[]> {
     try {
-        const response = await api.get<StrategicObjective[]>('/api/py/strategic-objectives');
+        const response = await api.get<StrategicObjective[]>('/api/py/strategic-objectives/');
         return response.data;
     } catch (error) {
         console.error('Failed to fetch strategic objectives:', error);
@@ -118,7 +123,7 @@ export async function fetchStrategicObjectives(): Promise<StrategicObjective[]> 
 
 export async function createStrategicObjective(data: CreateStrategicObjectiveRequest): Promise<StrategicObjective> {
     try {
-        const response = await api.post<StrategicObjective>('/api/py/strategic-objectives', data);
+        const response = await api.post<StrategicObjective>('/api/py/strategic-objectives/', data);
         return response.data;
     } catch (error) {
         console.error('Failed to create strategic objective:', error);
@@ -128,7 +133,7 @@ export async function createStrategicObjective(data: CreateStrategicObjectiveReq
 
 export async function updateStrategicObjective(id: string, data: CreateStrategicObjectiveRequest & { id: string }): Promise<StrategicObjective> {
     try {
-        const response = await api.put<StrategicObjective>(`/api/py/strategic-objectives/${id}`, data);
+        const response = await api.put<StrategicObjective>(`/api/py/strategic-objectives/${id}/`, data);
         return response.data;
     } catch (error) {
         console.error('Failed to update strategic objective:', error);
@@ -138,7 +143,7 @@ export async function updateStrategicObjective(id: string, data: CreateStrategic
 
 export async function deleteStrategicObjective(id: string): Promise<void> {
     try {
-        await api.delete(`/api/py/strategic-objectives/${id}`);
+        await api.delete(`/api/py/strategic-objectives/${id}/`);
     } catch (error) {
         console.error('Failed to delete strategic objective:', error);
         throw error;

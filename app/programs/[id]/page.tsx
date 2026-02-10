@@ -11,6 +11,7 @@ import {
     ChevronRight,
 } from 'lucide-react';
 import { fetchProgram, fetchStrategicObjectives, type StrategicObjective } from '@/lib/api';
+import { useAuth } from '@/lib/auth-context';
 import { ChatWidget } from '@/components/ChatWidget';
 import type { Program, Risk, Milestone } from '@/lib/mockData';
 
@@ -30,12 +31,20 @@ const riskSeverityColors = {
 export default function ProgramDetailPage() {
     const { id } = useParams();
     const router = useRouter();
+    const { user, loading: authLoading } = useAuth();
     const [program, setProgram] = useState<Program | null>(null);
     const [strategicObjectives, setStrategicObjectives] = useState<StrategicObjective[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/auth');
+        }
+    }, [authLoading, user, router]);
+
+    useEffect(() => {
+        if (authLoading || !user) return;
         async function loadProgram() {
             if (!id) return;
             try {
@@ -54,9 +63,9 @@ export default function ProgramDetailPage() {
             }
         }
         loadProgram();
-    }, [id]);
+    }, [id, authLoading, user]);
 
-    if (isLoading) {
+    if (authLoading || !user || isLoading) {
         return (
             <div className="min-h-screen bg-deep flex items-center justify-center p-6">
                 <div className="flex flex-col items-center gap-4">
@@ -100,7 +109,7 @@ export default function ProgramDetailPage() {
                     </button>
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-accent-violet to-fuchsia-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-sm border-2 border-white/10">
-                            {program.owner.split(' ').map(n => n[0]).join('')}
+                            {(program.owner || 'U').split(' ').map(n => n[0]).join('')}
                         </div>
                         <div>
                             <h1 className="text-xl font-bold text-white leading-tight tracking-tight">{program.name}</h1>
