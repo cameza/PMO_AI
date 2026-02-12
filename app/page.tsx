@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell } from 'lucide-react';
+import { Bell, Settings } from 'lucide-react';
 import { KPICard } from '@/components/KPICard';
 import { ProgramVelocityChart } from '@/components/charts/ProgramVelocityChart';
 import { StrategicAlignmentChart } from '@/components/charts/StrategicAlignmentChart';
@@ -13,9 +13,9 @@ import { LinesUnderPressureDetail } from '@/components/LinesUnderPressureDetail'
 import { MilestoneCompletionDetail } from '@/components/MilestoneCompletionDetail';
 import { UpcomingLaunchesDetail } from '@/components/UpcomingLaunchesDetail';
 import { ProgramDetailModal } from '@/components/ProgramDetailModal';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchPrograms, fetchOrgDataSource } from '@/lib/api';
+import { fetchPrograms, fetchOrgDataSource, toggleDataSource, fetchIntegrationStatus } from '@/lib/api';
 import { ProgramFormModal } from '@/components/ProgramFormModal';
 import { useAuth } from '@/lib/auth-context';
 import type { Program } from '@/lib/mockData';
@@ -40,6 +40,8 @@ export default function Dashboard() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<'manual' | 'synced'>('manual');
+  const [hasIntegration, setHasIntegration] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
 
   // Chart → Table filter state
   const [chartFilter, setChartFilter] = useState<{
@@ -68,17 +70,22 @@ export default function Dashboard() {
     }
   };
 
+  const hasLoadedRef = useRef(false);
+
   useEffect(() => {
-    if (authLoading || !user) return;
+    if (authLoading || !user || hasLoadedRef.current) return;
+    hasLoadedRef.current = true;
     async function loadData() {
       try {
         setIsLoading(true);
-        const [data, ds] = await Promise.all([
+        const [data, ds, integStatus] = await Promise.all([
           fetchPrograms(),
           fetchOrgDataSource(),
+          fetchIntegrationStatus(),
         ]);
         setFetchedPrograms(data);
         setDataSource(ds);
+        setHasIntegration(integStatus.connected);
         setError(null);
       } catch (err) {
         console.error('Error loading programs:', err);
@@ -89,6 +96,21 @@ export default function Dashboard() {
     }
     loadData();
   }, [authLoading, user]);
+
+  const handleToggleDataSource = async () => {
+    const newMode = dataSource === 'manual' ? 'synced' : 'manual';
+    setIsToggling(true);
+    try {
+      await toggleDataSource(newMode);
+      setDataSource(newMode);
+      const data = await fetchPrograms();
+      setFetchedPrograms(data);
+    } catch (err) {
+      console.error('Failed to toggle data source:', err);
+    } finally {
+      setIsToggling(false);
+    }
+  };
 
   // Compute KPI data
   const strategicCoverage = useMemo(() => getStrategicCoverage(fetchedPrograms), [fetchedPrograms]);
@@ -149,6 +171,27 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center gap-3">
+          {hasIntegration && (
+            <div className="flex items-center gap-2 mr-2">
+              <span className={`text-xs font-medium ${dataSource === 'manual' ? 'text-slate-300' : 'text-slate-500'}`}>Standalone</span>
+              <button
+                onClick={handleToggleDataSource}
+                disabled={isToggling}
+                className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${dataSource === 'synced' ? 'bg-accent-violet' : 'bg-slate-600'} ${isToggling ? 'opacity-50' : ''}`}
+                title={`Switch to ${dataSource === 'manual' ? 'Linear' : 'Standalone'} data`}
+              >
+                <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform duration-200 ${dataSource === 'synced' ? 'translate-x-5' : ''}`} />
+              </button>
+              <span className={`text-xs font-medium ${dataSource === 'synced' ? 'text-slate-300' : 'text-slate-500'}`}>Linear</span>
+            </div>
+          )}
+          <button
+            onClick={() => router.push('/admin/integrations')}
+            className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+            title="Integration Settings"
+          >
+            <Settings className="w-5 h-5 text-slate-400" />
+          </button>
           <button className="p-2 hover:bg-white/5 rounded-lg transition-colors relative">
             <Bell className="w-5 h-5 text-slate-400" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent-rose rounded-full" />

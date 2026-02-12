@@ -162,3 +162,42 @@ class MilestoneUpdate(BaseModel):
     due_date: Optional[str] = None
     completed_date: Optional[str] = None
     status: Optional[MilestoneStatus] = None
+
+
+# ---------------------------------------------------------------------------
+# Integration models
+# ---------------------------------------------------------------------------
+
+class IntegrationConnect(BaseModel):
+    api_key: str
+
+
+class IntegrationConfig(BaseModel):
+    id: str
+    organization_id: str
+    tool: str
+    status: str
+    sync_schedule: str
+    last_sync_at: Optional[str] = None
+    config: Optional[dict] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+
+class IntegrationStatus(BaseModel):
+    connected: bool
+    tool: Optional[str] = None
+    status: Optional[str] = None
+    last_sync_at: Optional[str] = None
+    organization: Optional[dict] = None
+
+
+class SyncResult(BaseModel):
+    strategic_objectives: int = 0
+    programs: int = 0
+    milestones: int = 0
+    last_sync_at: Optional[str] = None
+
+
+class DataSourceToggle(BaseModel):
+    data_source: str  # 'manual' or 'synced'

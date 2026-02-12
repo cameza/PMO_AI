@@ -483,6 +483,7 @@ Each chart visually expands on or grounds one of the KPI cards above, giving the
 - [ ] Admin can view and manually override any mapping at any time via `/settings/integrations/[tool]/mappings`
 - [ ] System syncs data on configurable schedules (hourly, daily) via Vercel Cron Jobs
 - [ ] Webhook support for real-time updates from integrated tools
+- [ ] Preferred cadence: webhook-first for near-real-time updates, plus a daily full sync as reconciliation (avoids heavy polling)
 - [ ] Integration failures trigger alerts and retry mechanisms
 - [ ] Historical data is preserved for trend analysis
 
@@ -947,6 +948,17 @@ The agent uses a hybrid retrieval approach to ground its responses:
 - **Message Formatting Enhancement**: Added automatic conversion of **bold** and ## headers to Slack-compatible *italic* format.
 - **Full Integration Testing**: Comprehensive validation confirms both Monday Morning Summary (push) and user questions (pull) working perfectly.
 - **Data Accuracy Validation**: 100% verification that all Slack message content is grounded in database data with no hallucinations.
+
+### v2.5 — February 12, 2026
+- **Linear Integration (MCS-148)**: First external data source connector. Linear initiatives→strategic objectives, projects→programs, milestones→milestones via deterministic field mapping.
+- **Integration Pipeline (Layer 1 & 3)**: `integration_configs`, `raw_records`, `field_mappings` tables created. Raw ingestion + normalized store implemented. AI normalization (Layer 2) deferred to post-MVP.
+- **Linear GraphQL Adapter**: `backend/integrations/linear_adapter.py` — fetches initiatives, projects (with labels), and milestones via `httpx` POST to Linear's GraphQL API. No new dependencies.
+- **Sync Engine**: `backend/integrations/sync_engine.py` — deterministic mapping with status→pipeline_stage, Product Line labels, owner resolution. Upserts on `external_id` + `sync_source`.
+- **Data Source Toggle**: Standalone ↔ Linear toggle in dashboard header. Both datasets coexist (`sync_source IS NULL` vs `sync_source = 'linear'`). Backend filters all queries by active mode.
+- **Integration Settings Page**: `app/admin/integrations/page.tsx` — connect/disconnect Linear, manual sync trigger, status display, field mapping reference.
+- **Future Entity: Features**: Linear issues map to a "Features" concept not yet in the PMO AI data model. Captured as post-MVP functionality.
+- **Risk Management Gap**: Tools like Linear and Jira lack native risk management. Risks remain manual-entry only for integrated data sources.
+- **Future: User-Configurable Mappings**: `field_mappings` table supports per-org mapping overrides. Planned: (a) admin UI for manual field mapping via dropdowns, (b) AI-assisted mapping where LLM proposes mappings from sample records.
 
 ### v1.7 — February 5, 2026 (Morning)
 - **Monday Morning Summary Integration**: Complete end-to-end Slack integration with structured formatting and 100% data accuracy validation.
