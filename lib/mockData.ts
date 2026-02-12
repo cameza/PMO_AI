@@ -399,16 +399,16 @@ export const programs: Program[] = [
 
 // Computed data for charts
 export const getVelocityData = (data: Program[] = programs) => {
-  const stageCounts = {
-    'Discovery': 0,
-    'Planning': 0,
-    'In Progress': 0,
-    'Launching': 0,
-    'Completed': 0,
-  };
+  const orderedStages = ['Discovery', 'Planning', 'In Progress', 'Launching', 'Completed'] as const;
+  const stageSet = new Set(data.map(p => p.pipelineStage).filter(Boolean));
+  const stages = [
+    ...orderedStages.filter(stage => stageSet.has(stage)),
+    ...Array.from(stageSet).filter(stage => !orderedStages.includes(stage)),
+  ];
+  const stageCounts = Object.fromEntries(stages.map(stage => [stage, 0]));
 
   data.forEach(p => {
-    stageCounts[p.pipelineStage]++;
+    if (p.pipelineStage in stageCounts) stageCounts[p.pipelineStage]++;
   });
 
   return Object.entries(stageCounts).map(([stage, count]) => ({
@@ -418,16 +418,19 @@ export const getVelocityData = (data: Program[] = programs) => {
 };
 
 export const getStrategicAlignmentData = (data: Program[] = programs) => {
+  const lines = Array.from(new Set(data.map(p => p.productLine).filter(Boolean))).sort();
   const result: Record<string, { productLine: string; onTrack: number; atRisk: number; offTrack: number }> = {};
 
-  productLines.forEach(line => {
+  lines.forEach(line => {
     result[line] = { productLine: line, onTrack: 0, atRisk: 0, offTrack: 0 };
   });
 
   data.filter(p => p.status !== 'Completed').forEach(p => {
-    if (p.status === 'On Track') result[p.productLine].onTrack++;
-    else if (p.status === 'At Risk') result[p.productLine].atRisk++;
-    else if (p.status === 'Off Track') result[p.productLine].offTrack++;
+    const bucket = result[p.productLine];
+    if (!bucket) return;
+    if (p.status === 'On Track') bucket.onTrack++;
+    else if (p.status === 'At Risk') bucket.atRisk++;
+    else if (p.status === 'Off Track') bucket.offTrack++;
   });
 
   return Object.values(result);
@@ -472,17 +475,20 @@ export const getLaunchCadenceData = (data: Program[] = programs) => {
 };
 
 export const getRiskLandscapeData = (data: Program[] = programs) => {
+  const lines = Array.from(new Set(data.map(p => p.productLine).filter(Boolean))).sort();
   const result: Record<string, { productLine: string; high: number; medium: number; low: number }> = {};
 
-  productLines.forEach(line => {
+  lines.forEach(line => {
     result[line] = { productLine: line, high: 0, medium: 0, low: 0 };
   });
 
   data.forEach(p => {
+    const bucket = result[p.productLine];
+    if (!bucket) return;
     p.risks.filter(r => r.status === 'Open').forEach(r => {
-      if (r.severity === 'High') result[p.productLine].high++;
-      else if (r.severity === 'Medium') result[p.productLine].medium++;
-      else if (r.severity === 'Low') result[p.productLine].low++;
+      if (r.severity === 'High') bucket.high++;
+      else if (r.severity === 'Medium') bucket.medium++;
+      else if (r.severity === 'Low') bucket.low++;
     });
   });
 
@@ -492,26 +498,33 @@ export const getRiskLandscapeData = (data: Program[] = programs) => {
 // KPI computations
 export const getStrategicCoverage = (data: Program[] = programs) => {
   const coveredObjectives = new Set<string>();
+  const allObjectives = new Set<string>();
+
+  data.forEach(p => {
+    p.strategicObjectives.forEach(obj => allObjectives.add(obj));
+  });
+
   data.filter(p => p.status !== 'Completed').forEach(p => {
     p.strategicObjectives.forEach(obj => coveredObjectives.add(obj));
   });
   return {
     covered: coveredObjectives.size,
-    total: strategicObjectives.length,
-    uncovered: strategicObjectives.filter(obj => !coveredObjectives.has(obj)),
+    total: allObjectives.size,
+    uncovered: Array.from(allObjectives).filter(obj => !coveredObjectives.has(obj)),
   };
 };
 
 export const getLinesUnderPressure = (data: Program[] = programs) => {
   const pressureByLine: Record<string, number> = {};
+  const lines = Array.from(new Set(data.map(p => p.productLine).filter(Boolean))).sort();
 
-  productLines.forEach(line => {
+  lines.forEach(line => {
     pressureByLine[line] = 0;
   });
 
   data.filter(p => p.status === 'At Risk' || p.status === 'Off Track')
     .forEach(p => {
-      pressureByLine[p.productLine]++;
+      if (p.productLine in pressureByLine) pressureByLine[p.productLine]++;
     });
 
   const underPressure = Object.entries(pressureByLine)

@@ -335,4 +335,83 @@ export async function deleteMilestone(programId: string, milestoneId: string): P
     }
 }
 
+// ---------------------------------------------------------------------------
+// Integration API
+// ---------------------------------------------------------------------------
+
+export interface IntegrationStatus {
+    connected: boolean;
+    tool?: string;
+    status?: string;
+    last_sync_at?: string;
+    organization?: {
+        workspace_id?: string;
+        workspace_name?: string;
+        workspace_url_key?: string;
+    };
+}
+
+export interface SyncResult {
+    strategic_objectives: number;
+    programs: number;
+    milestones: number;
+    last_sync_at?: string;
+}
+
+export async function connectLinear(apiKey: string): Promise<{ success: boolean; integration_id?: string; organization?: Record<string, string>; error?: string }> {
+    try {
+        const response = await api.post('/api/py/integrations/linear/connect', { api_key: apiKey });
+        return response.data;
+    } catch (error) {
+        console.error('Failed to connect Linear:', error);
+        throw error;
+    }
+}
+
+export async function syncLinear(): Promise<SyncResult> {
+    try {
+        // Sync can take 30-60s due to hundreds of Supabase upserts.
+        // In dev, bypass Next.js rewrite proxy (which has a short timeout)
+        // and hit FastAPI directly.
+        const isDev = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+        const syncUrl = isDev
+            ? 'http://127.0.0.1:8000/api/integrations/linear/sync'
+            : '/api/py/integrations/linear/sync';
+        const response = await axios.post<SyncResult>(syncUrl, {}, { timeout: 120000 });
+        return response.data;
+    } catch (error) {
+        console.error('Failed to sync Linear:', error);
+        throw error;
+    }
+}
+
+export async function fetchIntegrationStatus(): Promise<IntegrationStatus> {
+    try {
+        const response = await api.get<IntegrationStatus>('/api/py/integrations/status');
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch integration status:', error);
+        return { connected: false };
+    }
+}
+
+export async function disconnectLinear(): Promise<void> {
+    try {
+        await api.delete('/api/py/integrations/linear');
+    } catch (error) {
+        console.error('Failed to disconnect Linear:', error);
+        throw error;
+    }
+}
+
+export async function toggleDataSource(dataSource: 'manual' | 'synced'): Promise<{ data_source: string }> {
+    try {
+        const response = await api.patch<{ data_source: string }>('/api/py/org/data-source', { data_source: dataSource });
+        return response.data;
+    } catch (error) {
+        console.error('Failed to toggle data source:', error);
+        throw error;
+    }
+}
+
 export default api;
