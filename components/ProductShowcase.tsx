@@ -88,7 +88,7 @@ export function ProductShowcase() {
                 <div key={index} className="flex-[0_0_100%] min-w-0 px-4">
                   <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden shadow-2xl">
                     {/* Image Container */}
-                    <div className="relative overflow-hidden bg-gradient-to-br from-violet-950/20 to-indigo-950/20 p-6 h-96 flex items-center justify-center">
+                    <div className="relative overflow-hidden bg-gradient-to-br from-violet-950/20 to-indigo-950/20 p-6 h-[32rem] flex items-center justify-center">
                       <img
                         src={slide.image}
                         alt={slide.title}
