@@ -128,10 +128,13 @@ pmo-ai/                                  # Vercel monorepo (Next.js at root)
 │   └── index.py                          # Vercel Function entrypoint → imports FastAPI
 ├── app/
 │   ├── layout.tsx                        # Root layout, wraps AuthProvider
-│   ├── page.tsx                          # Dashboard home: KPIs + charts + program table (client-side auth guard)
+│   ├── page.tsx                          # Public landing page with inline sign-in/sign-up
+│   ├── dashboard/
+│   │   └── page.tsx                      # Protected dashboard home: KPIs + charts + program table
 │   ├── error.tsx                         # Error boundary for client-side exceptions
 │   ├── auth/
-│   │   └── page.tsx                      # Login / signup page (Supabase Auth)
+│   │   ├── page.tsx                      # Legacy login/signup route (kept for compatibility)
+│   │   └── callback/page.tsx             # Email verification callback route
 │   ├── admin/
 │   │   └── strategic-objectives/page.tsx # Admin: manage strategic objectives
 │   ├── programs/
@@ -881,6 +884,13 @@ The agent uses a hybrid retrieval approach to ground its responses:
 ---
 
 ## Changelog
+
+### v2.6 — February 17, 2026
+- **Landing-First Entry Flow**: `/` now serves a public landing page with inline sign-in/sign-up in the navbar area (responsive mobile toggle), replacing the prior auth-first entry experience.
+- **Dashboard Route Split**: Core authenticated app shell moved to `/dashboard`. Authenticated users hitting `/` are auto-redirected to `/dashboard`.
+- **Protected Route Redirect Alignment**: Admin and program detail routes now redirect unauthenticated users to `/` (landing) instead of `/auth`.
+- **Email Verification Callback**: Added `app/auth/callback/page.tsx` to handle Supabase verification return, redirect successful sessions to `/dashboard`, and show explicit invalid/expired-link messaging.
+- **Production-Only Verification Links**: Supabase signup now uses `emailRedirectTo: https://pmo-ai.vercel.app/auth/callback` in auth flows, preventing localhost confirmation links in email.
 
 ### v2.4 — February 10, 2026
 - **Interactive KPI Card Modals**: All 4 KPI cards now open drill-down modals on click with backdrop blur. Lines Under Pressure shows product lines with 2+ flagged programs; Milestone Completion lists milestones due this month grouped by status; Upcoming Launches shows programs launching within 30 days with countdown. Clicking a program inside any KPI modal opens the program detail modal.

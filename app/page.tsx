@@ -1,371 +1,283 @@
 'use client';
 
-import { Bell, Settings } from 'lucide-react';
-import { KPICard } from '@/components/KPICard';
-import { ProgramVelocityChart } from '@/components/charts/ProgramVelocityChart';
-import { StrategicAlignmentChart } from '@/components/charts/StrategicAlignmentChart';
-import { LaunchCadenceChart } from '@/components/charts/LaunchCadenceChart';
-import { PortfolioStatusChart } from '@/components/charts/PortfolioStatusChart';
-import { ProgramTable } from '@/components/ProgramTable';
-import { ChatWidget } from '@/components/ChatWidget';
-import { StrategicCoverageDetail } from '@/components/StrategicCoverageDetail';
-import { LinesUnderPressureDetail } from '@/components/LinesUnderPressureDetail';
-import { MilestoneCompletionDetail } from '@/components/MilestoneCompletionDetail';
-import { UpcomingLaunchesDetail } from '@/components/UpcomingLaunchesDetail';
-import { ProgramDetailModal } from '@/components/ProgramDetailModal';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchPrograms, fetchOrgDataSource, toggleDataSource, fetchIntegrationStatus } from '@/lib/api';
-import { ProgramFormModal } from '@/components/ProgramFormModal';
 import { useAuth } from '@/lib/auth-context';
-import type { Program } from '@/lib/mockData';
-import {
-  getVelocityData,
-  getStrategicAlignmentData,
-  getLaunchCadenceData,
-  getStrategicCoverage,
-  getLinesUnderPressure,
-  getMilestoneCompletion,
-  getUpcomingLaunches,
-} from '@/lib/mockData';
+import { getSupabase } from '@/lib/supabase';
+import { motion } from 'motion/react';
+import { ArrowRight, Play, Menu, X } from 'lucide-react';
+import { AuthModal } from '@/components/AuthModal';
+import { ProductShowcase } from '@/components/ProductShowcase';
+import { ProblemSection } from '@/components/ProblemSection';
+import { SolutionSection } from '@/components/SolutionSection';
+import { DayInLifeSection } from '@/components/DayInLifeSection';
+import { Footer } from '@/components/Footer';
+import { ExpressiveEye } from '@/components/ExpressiveEye';
 
-export default function Dashboard() {
-  const [fetchedPrograms, setFetchedPrograms] = useState<Program[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isStrategicDetailOpen, setIsStrategicDetailOpen] = useState(false);
-  const [isLinesDetailOpen, setIsLinesDetailOpen] = useState(false);
-  const [isMilestoneDetailOpen, setIsMilestoneDetailOpen] = useState(false);
-  const [isLaunchesDetailOpen, setIsLaunchesDetailOpen] = useState(false);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null);
-  const [dataSource, setDataSource] = useState<'manual' | 'synced'>('manual');
-  const [hasIntegration, setHasIntegration] = useState(false);
-  const [isToggling, setIsToggling] = useState(false);
-
-  // Chart → Table filter state
-  const [chartFilter, setChartFilter] = useState<{
-    status?: string | null;
-    productLine?: string | null;
-    pipelineStage?: string | null;
-    launchMonth?: string | null;
-  }>({});
-  const clearChartFilter = () => setChartFilter({});
-  const { user, loading: authLoading, signOut } = useAuth();
+export default function LandingPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
 
-  // Client-side auth guard — redirect to /auth if not logged in
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/auth');
+    if (!authLoading && user) {
+      router.replace('/dashboard');
     }
   }, [authLoading, user, router]);
 
-  const reloadPrograms = async () => {
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    setSubmitting(true);
+
     try {
-      const data = await fetchPrograms();
-      setFetchedPrograms(data);
-    } catch (err) {
-      console.error('Error reloading programs:', err);
-    }
-  };
+      if (isSignUp) {
+        const { error: signUpError } = await getSupabase().auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: 'https://pmo-ai.vercel.app/auth/callback',
+          },
+        });
 
-  const hasLoadedRef = useRef(false);
+        if (signUpError) {
+          setError(signUpError.message);
+          return;
+        }
 
-  useEffect(() => {
-    if (authLoading || !user || hasLoadedRef.current) return;
-    hasLoadedRef.current = true;
-    async function loadData() {
-      try {
-        setIsLoading(true);
-        const [data, ds, integStatus] = await Promise.all([
-          fetchPrograms(),
-          fetchOrgDataSource(),
-          fetchIntegrationStatus(),
-        ]);
-        setFetchedPrograms(data);
-        setDataSource(ds);
-        setHasIntegration(integStatus.connected);
-        setError(null);
-      } catch (err) {
-        console.error('Error loading programs:', err);
-        setError('Failed to load portfolio data. Please ensure the backend is running.');
-      } finally {
-        setIsLoading(false);
+        setSuccess('Check your email to confirm your account.');
+      } else {
+        const { error: signInError } = await getSupabase().auth.signInWithPassword({ email, password });
+        if (signInError) {
+          setError(signInError.message);
+          return;
+        }
+        window.location.href = '/dashboard';
       }
-    }
-    loadData();
-  }, [authLoading, user]);
-
-  const handleToggleDataSource = async () => {
-    const newMode = dataSource === 'manual' ? 'synced' : 'manual';
-    setIsToggling(true);
-    try {
-      await toggleDataSource(newMode);
-      setDataSource(newMode);
-      const data = await fetchPrograms();
-      setFetchedPrograms(data);
     } catch (err) {
-      console.error('Failed to toggle data source:', err);
+      setError(err instanceof Error ? err.message : 'Unexpected error during authentication.');
     } finally {
-      setIsToggling(false);
+      setSubmitting(false);
     }
-  };
+  }
 
-  // Compute KPI data
-  const strategicCoverage = useMemo(() => getStrategicCoverage(fetchedPrograms), [fetchedPrograms]);
-  const linesUnderPressure = useMemo(() => getLinesUnderPressure(fetchedPrograms), [fetchedPrograms]);
-  const milestoneCompletion = useMemo(() => getMilestoneCompletion(fetchedPrograms), [fetchedPrograms]);
-  const upcomingLaunches = useMemo(() => getUpcomingLaunches(fetchedPrograms), [fetchedPrograms]);
-
-  // Compute chart data
-  const velocityData = useMemo(() => getVelocityData(fetchedPrograms), [fetchedPrograms]);
-  const alignmentData = useMemo(() => getStrategicAlignmentData(fetchedPrograms), [fetchedPrograms]);
-
-  // Launch Cadence uses actual program data for dynamic calculation
-  const cadenceData = useMemo(() => getLaunchCadenceData(fetchedPrograms), [fetchedPrograms]);
-
-  if (authLoading || !user || isLoading) {
+  if (authLoading) {
     return (
       <div className="h-screen bg-deep flex items-center justify-center font-jakarta">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-accent-violet border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400 font-medium">Loading portfolio data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="h-screen bg-deep flex items-center justify-center font-jakarta p-6">
-        <div className="max-w-md w-full bg-surface rounded-2xl shadow-glass border border-white/10 p-8 text-center text-sm">
-          <div className="w-12 h-12 bg-accent-rose/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Bell className="w-6 h-6 text-accent-rose" />
-          </div>
-          <h2 className="text-lg font-semibold text-white mb-2">Connection Error</h2>
-          <p className="text-slate-400 mb-6">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="w-full bg-accent-violet text-white font-semibold py-2.5 rounded-xl hover:bg-accent-violet/80 transition-colors shadow-sm"
-          >
-            Try Again
-          </button>
+          <p className="text-slate-400 font-medium">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen bg-deep flex flex-col">
-      {/* Header — full width */}
-      <header className="bg-surface/80 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-accent-violet to-fuchsia-500 rounded-lg flex items-center justify-center shadow-lg">
-            <span className="text-white font-bold text-sm">P</span>
-          </div>
-          <div>
-            <h1 className="font-semibold text-white text-sm tracking-tight">Portfolio</h1>
-            <p className="text-xs text-slate-500 uppercase tracking-wide">Executive Dashboard</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          {hasIntegration && (
-            <div className="flex items-center gap-2 mr-2">
-              <span className={`text-xs font-medium ${dataSource === 'manual' ? 'text-slate-300' : 'text-slate-500'}`}>Standalone</span>
+    <div className="min-h-screen bg-[#0a0b10] text-slate-200 font-jakarta">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-[#0a0b10]/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex items-center justify-center h-20">
+            {/* Centered Logo */}
+            <div className="flex items-center gap-3">
+              <ExpressiveEye size="sm" emotion="neutral" enableTracking={true} />
+              <span className="text-xl font-semibold text-white">Portfolio AI</span>
+            </div>
+            
+            {/* Desktop Log In Button */}
+            <div className="hidden md:block absolute right-6 lg:right-8">
               <button
-                onClick={handleToggleDataSource}
-                disabled={isToggling}
-                className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${dataSource === 'synced' ? 'bg-accent-violet' : 'bg-slate-600'} ${isToggling ? 'opacity-50' : ''}`}
-                title={`Switch to ${dataSource === 'manual' ? 'Linear' : 'Standalone'} data`}
+                onClick={() => setAuthModalOpen(true)}
+                className="px-6 py-2 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 text-white font-medium transition-all"
               >
-                <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform duration-200 ${dataSource === 'synced' ? 'translate-x-5' : ''}`} />
+                Log In
               </button>
-              <span className={`text-xs font-medium ${dataSource === 'synced' ? 'text-slate-300' : 'text-slate-500'}`}>Linear</span>
+            </div>
+            
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden absolute right-6 text-white"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+          
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden border-t border-white/10 py-4">
+              <button
+                onClick={() => {
+                  setAuthModalOpen(true);
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full px-6 py-2 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 text-white font-medium transition-all text-left"
+              >
+                Log In
+              </button>
             </div>
           )}
-          <button
-            onClick={() => router.push('/admin/integrations')}
-            className="p-2 hover:bg-white/5 rounded-lg transition-colors"
-            title="Integration Settings"
-          >
-            <Settings className="w-5 h-5 text-slate-400" />
-          </button>
-          <button className="p-2 hover:bg-white/5 rounded-lg transition-colors relative">
-            <Bell className="w-5 h-5 text-slate-400" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent-rose rounded-full" />
-          </button>
-          {user && (
-            <span className="text-xs text-slate-400 hidden sm:block">{user.email}</span>
-          )}
-          <button
-            onClick={async () => { await signOut(); router.push('/auth'); }}
-            className="w-8 h-8 bg-gradient-to-br from-accent-violet to-fuchsia-500 rounded-full flex items-center justify-center text-white text-sm font-semibold hover:opacity-80 transition-opacity"
-            title="Sign out"
-          >
-            {user?.email?.charAt(0).toUpperCase() || 'U'}
-          </button>
         </div>
-      </header>
+      </nav>
 
-      {/* Body — main content + chat sidebar, both start below header */}
-      <div className="flex-1 flex min-h-0">
-        {/* Main Content */}
-        <main className="flex-1 p-4 flex flex-col min-h-0 gap-3 w-full max-w-[100vw] overflow-y-auto">
-          {/* KPI Cards Row */}
-          {/* Mobile: Swipe Carousel, Desktop: Grid */}
-          <div className="flex w-full overflow-x-auto snap-x snap-mandatory gap-3 pb-2 md:pb-0 md:grid md:grid-cols-4 flex-shrink-0 no-scrollbar">
-            <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
-              <KPICard
-                title="Strategic Coverage"
-                value={`${strategicCoverage.covered} of ${strategicCoverage.total}`}
-                subtitle={`${strategicCoverage.total - strategicCoverage.covered} objectives uncovered`}
-                subtitleColor="text-accent-violet"
-                glowColor="violet"
-                onClick={() => setIsStrategicDetailOpen(true)}
-                className="cursor-pointer hover:border-white/30 transition-colors"
-              />
-            </div>
-            <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
-              <KPICard
-                title="Lines Under Pressure"
-                value={`${linesUnderPressure.count} lines`}
-                tags={linesUnderPressure.lines.map(line => ({
-                  label: line,
-                  color: 'bg-accent-amber/20 text-accent-amber'
-                }))}
-                glowColor="amber"
-                onClick={() => setIsLinesDetailOpen(true)}
-                className="cursor-pointer hover:border-white/30 transition-colors"
-              />
-            </div>
-            <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
-              <KPICard
-                title="Milestone Completion"
-                value={`${milestoneCompletion.percentage}%`}
-                subtitle={`${milestoneCompletion.completed} of ${milestoneCompletion.total} completed`}
-                subtitleColor="text-slate-400"
-                progress={milestoneCompletion.percentage}
-                progressColor="bg-accent-emerald"
-                glowColor="emerald"
-                onClick={() => setIsMilestoneDetailOpen(true)}
-                className="cursor-pointer hover:border-white/30 transition-colors"
-              />
-            </div>
-            <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
-              <KPICard
-                title="Upcoming Launches"
-                value={`${upcomingLaunches.count} launching`}
-                subtitle={upcomingLaunches.nextDate ? `Next: ${formatLaunchDate(upcomingLaunches.nextDate)}` : 'None in next 30 days'}
-                subtitleColor="text-accent-violet"
-                glowColor="blue"
-                onClick={() => setIsLaunchesDetailOpen(true)}
-                className="cursor-pointer hover:border-white/30 transition-colors"
-              />
-            </div>
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Background with AI Glow */}
+        <div className="absolute inset-0 bg-[#0a0b10]">
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-violet-600/20 rounded-full blur-[120px]" />
+          <div className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-indigo-600/20 rounded-full blur-[100px]" />
+        </div>
+
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40" />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-32">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left: Content */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="space-y-8"
+            >
+              <motion.h1
+                className="text-5xl md:text-7xl font-semibold tracking-tight text-white"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+              >
+                The Portfolio That{' '}
+                <span className="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">
+                  Explains Itself
+                </span>
+              </motion.h1>
+
+              <motion.p
+                className="text-xl text-gray-300 leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+              >
+                Stop chasing status updates. Use RAG-powered AI to turn fragmented program data into{' '}
+                <span className="text-white font-semibold">executive-ready strategic insights</span> in seconds.
+              </motion.p>
+
+              <motion.div
+                className="flex flex-wrap gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+              >
+                <button
+                  onClick={() => setAuthModalOpen(true)}
+                  className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white px-8 py-6 text-lg rounded-xl font-medium group transition-all"
+                >
+                  Get Started
+                  <ArrowRight className="ml-2 inline size-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+                <button
+                  onClick={() => {
+                    const element = document.getElementById('product-showcase');
+                    element?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="border border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 text-white px-8 py-6 text-lg rounded-xl font-medium transition-all"
+                >
+                  <Play className="mr-2 inline size-5" />
+                  View Dashboard
+                </button>
+              </motion.div>
+            </motion.div>
+
+            {/* Right: Dashboard Preview */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="relative"
+            >
+              <div className="relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 shadow-2xl">
+                {/* Mock Dashboard Query */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="flex-1">
+                      <div className="text-sm text-gray-400">Executive Command Center</div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl bg-white/5 border border-white/10 p-4 backdrop-blur-sm">
+                    <div className="text-sm text-gray-400 mb-2">Query</div>
+                    <div className="text-white font-medium">
+                      &quot;Which programs in the Smart Home line are currently at risk?&quot;
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-amber-400 font-semibold">Project Titan</span>
+                        <span className="px-2 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs">High Risk</span>
+                      </div>
+                      <p className="text-sm text-gray-300">Vendor delay detected in Q2 milestone</p>
+                    </div>
+
+                    <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-emerald-400 font-semibold">Nova Platform</span>
+                        <span className="px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs">On Track</span>
+                      </div>
+                      <p className="text-sm text-gray-300">7 of 9 objectives covered</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Glow effect */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-violet-600/20 to-indigo-600/20 rounded-2xl blur-xl -z-10" />
+              </div>
+            </motion.div>
           </div>
+        </div>
+      </section>
 
-          {/* Charts Row */}
-          {/* Mobile: Swipe Carousel, Desktop: Grid */}
-          <div className="flex w-full overflow-x-auto snap-x snap-mandatory gap-3 pb-2 md:pb-0 md:grid md:grid-cols-4 flex-shrink-0 no-scrollbar">
-            <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
-              <PortfolioStatusChart data={fetchedPrograms} compact onSegmentClick={(status) => setChartFilter({ status })} />
-            </div>
-            <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
-              <ProgramVelocityChart data={velocityData} compact onBarClick={(stage) => setChartFilter({ pipelineStage: stage })} />
-            </div>
-            <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
-              <StrategicAlignmentChart data={alignmentData} compact onBarClick={(status, productLine) => setChartFilter({ status, productLine })} />
-            </div>
-            <div className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 block">
-              <LaunchCadenceChart data={cadenceData} compact onBarClick={(month) => setChartFilter({ launchMonth: month })} />
-            </div>
-          </div>
+      {/* Product Showcase */}
+      <ProductShowcase />
 
-          {/* Program Table - Takes remaining space */}
-          <div className="flex-1 min-h-[300px] md:min-h-0 flex flex-col">
-            <ProgramTable
-              programs={fetchedPrograms}
-              compact
-              onCreateProgram={() => setIsCreateModalOpen(true)}
-              onRowClick={(id) => setSelectedProgramId(id)}
-              dataSource={dataSource}
-              externalStatusFilter={chartFilter.status}
-              externalProductLineFilter={chartFilter.productLine}
-              externalPipelineStageFilter={chartFilter.pipelineStage}
-              externalLaunchMonth={chartFilter.launchMonth}
-              onClearExternalFilter={clearChartFilter}
-            />
-          </div>
-        </main>
+      {/* Problem Section */}
+      <ProblemSection />
 
-        {/* AI Chat Sidebar - Floating, starts at same height as KPI cards */}
-        <aside className="w-[380px] flex-shrink-0 p-4 pl-0 hidden lg:block">
-          <div className="h-full glass border border-white/10 rounded-2xl flex flex-col shadow-2xl overflow-hidden">
-            <ChatWidget />
-          </div>
-        </aside>
-      </div>
+      {/* Solution Section */}
+      <SolutionSection />
 
-      {/* Strategic Coverage Detail Modal */}
-      <StrategicCoverageDetail
-        isOpen={isStrategicDetailOpen}
-        onClose={() => setIsStrategicDetailOpen(false)}
-        covered={strategicCoverage.covered}
-        total={strategicCoverage.total}
-        uncovered={strategicCoverage.uncovered}
-      />
+      {/* Day in Life Section */}
+      <DayInLifeSection />
 
-      {/* Lines Under Pressure Detail Modal */}
-      <LinesUnderPressureDetail
-        isOpen={isLinesDetailOpen}
-        onClose={() => setIsLinesDetailOpen(false)}
-        programs={fetchedPrograms}
-        onProgramClick={(id) => { setIsLinesDetailOpen(false); setSelectedProgramId(id); }}
-      />
+      {/* Footer */}
+      <Footer />
 
-      {/* Milestone Completion Detail Modal */}
-      <MilestoneCompletionDetail
-        isOpen={isMilestoneDetailOpen}
-        onClose={() => setIsMilestoneDetailOpen(false)}
-        programs={fetchedPrograms}
-        completed={milestoneCompletion.completed}
-        total={milestoneCompletion.total}
-        percentage={milestoneCompletion.percentage}
-        onProgramClick={(id) => { setIsMilestoneDetailOpen(false); setSelectedProgramId(id); }}
-      />
-
-      {/* Upcoming Launches Detail Modal */}
-      <UpcomingLaunchesDetail
-        isOpen={isLaunchesDetailOpen}
-        onClose={() => setIsLaunchesDetailOpen(false)}
-        programs={fetchedPrograms}
-        onProgramClick={(id) => { setIsLaunchesDetailOpen(false); setSelectedProgramId(id); }}
-      />
-
-      {/* Program Detail Modal */}
-      <ProgramDetailModal
-        programId={selectedProgramId}
-        isOpen={!!selectedProgramId}
-        onClose={() => setSelectedProgramId(null)}
-        onProgramDeleted={reloadPrograms}
-        onProgramUpdated={reloadPrograms}
-      />
-
-      {/* Create Program Modal */}
-      <ProgramFormModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSaved={() => {
-          reloadPrograms();
-        }}
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        isSignUp={isSignUp}
+        setIsSignUp={setIsSignUp}
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        error={error}
+        success={success}
+        submitting={submitting}
+        onSubmit={handleSubmit}
       />
     </div>
   );
 }
 
-function formatLaunchDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
