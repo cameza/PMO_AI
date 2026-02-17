@@ -12,6 +12,7 @@ import { ProblemSection } from '@/components/ProblemSection';
 import { SolutionSection } from '@/components/SolutionSection';
 import { DayInLifeSection } from '@/components/DayInLifeSection';
 import { Footer } from '@/components/Footer';
+import { ExpressiveEye } from '@/components/ExpressiveEye';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -88,9 +89,7 @@ export default function LandingPage() {
           <div className="flex items-center justify-center h-20">
             {/* Centered Logo */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-accent-violet to-fuchsia-500 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-base">P</span>
-              </div>
+              <ExpressiveEye size="sm" emotion="neutral" enableTracking={true} />
               <span className="text-xl font-semibold text-white">Portfolio AI</span>
             </div>
             
@@ -186,7 +185,10 @@ export default function LandingPage() {
                   <ArrowRight className="ml-2 inline size-5 group-hover:translate-x-1 transition-transform" />
                 </button>
                 <button
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => {
+                    const element = document.getElementById('product-showcase');
+                    element?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className="border border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 text-white px-8 py-6 text-lg rounded-xl font-medium transition-all"
                 >
                   <Play className="mr-2 inline size-5" />

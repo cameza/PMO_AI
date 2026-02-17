@@ -1,9 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { ExpressiveEye } from './ExpressiveEye';
 
 export function Footer() {
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
   return (
     <footer className="relative py-32 bg-[#0a0b10]">
       {/* Dramatic Background */}
@@ -20,11 +24,9 @@ export function Footer() {
           transition={{ duration: 0.8 }}
           className="text-center mb-20"
         >
-          {/* Expressive Eye Placeholder */}
+          {/* Expressive Eye */}
           <div className="flex justify-center mb-8">
-            <div className="size-16 bg-gradient-to-br from-accent-violet to-fuchsia-500 rounded-full flex items-center justify-center shadow-lg">
-              <Sparkles className="size-8 text-white" />
-            </div>
+            <ExpressiveEye size="lg" emotion="focused" enableTracking={true} />
           </div>
 
           <h2 className="text-4xl md:text-6xl font-semibold text-white mb-6 tracking-tight max-w-4xl mx-auto">
@@ -43,11 +45,37 @@ export function Footer() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => setAuthModalOpen(true)}
             className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all"
           >
             Get Started
             <ArrowRight className="size-5" />
           </motion.button>
+
+          {/* Auth Modal */}
+          {authModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              {/* Backdrop */}
+              <div 
+                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                onClick={() => setAuthModalOpen(false)}
+              />
+              
+              {/* Modal Content */}
+              <div className="relative w-full max-w-md rounded-2xl border border-white/10 bg-surface p-6 shadow-2xl">
+                <div className="text-center">
+                  <h3 className="text-2xl font-semibold text-white mb-2">Get Started</h3>
+                  <p className="text-gray-400 mb-6">Transform your program portfolio with AI-powered insights.</p>
+                  <button
+                    onClick={() => setAuthModalOpen(false)}
+                    className="w-full rounded-lg py-3 text-white font-medium bg-gradient-to-r from-accent-violet to-fuchsia-500 hover:from-accent-violet/90 hover:to-fuchsia-500/90 transition-all"
+                  >
+                    Sign In to Continue
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </motion.div>
 
         {/* Divider */}

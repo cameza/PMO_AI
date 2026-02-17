@@ -9,17 +9,17 @@ const slides = [
   {
     title: 'Executive Dashboard',
     description: 'Get a comprehensive view of your entire portfolio with real-time insights on strategic coverage, velocity, and launch readiness.',
-    image: '/api/placeholder/600/400', // Placeholder for dashboard image
+    image: '/assets/dashboard.png',
   },
   {
     title: 'Project Deep-Dive',
     description: 'Track individual projects with active risk monitoring, milestone progress, and strategic alignment—all automatically updated from your source data.',
-    image: '/api/placeholder/600/400', // Placeholder for project image
+    image: '/assets/project.png',
   },
   {
     title: 'Slack Integration',
     description: 'Receive proactive portfolio summaries and answer ad-hoc questions directly in Slack. Your AI assistant keeps you informed without leaving your workflow.',
-    image: '/api/placeholder/600/400', // Placeholder for slack image
+    image: '/assets/slack.png',
   },
 ];
 
@@ -48,7 +48,7 @@ export function ProductShowcase() {
   }, [emblaApi, onSelect]);
 
   return (
-    <section className="relative py-32 bg-[#0a0b10] overflow-hidden">
+    <section id="product-showcase" className="relative py-32 bg-[#0a0b10] overflow-hidden">
       {/* Background Glow */}
       <div className="absolute inset-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-gradient-to-b from-violet-600/10 to-indigo-600/10 rounded-full blur-[150px]" />
@@ -93,6 +93,7 @@ export function ProductShowcase() {
                         src={slide.image}
                         alt={slide.title}
                         className="w-full h-auto object-contain rounded-lg"
+                        loading="lazy"
                       />
                     </div>
 
