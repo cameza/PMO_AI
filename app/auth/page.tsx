@@ -32,7 +32,7 @@ export default function AuthPage() {
           setError(error.message);
         } else {
           // Full page navigation so middleware sees the fresh auth cookies
-          window.location.href = '/';
+          window.location.href = '/dashboard';
         }
       }
     } catch (err) {

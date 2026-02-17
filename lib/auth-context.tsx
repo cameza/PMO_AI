@@ -59,7 +59,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signUp = useCallback(async (email: string, password: string) => {
-    const { error } = await getSupabase().auth.signUp({ email, password });
+    const { error } = await getSupabase().auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: 'https://pmo-ai.vercel.app/auth/callback',
+      },
+    });
     return { error: error as Error | null };
   }, []);
 

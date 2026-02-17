@@ -8,12 +8,12 @@ from dotenv import load_dotenv
 
 try:
     # When imported as a package (e.g., from Vercel via backend.main)
-    from backend.api import programs, agent, strategic_objectives, leads
+    from backend.api import programs, agent, strategic_objectives, integrations, leads
     from backend.database.db import init_db
     from backend.agent.rag import index_portfolio_data, get_rag_stats, set_rag_ready
 except ImportError:
     # When run directly (e.g., uvicorn main:app from backend/)
-    from api import programs, agent, strategic_objectives, leads
+    from api import programs, agent, strategic_objectives, integrations, leads
     from database.db import init_db
     from agent.rag import index_portfolio_data, get_rag_stats, set_rag_ready
 
@@ -55,6 +55,7 @@ app.include_router(programs.router, prefix=API_PREFIX, tags=["programs"])
 app.include_router(agent.router, prefix=API_PREFIX, tags=["agent"])
 app.include_router(strategic_objectives.router, prefix=f"{API_PREFIX}/strategic-objectives")
 app.include_router(leads.router, prefix=f"{API_PREFIX}/leads", tags=["leads"])
+app.include_router(integrations.router, prefix=API_PREFIX, tags=["integrations"])
 
 
 def _check_existing_embeddings() -> int:

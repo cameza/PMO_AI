@@ -150,7 +150,10 @@ def get_all_programs() -> List[Program]:
     try:
         org_id = _get_org_id()
 
-        prog_rows = _get("programs", {"select": "*", "organization_id": f"eq.{org_id}"})
+        sync_filter = _sync_source_filter()
+        prog_params = {"select": "*", "organization_id": f"eq.{org_id}"}
+        prog_params.update(sync_filter)
+        prog_rows = _get("programs", prog_params)
         risk_rows = _get("risks", {"select": "*", "organization_id": f"eq.{org_id}"})
         ms_rows = _get("milestones", {"select": "*", "organization_id": f"eq.{org_id}"})
         map_rows = _get("program_strategic_objectives", {"select": "*"})
@@ -290,14 +293,17 @@ def _row_to_objective(row: dict) -> StrategicObjective:
 
 
 def get_all_strategic_objectives() -> List[StrategicObjective]:
-    """Retrieve all strategic objectives."""
+    """Retrieve all strategic objectives (filtered by data source mode)."""
     try:
         org_id = _get_org_id()
-        rows = _get("strategic_objectives", {
+        sync_filter = _sync_source_filter()
+        params = {
             "select": "*",
             "organization_id": f"eq.{org_id}",
             "order": "priority.asc,name.asc",
-        })
+        }
+        params.update(sync_filter)
+        rows = _get("strategic_objectives", params)
         return [_row_to_objective(row) for row in rows]
     except Exception as e:
         logger.error(f"Error fetching strategic objectives: {e}")
@@ -690,7 +696,7 @@ def create_lead(lead: LeadCapture) -> dict:
         result = _post("leads", lead_data)
         if result:
             logger.info(f"Created lead: {lead.email}")
-            return result[0]  # Return the created lead record
+            return result[0]
         raise Exception("Failed to create lead")
     except Exception as e:
         logger.error(f"Error creating lead: {e}")

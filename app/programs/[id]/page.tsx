@@ -76,7 +76,7 @@ export default function ProgramDetailPage() {
 
     useEffect(() => {
         if (!authLoading && !user) {
-            router.push('/auth');
+            router.push('/');
         }
     }, [authLoading, user, router]);
 
@@ -121,7 +121,7 @@ export default function ProgramDetailPage() {
         setIsDeleting(true);
         try {
             await deleteProgram(program.id);
-            router.push('/');
+            router.push('/dashboard');
         } catch (err) {
             console.error('Error deleting program:', err);
             setIsDeleting(false);
@@ -237,7 +237,7 @@ export default function ProgramDetailPage() {
                     <h2 className="text-lg font-semibold text-white mb-2">Error</h2>
                     <p className="text-slate-400 mb-6">{error || 'Program not found'}</p>
                     <button
-                        onClick={() => router.push('/')}
+                        onClick={() => router.push('/dashboard')}
                         className="w-full bg-accent-violet text-white font-semibold py-2.5 rounded-xl hover:bg-accent-violet/80 transition-colors shadow-sm"
                     >
                         Back to Dashboard
@@ -253,7 +253,7 @@ export default function ProgramDetailPage() {
             <header className="bg-surface/80 backdrop-blur-md border-b border-white/10 px-6 py-4 sticky top-0 z-10 flex items-center justify-between">
                 <div className="flex items-center gap-6">
                     <button
-                        onClick={() => router.push('/')}
+                        onClick={() => router.push('/dashboard')}
                         className="p-2 hover:bg-white/5 rounded-full transition-colors"
                     >
                         <ArrowLeft className="w-5 h-5 text-slate-400" />
