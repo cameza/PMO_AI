@@ -681,6 +681,14 @@ def get_org_data_source() -> str:
         return "manual"
 
 
+def _sync_source_filter() -> dict:
+    """Return PostgREST filter params for sync_source based on org data_source mode."""
+    mode = get_org_data_source()
+    if mode == "synced":
+        return {"sync_source": "not.is.null"}
+    return {"sync_source": "is.null"}
+
+
 def create_lead(lead: LeadCapture) -> dict:
     """Create a new lead in the database."""
     try:
