@@ -6,6 +6,12 @@ import { useAuth } from '@/lib/auth-context';
 import { getSupabase } from '@/lib/supabase';
 import { motion } from 'motion/react';
 import { ArrowRight, Play, Menu, X } from 'lucide-react';
+import { AuthModal } from '@/components/AuthModal';
+import { ProductShowcase } from '@/components/ProductShowcase';
+import { ProblemSection } from '@/components/ProblemSection';
+import { SolutionSection } from '@/components/SolutionSection';
+import { DayInLifeSection } from '@/components/DayInLifeSection';
+import { Footer } from '@/components/Footer';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -18,6 +24,7 @@ export default function LandingPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -87,20 +94,14 @@ export default function LandingPage() {
               <span className="text-xl font-semibold text-white">Portfolio AI</span>
             </div>
             
-            {/* Desktop Auth */}
+            {/* Desktop Log In Button */}
             <div className="hidden md:block absolute right-6 lg:right-8">
-              <AuthPanel
-                isSignUp={isSignUp}
-                setIsSignUp={setIsSignUp}
-                email={email}
-                setEmail={setEmail}
-                password={password}
-                setPassword={setPassword}
-                error={error}
-                success={success}
-                submitting={submitting}
-                onSubmit={handleSubmit}
-              />
+              <button
+                onClick={() => setAuthModalOpen(true)}
+                className="px-6 py-2 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 text-white font-medium transition-all"
+              >
+                Log In
+              </button>
             </div>
             
             {/* Mobile Menu Button */}
@@ -115,18 +116,15 @@ export default function LandingPage() {
           {/* Mobile Menu */}
           {mobileMenuOpen && (
             <div className="md:hidden border-t border-white/10 py-4">
-              <AuthPanel
-                isSignUp={isSignUp}
-                setIsSignUp={setIsSignUp}
-                email={email}
-                setEmail={setEmail}
-                password={password}
-                setPassword={setPassword}
-                error={error}
-                success={success}
-                submitting={submitting}
-                onSubmit={handleSubmit}
-              />
+              <button
+                onClick={() => {
+                  setAuthModalOpen(true);
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full px-6 py-2 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 text-white font-medium transition-all text-left"
+              >
+                Log In
+              </button>
             </div>
           )}
         </div>
@@ -181,7 +179,7 @@ export default function LandingPage() {
                 transition={{ delay: 0.6, duration: 0.8 }}
               >
                 <button
-                  onClick={() => setMobileMenuOpen(true)}
+                  onClick={() => setAuthModalOpen(true)}
                   className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white px-8 py-6 text-lg rounded-xl font-medium group transition-all"
                 >
                   Get Started
@@ -246,83 +244,38 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Product Showcase */}
+      <ProductShowcase />
+
+      {/* Problem Section */}
+      <ProblemSection />
+
+      {/* Solution Section */}
+      <SolutionSection />
+
+      {/* Day in Life Section */}
+      <DayInLifeSection />
+
+      {/* Footer */}
+      <Footer />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        isSignUp={isSignUp}
+        setIsSignUp={setIsSignUp}
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        error={error}
+        success={success}
+        submitting={submitting}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }
 
-interface AuthPanelProps {
-  isSignUp: boolean;
-  setIsSignUp: (value: boolean) => void;
-  email: string;
-  setEmail: (value: string) => void;
-  password: string;
-  setPassword: (value: string) => void;
-  error: string | null;
-  success: string | null;
-  submitting: boolean;
-  onSubmit: (e: React.FormEvent) => Promise<void>;
-}
-
-function AuthPanel({
-  isSignUp,
-  setIsSignUp,
-  email,
-  setEmail,
-  password,
-  setPassword,
-  error,
-  success,
-  submitting,
-  onSubmit,
-}: AuthPanelProps) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-surface p-4">
-      <div className="flex gap-2 mb-3">
-        <button
-          onClick={() => setIsSignUp(false)}
-          className={`text-xs px-3 py-1.5 rounded-lg ${!isSignUp ? 'bg-accent-violet text-white' : 'bg-deep text-slate-400'}`}
-          type="button"
-        >
-          Sign in
-        </button>
-        <button
-          onClick={() => setIsSignUp(true)}
-          className={`text-xs px-3 py-1.5 rounded-lg ${isSignUp ? 'bg-accent-violet text-white' : 'bg-deep text-slate-400'}`}
-          type="button"
-        >
-          Sign up
-        </button>
-      </div>
-
-      <form onSubmit={onSubmit} className="grid sm:grid-cols-[1fr_1fr_auto] gap-2">
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@company.com"
-          className="bg-deep border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500"
-        />
-        <input
-          type="password"
-          required
-          minLength={6}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          className="bg-deep border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500"
-        />
-        <button
-          type="submit"
-          disabled={submitting}
-          className="rounded-lg px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-accent-violet to-fuchsia-500 disabled:opacity-50"
-        >
-          {submitting ? '...' : isSignUp ? 'Create' : 'Enter'}
-        </button>
-      </form>
-
-      {error && <p className="text-xs text-accent-rose mt-2">{error}</p>}
-      {success && <p className="text-xs text-accent-emerald mt-2">{success}</p>}
-    </div>
-  );
-}
