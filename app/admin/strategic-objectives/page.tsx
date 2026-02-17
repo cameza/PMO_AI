@@ -11,7 +11,7 @@ export default function StrategicObjectivesPage() {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push('/auth');
+      router.push('/');
     }
   }, [authLoading, user, router]);
 
