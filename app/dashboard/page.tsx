@@ -349,6 +349,7 @@ export default function DashboardPage() {
         isOpen={isNotificationModalOpen}
         onClose={() => setIsNotificationModalOpen(false)}
         dataSource={dataSource}
+        userEmail={user?.email ?? null}
       />
     </div>
   );
