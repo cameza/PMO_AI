@@ -9,45 +9,41 @@ interface NotificationModalProps {
     isOpen: boolean;
     onClose: () => void;
     dataSource: 'manual' | 'synced';
+    userEmail?: string | null;
 }
 
-export function NotificationModal({ isOpen, onClose, dataSource }: NotificationModalProps) {
-    const [email, setEmail] = useState('');
-    const [name, setName] = useState('');
-    const [company, setCompany] = useState('');
+export function NotificationModal({ isOpen, onClose, dataSource, userEmail }: NotificationModalProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+    const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        
-        if (!email.trim()) return;
-        
+    const normalizedEmail = userEmail?.trim();
+
+    const handleSubmit = async () => {
+        if (!normalizedEmail) {
+            setSubmitStatus('error');
+            setFeedbackMessage('We were unable to detect your account email. Please reach out to support.');
+            return;
+        }
+
         setIsSubmitting(true);
         setSubmitStatus('idle');
+        setFeedbackMessage(null);
         
         try {
             const leadData: LeadCaptureRequest = {
-                email: email.trim(),
-                name: name.trim() || undefined,
-                company: company.trim() || undefined,
+                email: normalizedEmail,
                 source: 'demo_notification'
             };
             
             await captureLead(leadData);
             setSubmitStatus('success');
-            
-            // Clear form after successful submission
-            setTimeout(() => {
-                setEmail('');
-                setName('');
-                setCompany('');
-                setSubmitStatus('idle');
-            }, 3000);
-            
+            setFeedbackMessage('Thanks! Weʼll be in touch soon.');
+        
         } catch (error) {
             console.error('Failed to capture lead:', error);
             setSubmitStatus('error');
+            setFeedbackMessage('Something went wrong. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -171,79 +167,46 @@ export function NotificationModal({ isOpen, onClose, dataSource }: NotificationM
                                     </div>
                                 </div>
 
-                                {/* Email Capture Form */}
+                                {/* Email Capture CTA */}
                                 <div className="space-y-4">
-                                    <h3 className="text-sm font-semibold text-white">Interested in Real Integration?</h3>
+                                    <h3 className="text-sm font-semibold text-white">Ready for a real integration?</h3>
                                     <p className="text-xs text-slate-400">
-                                        Leave your email and we&apos;ll help you connect PMO AI to your actual data sources.
+                                        Click below and we&apos;ll reach out using your account email {normalizedEmail ? (
+                                            <span className="text-white font-medium">({normalizedEmail})</span>
+                                        ) : null} to help you connect PMO AI to your live systems.
                                     </p>
-                                    
-                                    <form onSubmit={handleSubmit} className="space-y-3">
-                                        <div>
-                                            <input
-                                                type="email"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                placeholder="Work email*"
-                                                required
-                                                disabled={isSubmitting}
-                                                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-accent-violet/50 focus:ring-2 focus:ring-accent-violet/20 disabled:opacity-50"
-                                            />
-                                        </div>
-                                        
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <input
-                                                type="text"
-                                                value={name}
-                                                onChange={(e) => setName(e.target.value)}
-                                                placeholder="Name (optional)"
-                                                disabled={isSubmitting}
-                                                className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-accent-violet/50 focus:ring-2 focus:ring-accent-violet/20 disabled:opacity-50"
-                                            />
-                                            
-                                            <input
-                                                type="text"
-                                                value={company}
-                                                onChange={(e) => setCompany(e.target.value)}
-                                                placeholder="Company (optional)"
-                                                disabled={isSubmitting}
-                                                className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-accent-violet/50 focus:ring-2 focus:ring-accent-violet/20 disabled:opacity-50"
-                                            />
-                                        </div>
 
-                                        {/* Submit Status Messages */}
-                                        {submitStatus === 'success' && (
-                                            <div className="flex items-center gap-2 p-3 bg-accent-emerald/10 border border-accent-emerald/20 rounded-lg">
-                                                <CheckCircle className="w-4 h-4 text-accent-emerald" />
-                                                <span className="text-sm text-accent-emerald">Thanks! We&apos;ll be in touch soon.</span>
-                                            </div>
-                                        )}
-                                        
-                                        {submitStatus === 'error' && (
-                                            <div className="flex items-center gap-2 p-3 bg-accent-rose/10 border border-accent-rose/20 rounded-lg">
-                                                <AlertCircle className="w-4 h-4 text-accent-rose" />
-                                                <span className="text-sm text-accent-rose">Something went wrong. Please try again.</span>
-                                            </div>
-                                        )}
+                                    {feedbackMessage && (
+                                        <div className={`flex items-center gap-2 p-3 rounded-lg border ${submitStatus === 'success' ? 'bg-accent-emerald/10 border-accent-emerald/20 text-accent-emerald' : 'bg-accent-rose/10 border-accent-rose/20 text-accent-rose'}`}>
+                                            {submitStatus === 'success' ? <CheckCircle className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                                            <span className="text-sm">{feedbackMessage}</span>
+                                        </div>
+                                    )}
 
-                                        <button
-                                            type="submit"
-                                            disabled={isSubmitting || !email.trim() || submitStatus === 'success'}
-                                            className="w-full bg-gradient-to-r from-accent-violet to-fuchsia-500 text-white font-semibold py-2.5 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                                        >
-                                            {isSubmitting ? (
-                                                <>
-                                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                    Sending...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Mail className="w-4 h-4" />
-                                                    Get in Touch
-                                                </>
-                                            )}
-                                        </button>
-                                    </form>
+                                    <button
+                                        type="button"
+                                        onClick={handleSubmit}
+                                        disabled={isSubmitting || submitStatus === 'success' || !normalizedEmail}
+                                        className="w-full bg-gradient-to-r from-accent-violet to-fuchsia-500 text-white font-semibold py-2.5 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                    >
+                                        {isSubmitting ? (
+                                            <>
+                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                Sending request...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Mail className="w-4 h-4" />
+                                                Get in Touch
+                                            </>
+                                        )}
+                                    </button>
+
+                                    {!normalizedEmail && (
+                                        <p className="text-xs text-accent-rose">
+                                            We couldn&apos;t detect your email from the current session. Please contact support so we can help you connect your data.
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>
