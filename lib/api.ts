@@ -343,7 +343,23 @@ export interface LeadCaptureRequest {
     source?: string;
 }
 
-export async function captureLead(lead: LeadCaptureRequest): Promise<{ success: boolean; lead: any; message: string }> {
+export interface LeadCaptureResponse {
+    success: boolean;
+    lead: {
+        id: string;
+        organization_id: string;
+        email: string;
+        name?: string | null;
+        company?: string | null;
+        source?: string | null;
+        status?: string | null;
+        created_at?: string;
+        updated_at?: string;
+    };
+    message: string;
+}
+
+export async function captureLead(lead: LeadCaptureRequest): Promise<LeadCaptureResponse> {
     try {
         const response = await api.post('/api/py/leads', lead);
         return response.data;
