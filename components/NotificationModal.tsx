@@ -91,7 +91,7 @@ export function NotificationModal({ isOpen, onClose, dataSource }: NotificationM
                                         </div>
                                         <div>
                                             <h2 className="text-lg font-semibold text-white">Demo Mode Active</h2>
-                                            <p className="text-sm text-slate-400">You're viewing sample data</p>
+                                            <p className="text-sm text-slate-400">You&apos;re viewing sample data</p>
                                         </div>
                                     </div>
                                     <button
@@ -109,7 +109,7 @@ export function NotificationModal({ isOpen, onClose, dataSource }: NotificationM
                                 {/* Description */}
                                 <div className="text-sm text-slate-300 leading-relaxed">
                                     <p className="mb-4">
-                                        Welcome to PMO AI! You're currently exploring our demo with sample portfolio data. 
+                                        Welcome to PMO AI! You&apos;re currently exploring our demo with sample portfolio data. 
                                         This showcases how our AI-powered program management system works with real-world scenarios.
                                     </p>
                                     <p>
@@ -175,7 +175,7 @@ export function NotificationModal({ isOpen, onClose, dataSource }: NotificationM
                                 <div className="space-y-4">
                                     <h3 className="text-sm font-semibold text-white">Interested in Real Integration?</h3>
                                     <p className="text-xs text-slate-400">
-                                        Leave your email and we'll help you connect PMO AI to your actual data sources.
+                                        Leave your email and we&apos;ll help you connect PMO AI to your actual data sources.
                                     </p>
                                     
                                     <form onSubmit={handleSubmit} className="space-y-3">
@@ -215,7 +215,7 @@ export function NotificationModal({ isOpen, onClose, dataSource }: NotificationM
                                         {submitStatus === 'success' && (
                                             <div className="flex items-center gap-2 p-3 bg-accent-emerald/10 border border-accent-emerald/20 rounded-lg">
                                                 <CheckCircle className="w-4 h-4 text-accent-emerald" />
-                                                <span className="text-sm text-accent-emerald">Thanks! We'll be in touch soon.</span>
+                                                <span className="text-sm text-accent-emerald">Thanks! We&apos;ll be in touch soon.</span>
                                             </div>
                                         )}
                                         
