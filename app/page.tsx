@@ -13,6 +13,7 @@ import { LinesUnderPressureDetail } from '@/components/LinesUnderPressureDetail'
 import { MilestoneCompletionDetail } from '@/components/MilestoneCompletionDetail';
 import { UpcomingLaunchesDetail } from '@/components/UpcomingLaunchesDetail';
 import { ProgramDetailModal } from '@/components/ProgramDetailModal';
+import { NotificationModal } from '@/components/NotificationModal';
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchPrograms, fetchOrgDataSource } from '@/lib/api';
@@ -40,6 +41,7 @@ export default function Dashboard() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<'manual' | 'synced'>('manual');
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
 
   // Chart → Table filter state
   const [chartFilter, setChartFilter] = useState<{
@@ -149,7 +151,10 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="p-2 hover:bg-white/5 rounded-lg transition-colors relative">
+          <button 
+            onClick={() => setIsNotificationModalOpen(true)}
+            className="p-2 hover:bg-white/5 rounded-lg transition-colors relative"
+          >
             <Bell className="w-5 h-5 text-slate-400" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent-rose rounded-full" />
           </button>
@@ -317,6 +322,13 @@ export default function Dashboard() {
         onSaved={() => {
           reloadPrograms();
         }}
+      />
+
+      {/* Notification Modal */}
+      <NotificationModal
+        isOpen={isNotificationModalOpen}
+        onClose={() => setIsNotificationModalOpen(false)}
+        dataSource={dataSource}
       />
     </div>
   );

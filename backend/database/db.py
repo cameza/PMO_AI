@@ -11,6 +11,7 @@ from .models import (
     ProgramCreate, ProgramUpdate,
     RiskCreate, RiskUpdate,
     MilestoneCreate, MilestoneUpdate,
+    LeadCapture,
 )
 
 logger = logging.getLogger(__name__)
@@ -672,3 +673,25 @@ def get_org_data_source() -> str:
     except Exception as e:
         logger.error(f"Error fetching org data source: {e}")
         return "manual"
+
+
+def create_lead(lead: LeadCapture) -> dict:
+    """Create a new lead in the database."""
+    try:
+        org_id = _get_org_id()
+        lead_data = {
+            "organization_id": org_id,
+            "email": lead.email,
+            "name": lead.name,
+            "company": lead.company,
+            "source": lead.source,
+            "status": "new",
+        }
+        result = _post("leads", lead_data)
+        if result:
+            logger.info(f"Created lead: {lead.email}")
+            return result[0]  # Return the created lead record
+        raise Exception("Failed to create lead")
+    except Exception as e:
+        logger.error(f"Error creating lead: {e}")
+        raise

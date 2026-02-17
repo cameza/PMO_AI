@@ -162,3 +162,10 @@ class MilestoneUpdate(BaseModel):
     due_date: Optional[str] = None
     completed_date: Optional[str] = None
     status: Optional[MilestoneStatus] = None
+
+
+class LeadCapture(BaseModel):
+    email: str
+    name: Optional[str] = None
+    company: Optional[str] = None
+    source: str = "demo_notification"

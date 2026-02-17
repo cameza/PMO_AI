@@ -335,4 +335,22 @@ export async function deleteMilestone(programId: string, milestoneId: string): P
     }
 }
 
+// Lead capture interface
+export interface LeadCaptureRequest {
+    email: string;
+    name?: string;
+    company?: string;
+    source?: string;
+}
+
+export async function captureLead(lead: LeadCaptureRequest): Promise<any> {
+    try {
+        const response = await api.post('/api/py/leads', lead);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to capture lead:', error);
+        throw error;
+    }
+}
+
 export default api;
