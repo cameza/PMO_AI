@@ -11,6 +11,7 @@ from .models import (
     ProgramCreate, ProgramUpdate,
     RiskCreate, RiskUpdate,
     MilestoneCreate, MilestoneUpdate,
+    LeadCapture,
 )
 
 logger = logging.getLogger(__name__)
@@ -681,13 +682,30 @@ def get_org_data_source() -> str:
 
 
 def _sync_source_filter() -> dict:
-    """Return PostgREST filter params for sync_source based on org data_source mode.
-
-    - manual mode → sync_source IS NULL (standalone/demo data)
-    - synced mode → sync_source IS NOT NULL (e.g., 'linear')
-    """
+    """Return PostgREST filter params for sync_source based on org data_source mode."""
     mode = get_org_data_source()
     if mode == "synced":
         return {"sync_source": "not.is.null"}
-    else:
-        return {"sync_source": "is.null"}
+    return {"sync_source": "is.null"}
+
+
+def create_lead(lead: LeadCapture) -> dict:
+    """Create a new lead in the database."""
+    try:
+        org_id = _get_org_id()
+        lead_data = {
+            "organization_id": org_id,
+            "email": lead.email,
+            "name": lead.name,
+            "company": lead.company,
+            "source": lead.source,
+            "status": "new",
+        }
+        result = _post("leads", lead_data)
+        if result:
+            logger.info(f"Created lead: {lead.email}")
+            return result[0]
+        raise Exception("Failed to create lead")
+    except Exception as e:
+        logger.error(f"Error creating lead: {e}")
+        raise

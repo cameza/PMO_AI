@@ -336,6 +336,43 @@ export async function deleteMilestone(programId: string, milestoneId: string): P
 }
 
 // ---------------------------------------------------------------------------
+// Lead capture API
+// ---------------------------------------------------------------------------
+
+export interface LeadCaptureRequest {
+    email: string;
+    name?: string;
+    company?: string;
+    source?: string;
+}
+
+export interface LeadCaptureResponse {
+    success: boolean;
+    lead: {
+        id: string;
+        organization_id: string;
+        email: string;
+        name?: string | null;
+        company?: string | null;
+        source?: string | null;
+        status?: string | null;
+        created_at?: string;
+        updated_at?: string;
+    };
+    message: string;
+}
+
+export async function captureLead(lead: LeadCaptureRequest): Promise<LeadCaptureResponse> {
+    try {
+        const response = await api.post<LeadCaptureResponse>('/api/py/leads', lead);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to capture lead:', error);
+        throw error;
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Integration API
 // ---------------------------------------------------------------------------
 

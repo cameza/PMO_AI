@@ -13,6 +13,7 @@ import { LinesUnderPressureDetail } from '@/components/LinesUnderPressureDetail'
 import { MilestoneCompletionDetail } from '@/components/MilestoneCompletionDetail';
 import { UpcomingLaunchesDetail } from '@/components/UpcomingLaunchesDetail';
 import { ProgramDetailModal } from '@/components/ProgramDetailModal';
+import { NotificationModal } from '@/components/NotificationModal';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchPrograms, fetchOrgDataSource, toggleDataSource, fetchIntegrationStatus } from '@/lib/api';
@@ -42,6 +43,7 @@ export default function DashboardPage() {
   const [dataSource, setDataSource] = useState<'manual' | 'synced'>('manual');
   const [hasIntegration, setHasIntegration] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
 
   const [chartFilter, setChartFilter] = useState<{
     status?: string | null;
@@ -184,7 +186,10 @@ export default function DashboardPage() {
           >
             <Settings className="w-5 h-5 text-slate-400" />
           </button>
-          <button className="p-2 hover:bg-white/5 rounded-lg transition-colors relative">
+          <button
+            onClick={() => setIsNotificationModalOpen(true)}
+            className="p-2 hover:bg-white/5 rounded-lg transition-colors relative"
+          >
             <Bell className="w-5 h-5 text-slate-400" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent-rose rounded-full" />
           </button>
@@ -338,6 +343,13 @@ export default function DashboardPage() {
         onSaved={() => {
           reloadPrograms();
         }}
+      />
+
+      <NotificationModal
+        isOpen={isNotificationModalOpen}
+        onClose={() => setIsNotificationModalOpen(false)}
+        dataSource={dataSource}
+        userEmail={user?.email ?? null}
       />
     </div>
   );

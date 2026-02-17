@@ -201,3 +201,10 @@ class SyncResult(BaseModel):
 
 class DataSourceToggle(BaseModel):
     data_source: str  # 'manual' or 'synced'
+
+
+class LeadCapture(BaseModel):
+    email: str
+    name: Optional[str] = None
+    company: Optional[str] = None
+    source: str = "demo_notification"
